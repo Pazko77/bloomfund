@@ -7,6 +7,7 @@ import Connexion from "../pages/Connexion/Connexion.js";
 import LayoutMain from "../layouts/LayoutMain/LayoutMain.js";
 import About from "../pages/About/About.js";
 import FormulaireCagnotte from "../pages/FormulaireCagnotte/FormulaireCagnotte";
+import Inscription from "../pages/Inscription/Inscription";
 
 function App() {
     return (
@@ -16,7 +17,8 @@ function App() {
                 <Route path="/about" element={<LayoutMain><About/></LayoutMain>}/>
                 <Route path="/rechercher" element={<LayoutMain><Rechercher/></LayoutMain>}/>
                 <Route path="/form" element={<LayoutMain><FormulaireCagnotte/></LayoutMain>}/>
-                <Route path="/connexion" element={<LayoutMain><Connexion/></LayoutMain>}/>
+                <Route path="/connexion" element={<Connexion/>}/>
+                <Route path="/inscription" element={<Inscription/>}/>
             </Routes>
         </BrowserRouter>);
 }
