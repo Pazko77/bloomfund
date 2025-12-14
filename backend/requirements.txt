@@ -1,6 +1,0 @@
-django>=4.2
-djangorestframework
-psycopg2-binary
-gunicorn
-django-cors-headers
-mysqlclient
