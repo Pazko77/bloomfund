@@ -1,0 +1,42 @@
+// .navbar {
+//     width: 100vw;
+//     height: clamp(60px,80px,160px);
+//     background-color: #fff;
+//     display: flex;
+//     position: fixed;
+//     justify-content: center;
+//     align-items: center;
+//     padding: 0;
+//     margin: 0;
+//     box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
+//     z-index: 1000;
+// }
+
+// .navbar ul {
+//     display: flex;
+//     align-items: center;
+//     list-style: none;
+//     padding: 0;
+//     margin: 0;
+// }
+
+// .navbar-item {
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     font-family: 'Poppins', sans-serif;
+//     font-weight: 600;
+//     font-size: 14px;
+//     gap:5px;
+//     width: 200px;
+//     padding: 0 16px;        /* agrandit la zone cliquable */
+//     height: 80px;           /* prend toute la hauteur de la navbar */
+//     text-decoration: none;
+//     color: #162816;
+// }
+
+// .navbar-item:hover {
+//     background-color: #f0f0f0;
+//     cursor: pointer;
+// }
+

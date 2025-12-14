@@ -1,0 +1,14 @@
+@use "variables" as *;
+
+
+
+@mixin flex-center($direction: row, $gap: null) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: $direction;
+  @if $gap != null {
+    gap: $gap;
+  }
+}
+
