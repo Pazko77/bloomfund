@@ -1,7 +1,8 @@
 {
 	"name": "backend",
 	"scripts": {
-		"dev": "nodemon server.js"
+		"dev-js": "nodemon server.js",
+		"dev": "nodemon  --exec ts-node server.ts"
 	},
 	"devDependencies": {
 		"@types/express": "^5.0.6",

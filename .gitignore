@@ -30,3 +30,6 @@ yarn-error.log*
 node_modules/
 
 test.http
+
+backend/interfaces/*.ts
+backend/models/*.ts
