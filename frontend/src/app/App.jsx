@@ -1,18 +1,9 @@
+import "./App.scss";
 
-import './App.scss'
-
-import { Routes, Route } from 'react-router-dom';
-
-
-
+import { Routes, Route } from "react-router-dom";
 
 function App() {
-
-  return (
-		<Routes>
-	
-		</Routes>
-	);
+  return <Routes></Routes>;
 }
 
-export default App
+export default App;

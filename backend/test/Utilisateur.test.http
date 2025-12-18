@@ -1,0 +1,33 @@
+### Register un nouvel utilisateur
+
+POST http://localhost:3000/api/utilisateurs/register
+Content-Type: application/json
+
+{
+  "nom": "Dupont",
+  "prenom": "Jean",
+  "email": "jean.dupont@test.com",
+  "mot_de_passe": "monpassword",
+  "departement": "75"
+}
+
+
+### Login pour récupérer le token JWT
+POST http://localhost:3000/api/utilisateurs/login
+Content-Type: application/json
+
+{
+  "email": "jean.dupont@test.com",
+  "mot_de_passe": "monpassword"
+}
+###
+POST http://localhost:3000/api/utilisateurs/logout
+
+
+
+### Accéder au profil protégé (remplacer TOKEN par celui reçu au login)
+GET http://localhost:3000/api/utilisateurs/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJqZWFuLmR1cG9udEB0ZXN0LmNvbSIsImlhdCI6MTc2NjA5OTM1NCwiZXhwIjoxNzY2MTAwMjU0fQ.iDoKm05LpLwj8YMSbXFRt-MGpu74gjaRCX5tpS8Quc4
+  
+
+

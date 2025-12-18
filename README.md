@@ -14,7 +14,7 @@ Avant de commencer, assurez-vous d'avoir installé :
 
 ---
 
-## Installation 
+## Installation
 
 1. **Cloner le projet :**
 
@@ -31,3 +31,4 @@ npm install --prefix backend
 
 3. **Lancer le projet**
 npm run dev
+```
