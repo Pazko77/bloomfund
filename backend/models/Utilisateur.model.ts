@@ -28,9 +28,20 @@ export interface UtilisateurInput {
 	prenom: string;
 	email: string;
 	mot_de_passe: string;
-  departement: string;
+	departement: string;
 	role: 'citoyen' | 'porteur_projet' | 'admin';
 }
+
+export interface UtilisateurOutput {
+	id: number;
+	nom: string;
+	prenom: string;
+	email: string;
+	departement: string;
+	role: 'citoyen' | 'porteur_projet' | 'admin';
+	date_inscription: Date;
+}
+
 
 
 
