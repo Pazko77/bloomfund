@@ -1,9 +1,35 @@
-import "./App.scss";
-
-import { Routes, Route } from "react-router-dom";
-
+import './App.scss';
+import { Routes, Route } from 'react-router-dom';
+import About from '../pages/About/About.jsx';
+import Accueil from '../pages/Accueil/Accueil.jsx';
+import Connexion from '../pages/Connexion/Connexion.jsx';
+import Inscription from '../pages/Inscription/Inscription.jsx';
+import Rechercher from '../pages/Rechercher/Rechercher.jsx';
+import Cagnotte from '../pages/FormulaireCagnotte/FormulaireCagnotte.jsx';
+import LayoutMain from '../layouts/LayoutMain/LayoutMain.jsx';
+import LayoutAuth from '../layouts/LayoutMain/LayoutAuth.jsx';
 function App() {
-  return <Routes></Routes>;
+	return (
+		<>
+			<Routes>
+				{/* Pages AVEC navbar */}
+				<Route element={<LayoutMain />}>
+					<Route path="/" element={<Accueil />} />
+					<Route path="/Accueil" element={<Accueil />} />
+					<Route path="" element={<Accueil />} />
+					<Route path="/about" element={<About />} />
+					<Route path="/rechercher" element={<Rechercher />} />
+				</Route>
+
+				{/* Pages SANS navbar */}
+				<Route element={<LayoutAuth />}>
+					<Route path="/connexion" element={<Connexion />} />
+					<Route path="/inscription" element={<Inscription />} />
+					<Route path="/formCagnotte" element={<Cagnotte />} />
+				</Route>
+			</Routes>
+		</>
+	);
 }
 
 export default App;

@@ -1,21 +1,40 @@
-// import './Navbar.css';
-// import logoNoText from '../../assets/BloomfundNoText.svg';
-// import searchIcon from '../../assets/search.svg';
+import './Navbar.scss';
+import logoNoText from '/BloomfundNoText.svg';
+import searchIcon from '/search.svg';
+import { useLocation } from 'react-router-dom';
+function Navbar() {
+	const navLinks = [
+		{ href: '/rechercher', text: 'Rechercher', icon: searchIcon },
+		{ href: '/about', text: 'À propos' },
+		{ href: '/', icon: logoNoText, alt: 'LogoBloomFund' },
+		{ href: '/form', text: 'Démarrer une cagnotte' },
+		{ href: '/connexion', text: 'Connexion' },
+	];
 
-// function Navbar() {
-//     return (
-//         <div className="navbar">
-//             <nav>
-//                 <ul>
-//                     <li><a className="navbar-item" href="/rechercher"><img src={searchIcon} alt="" /> Rechercher</a></li>
-//                     <li><a className="navbar-item" href="/about">À propos</a></li>
-//                     <li><a className="navbar-item" href="/"><img src={logoNoText} alt="LogoBloomFund" /></a></li>
-//                     <li><a className="navbar-item" href="/form">Démarrer une cagnotte</a></li>
-//                     <li><a className="navbar-item" href="/connexion">Connexion</a></li>
-//                 </ul>
-//             </nav>
-//         </div>
-//     );
-// }
+    	const location = useLocation(); 
 
-// export default Navbar;
+        const hiddenRoutes = ['/connexion', '/inscription'];
+
+        if (hiddenRoutes.includes(location.pathname)) {
+            return null;
+        }
+
+	return (
+		<div className="navbar">
+			<nav>
+				<ul>
+					{navLinks.map((link, index) => (
+						<li key={index}>
+							<a className="navbar-item" href={link.href}>
+								{link.icon && <img src={link.icon} alt={link.alt || ''} />}
+								{link.text && ` ${link.text}`}
+							</a>
+						</li>
+					))}
+				</ul>
+			</nav>
+		</div>
+	);
+}
+
+export default Navbar;
