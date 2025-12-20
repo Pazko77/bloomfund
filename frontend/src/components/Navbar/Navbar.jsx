@@ -27,7 +27,7 @@ function Navbar() {
 					{navLinks.map((link, index) => (
 						<li key={index}>
 							<a className="navbar-item" href={link.href}>
-								{link.icon && <img width={'162px'} src={link.icon} alt={link.alt || ''} />}
+								{link.icon && <img src={link.icon} alt={link.alt || ''} />}
 								{link.text && ` ${link.text}`}
 							</a>
 						</li>

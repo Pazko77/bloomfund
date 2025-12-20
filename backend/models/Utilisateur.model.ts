@@ -11,7 +11,7 @@ export interface Utilisateur {
 	prenom: string;
 	email: string;
 	mot_de_passe: string;
-	departement: string;
+	departement?: string;
 	role: 'citoyen' | 'porteur_projet' | 'admin';
 	date_inscription: Date;
 }
@@ -28,7 +28,7 @@ export interface UtilisateurInput {
 	prenom: string;
 	email: string;
 	mot_de_passe: string;
-	departement: string;
+	departement?: string;
 	role: 'citoyen' | 'porteur_projet' | 'admin';
 }
 
@@ -41,8 +41,6 @@ export interface UtilisateurOutput {
 	role: 'citoyen' | 'porteur_projet' | 'admin';
 	date_inscription: Date;
 }
-
-
 
 
 /** * Payload contenu dans le JWT pour un utilisateur.

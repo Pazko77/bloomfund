@@ -6,7 +6,7 @@ CREATE TABLE utilisateurs (
     email VARCHAR(150) NOT NULL UNIQUE,
     mot_de_passe VARCHAR(355) NOT NULL,
     role VARCHAR(30) NOT NULL DEFAULT 'citoyen',
-    departement VARCHAR(100) NOT NULL,
+    departement VARCHAR(100) ,
     date_inscription TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CHECK (role IN ('citoyen', 'porteur_projet', 'admin'))
 );
