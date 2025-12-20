@@ -9,6 +9,7 @@ Content-Type: application/json
   "email": "jean.dupont@test.com",
   "mot_de_passe": "monpassword",
   "departement": "75"
+  
 }
 
 
@@ -30,4 +31,27 @@ GET http://localhost:3000/api/utilisateurs/profile
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibm9tIjoiRHVwb250IiwicHJlbm9tIjoiSmVhbiIsImVtYWlsIjoiamVhbi5kdXBvbnRAdGVzdC5jb20iLCJtb3RfZGVfcGFzc2UiOiIkMmIkMTAkV3VleUNQbkY4R1owRGdUaWM5Ti5mT3laYnRITVh2RVI5VGlvei5RaTNNcDgzZDBmQWZubjYiLCJyb2xlIjoiY2l0b3llbiIsImRhdGVfaW5zY3JpcHRpb24iOiIyMDI1LTEyLTE4VDIyOjQxOjM0LjAwMFoiLCJkZXBhcnRlbWVudCI6Ijc1IiwiaWF0IjoxNzY2MTAwNTIyLCJleHAiOjE3NjYxMDE0MjJ9.-Fb2dDZUzRhir4ryhO6kbDsduysm8-sVZr2OvSgOmCQ
   
 
+### ADAMIN - Register un nouvel utilisateur avec le rôle admin
 
+POST http://localhost:3000/api/utilisateurs/register
+Content-Type: application/json
+
+{
+  "nom": "Pierre",
+  "prenom": "Ychnightder",
+  "email": "pierre.ychnightder@test.com",
+  "mot_de_passe": "monpassword",
+  "departement": "75",
+  "role": "admin"
+}
+
+
+###
+POST http://localhost:3000/api/utilisateurs/login
+Content-Type: application/json
+
+{
+  "email": "pierre.ychnightder@test.com",
+  "mot_de_passe": "monpassword"
+}
+###

@@ -1,0 +1,45 @@
+### Récupérer toutes les catégories
+GET http://localhost:3000/api/categories
+Accept: application/json
+
+
+### Récupérer une catégorie par ID
+GET http://localhost:3000/api/categories/2
+Accept: application/json
+
+
+### Créer une nouvelle catégorie
+POST http://localhost:3000/api/categories
+Content-Type: application/json
+
+{
+  "nom": "Environnement",
+  "description": "Projets liés à l'écologie et au développement durable"
+}
+
+
+### Supprimer une catégorie
+DELETE http://localhost:3000/api/categories/1
+
+
+
+
+
+### Création catégorie (admin)
+POST http://localhost:3000/api/categories
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibm9tIjoiUGllcnJlIiwicHJlbm9tIjoiWWNobmlnaHRkZXIiLCJlbWFpbCI6InBpZXJyZS55Y2huaWdodGRlckB0ZXN0LmNvbSIsIm1vdF9kZV9wYXNzZSI6IiQyYiQxMCRzdE1kZzBrTzZnaXpzQjJpT0NUWnkud25MV3BIcE9XVGhJQy83VHFJeGVYaTh5bUdMeHAxUyIsInJvbGUiOiJhZG1pbiIsImRhdGVfaW5zY3JpcHRpb24iOiIyMDI1LTEyLTIwVDIyOjQxOjM3LjAwMFoiLCJkZXBhcnRlbWVudCI6Ijc1IiwiaWF0IjoxNzY2MjcwNjYwLCJleHAiOjE3NjYyNzE1NjB9.0OxIe2NyJ_6L1XjfrKZJoHleq4MYX30eaJ31TXKARw4
+Content-Type: application/json
+
+{
+  "nom": "Culture",
+  "description": "Projets culturels"
+}
+
+
+### Test création sans nom (doit renvoyer 400)
+POST http://localhost:3000/api/categories
+Content-Type: application/json
+
+{
+  "description": "Test invalide"
+}
