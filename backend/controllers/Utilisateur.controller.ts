@@ -30,7 +30,7 @@ export const UtilisateurController = {
 	// LOGIN
 	async login(req: Request, res: Response) {
         const UtilisateurCurrent: UtilisateurInput = req.body;
-        const existingUtilisateur = await UtilisateurService.findByEmail(UtilisateurCurrent.email);
+        const existingUtilisateur  = await UtilisateurService.findByEmail(UtilisateurCurrent.email);
 
         if (!existingUtilisateur) {
             return res.status(400).json({ message: 'Utilisateur non trouvé' , success: false });
