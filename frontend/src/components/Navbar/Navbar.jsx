@@ -1,7 +1,7 @@
 import './Navbar.scss';
 import logoNoText from '/BloomfundNoText.svg';
 import searchIcon from '/search.svg';
-import logoText from '/BloomfundLogo.svg';
+import arrow from '/green_arrow-left.svg';
 import { useLocation } from 'react-router-dom';
 
 function Navbar() {
@@ -11,7 +11,7 @@ function Navbar() {
 	const isFormPage = formRoutes.includes(location.pathname);
 
 	const navLinks = isFormPage
-		? [{ href: '/', icon: logoText, alt: 'LogoBloomFund' }]
+		? [{ href: '/', icon: arrow, alt: 'Retour' }]
 		: [
 				{ href: '/rechercher', text: 'Rechercher', icon: searchIcon },
 				{ href: '/about', text: 'À propos' },

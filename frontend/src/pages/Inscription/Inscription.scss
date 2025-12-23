@@ -56,6 +56,7 @@
 
 .signup-header img {
   width: 150px;
+  margin: 0 auto 0 auto;
 }
 
 .signup-header p {
@@ -289,10 +290,7 @@
   transform: scale(1.1);
 }
 
-.terms-wrapper
-  input[type="checkbox"]:checked
-  ~ .checkbox-label
-  .checkmark::after {
+.terms-wrapper input[type="checkbox"]:checked ~ .checkbox-label .checkmark::after {
   content: "✓";
   color: #162816;
   font-size: 11px;

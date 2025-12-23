@@ -238,10 +238,7 @@
   transform: scale(1.1);
 }
 
-.remember-wrapper
-  input[type="checkbox"]:checked
-  ~ .checkbox-label
-  .checkmark::after {
+.remember-wrapper input[type="checkbox"]:checked ~ .checkbox-label .checkmark::after {
   content: "✓";
   color: #162816;
   font-size: 11px;
@@ -374,6 +371,13 @@
   font-size: 1rem;
   font-weight: 400;
 }
+
+.login-header img {
+  display: block;
+  margin: 0 auto 0 auto;
+  max-width: 120px;
+}
+
 
 /* Password Toggle Specific Styles */
 .password-wrapper {

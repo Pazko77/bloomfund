@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import './Inscription.scss';
-import Logo from '/backgroundLogo.svg';
+import Logo from '/BloomfundLogo.svg';
 
 export default function Inscription() {
 	const [formData, setFormData] = useState({

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import './Connexion.scss';
-import Logo from '/backgroundLogo.svg';
+import Logo from '/BloomfundLogo.svg';
 
 export default function Connexion() {
 	const [formData, setFormData] = useState({

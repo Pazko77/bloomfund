@@ -40,10 +40,43 @@
     cursor: pointer;
 }
 
+.navbar--logo-only {
+    justify-content: start;
+    background: rgba(0, 0, 0, 0);
+    box-shadow: none;
+}
+
+.navbar--logo-only .navbar-item:hover {
+    background-color: rgba(0, 0, 0, 0);
+    animation : retour infinite ease-in-out 1.5s;
+}
+
 .navbar--logo-only ul {
 	justify-content: center;
 }
 
 .navbar--logo-only img {
 	height: 48px;
+}
+
+@keyframes retour {
+    0% {
+        transform: translateX(0);
+    }
+    20% {
+        transform: translateX(-10px);
+    }
+    40% {
+        transform: translateX(0);
+    }
+
+    60% {
+        transform: translateX(0px);
+    }
+    80% {
+        transform: translateX(-10px);
+    }
+    100% {
+        transform: translateX(0);
+    }
 }
