@@ -7,6 +7,7 @@ import Inscription from '../pages/Inscription/Inscription.jsx';
 import Rechercher from '../pages/Rechercher/Rechercher.jsx';
 import Cagnotte from '../pages/FormulaireCagnotte/FormulaireCagnotte.jsx';
 import LayoutMain from '../layouts/LayoutMain/LayoutMain.jsx';
+import CagnottePageTemplate from "../components/CagnottePageTemplate/CagnottePageTemplate.jsx";
 function App() {
 	return (
 		<>
@@ -21,6 +22,7 @@ function App() {
 					<Route path="/inscription" element={<Inscription />} />
 					<Route path="/rechercher" element={<Rechercher />} />
 					<Route path="/formCagnotte" element={<Cagnotte />} />
+					<Route path="/cagnotte/:id" element={<CagnottePageTemplate />} />
 				</Route>
 			</Routes>
 		</>

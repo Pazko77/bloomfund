@@ -35,6 +35,46 @@ const Rechercher = ({ onSelect }) => {
 	const categories = ['Toutes catégories', 'Emploi', 'Immobilier', 'Véhicules', 'Services'];
 	const sortOptions = ['Date', 'Pertinence'];
 
+	//api cagnottes mock
+	// const [cagnottes, setCagnottes] = useState([]);
+	// const [chargement, setChargement] = useState(true);
+
+	// useEffect(() => {
+	// 	// Remplacez cette URL par celle que le backend vous donnera
+	// 	const API_URL = "#";
+	//
+	// 	fetch(API_URL)
+	// 		.then(response => response.json()) // On transforme la réponse en JSON
+	// 		.then(data => {
+	// 			setCagnottes(data);   // On met les données dans notre state
+	// 			setChargement(false); // On arrête l'affichage "chargement"
+	// 		})
+	// 		.catch(error => {
+	// 			console.error("Erreur de récupération :", error);
+	// 			setChargement(false);
+	// 		});
+	// }, []);
+
+	const cagnottes = [
+		{
+			id: 1,
+			auteur: "moi",
+			date: "20510",
+			description: "SSKJDS",
+			image: "https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg",
+			titre: "Yo"
+		},
+		{
+			id: 2,
+			auteur: "Léa",
+			date: "2024",
+			description: "Une autre description",
+			image: "https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg",
+			titre: "Aventure"
+		},
+		// Ajoutez autant d'objets que vous voulez ici...
+	];
+
 	useEffect(() => {
 		const handleClickOutside = (e) => {
 			if (searchRef.current && !searchRef.current.contains(e.target)) {
@@ -214,6 +254,7 @@ const Rechercher = ({ onSelect }) => {
 
 	return (
 		<div className="rechercher">
+			{/* 1. Barre de recherche principale */}
 			<div className="rechercher_searchbar">
 				<div className="rechercher_container" ref={searchRef}>
 					<div className="rechercher_inputwrapper">
@@ -276,7 +317,7 @@ const Rechercher = ({ onSelect }) => {
 					)}
 				</div>
 			</div>
-
+			{/* 2. Filtres */}
 			<div className="rechercher_filters">
 				{/* Filtre Catégories */}
 				<div className="rechercher_filtergroup">
@@ -450,15 +491,23 @@ const Rechercher = ({ onSelect }) => {
 					</div>
 				</div>
 			</div>
-
+			{/* 3. Affichage des cagnottes */}
 			<div className="rechercher_cardwrapper">
-				{/* Les cartes de résultats de recherche apparaîtront ici */}
-				<CagnotteCard auteur={"moi"} date={"20510"} description={"SSKJDS"} image={"https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg"} titre={"Yo"}/>
-				<CagnotteCard auteur={"moi"} date={"20510"} description={"SSKJDS"} image={"https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg"} titre={"Yo"}></CagnotteCard>
-				<CagnotteCard auteur={"moi"} date={"20510"} description={"SSKJDS"} image={"https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg"} titre={"Yo"}></CagnotteCard>
-				<CagnotteCard auteur={"moi"} date={"20510"} description={"SSKJDS"} image={"https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg"} titre={"Yo"}></CagnotteCard>
-				<CagnotteCard auteur={"moi"} date={"20510"} description={"SSKJDS"} image={"https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg"} titre={"Yo"}></CagnotteCard>
-
+				{/* 4. Si le tableau est vide, on affiche un message, sinon on boucle */}
+				{cagnottes.length === 0 ? (
+					<p>Aucune cagnotte trouvée.</p>
+				) : (
+					cagnottes.map((item) => (
+						<CagnotteCard
+							id={item.id}
+							auteur={item.auteur}
+							date={item.date}
+							description={item.description}
+							image={item.image}
+							titre={item.titre}
+						/>
+					))
+				)}
 			</div>
 		</div>
 	);

@@ -1,4 +1,3 @@
-import '../../components/Navbar/Navbar.scss';
 import logo from '/BloomfundLogo.svg';
 import './Accueil.scss';
 
