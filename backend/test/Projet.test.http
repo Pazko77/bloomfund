@@ -1,0 +1,30 @@
+### CREATE
+POST http://localhost:3000/api/projets
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibm9tIjoiUGllcnJlIiwicHJlbm9tIjoiWWNobmlnaHRkZXIiLCJlbWFpbCI6InBpZXJyZS55Y2huaWdodGRlckB0ZXN0LmNvbSIsIm1vdF9kZV9wYXNzZSI6IiQyYiQxMCRzdE1kZzBrTzZnaXpzQjJpT0NUWnkud25MV3BIcE9XVGhJQy83VHFJeGVYaTh5bUdMeHAxUyIsInJvbGUiOiJhZG1pbiIsImRhdGVfaW5zY3JpcHRpb24iOiIyMDI1LTEyLTIwVDIyOjQxOjM3LjAwMFoiLCJkZXBhcnRlbWVudCI6Ijc1IiwiaWF0IjoxNzY2ODUyOTk2LCJleHAiOjE3NjY4NTM4OTZ9.oh1pZOdHWepz2dBYM-9uG6r_rJc6TivA2z5bLf99Ffs 
+Content-Type: application/json
+
+{
+  "titre": "Projet test",
+  "description": "Description test",
+  "objectif_financier": 3000,
+  "localisation": "Paris"
+}
+
+### GET ALL
+GET http://localhost:3000/api/projets
+
+### GET ONE
+GET http://localhost:3000/api/projets/1
+
+### UPDATE
+PUT http://localhost:3000/api/projets/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibm9tIjoiUGllcnJlIiwicHJlbm9tIjoiWWNobmlnaHRkZXIiLCJlbWFpbCI6InBpZXJyZS55Y2huaWdodGRlckB0ZXN0LmNvbSIsIm1vdF9kZV9wYXNzZSI6IiQyYiQxMCRzdE1kZzBrTzZnaXpzQjJpT0NUWnkud25MV3BIcE9XVGhJQy83VHFJeGVYaTh5bUdMeHAxUyIsInJvbGUiOiJhZG1pbiIsImRhdGVfaW5zY3JpcHRpb24iOiIyMDI1LTEyLTIwVDIyOjQxOjM3LjAwMFoiLCJkZXBhcnRlbWVudCI6Ijc1IiwiaWF0IjoxNzY2ODUyOTk2LCJleHAiOjE3NjY4NTM4OTZ9.oh1pZOdHWepz2dBYM-9uG6r_rJc6TivA2z5bLf99Ffs 
+Content-Type: application/json
+
+{
+  "titre": "Nouveau titre"
+}
+
+### DELETE
+DELETE http://localhost:3000/api/projets/1
+Authorization: Bearer TOKEN
