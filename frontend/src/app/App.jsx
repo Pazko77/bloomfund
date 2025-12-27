@@ -7,7 +7,7 @@ import Inscription from '../pages/Inscription/Inscription.jsx';
 import Rechercher from '../pages/Rechercher/Rechercher.jsx';
 import Cagnotte from '../pages/FormulaireCagnotte/FormulaireCagnotte.jsx';
 import LayoutMain from '../layouts/LayoutMain/LayoutMain.jsx';
-import CagnottePageTemplate from "../components/CagnottePageTemplate/CagnottePageTemplate.jsx";
+import CagnottePageTemplate from "../pages/CagnottePageTemplate/CagnottePageTemplate.jsx";
 function App() {
 	return (
 		<>

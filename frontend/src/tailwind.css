@@ -1,0 +1,7 @@
+@import "../node_modules/tailwindcss";
+@config "../tailwind.config.js";
+
+@theme {
+    --font-sans: var(--font-main);
+    --bloom-green: #4C9A4E;
+}
