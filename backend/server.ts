@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import userRoutes from './routes/Utilisateur.route';
-import CategorieRouter from './routes/CAtegorie.routes';
+import CategorieRouter from './routes/Categorie.routes';
 import dotenv from 'dotenv';
 dotenv.config();
 

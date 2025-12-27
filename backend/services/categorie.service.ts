@@ -1,6 +1,6 @@
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import db from '../config/db';
-import { Categorie, CategorieInput } from '../models/categorie.model';
+import { Categorie, CategorieInput } from '../models/Categorie.model';
 
 export const CategorieService = {
 
