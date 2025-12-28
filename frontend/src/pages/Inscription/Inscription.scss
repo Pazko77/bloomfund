@@ -290,7 +290,10 @@
   transform: scale(1.1);
 }
 
-.terms-wrapper input[type="checkbox"]:checked ~ .checkbox-label .checkmark::after {
+.terms-wrapper
+  input[type="checkbox"]:checked
+  ~ .checkbox-label
+  .checkmark::after {
   content: "✓";
   color: #162816;
   font-size: 11px;

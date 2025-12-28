@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
 /**
  * hash
@@ -8,5 +8,5 @@ import bcrypt from 'bcrypt';
  * @returns {Promise<string>}
  */
 export const hashP = async (password: string): Promise<string> => {
-	return await bcrypt.hash(password, 10);
+  return await bcrypt.hash(password, 10);
 };

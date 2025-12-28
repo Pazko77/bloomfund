@@ -1,3 +1,3 @@
-const randomBytes = require('crypto').randomBytes;
+import { randomBytes } from 'crypto';
 const secret = randomBytes(64).toString('hex');
 console.log(secret);
