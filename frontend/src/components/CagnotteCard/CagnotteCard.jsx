@@ -16,6 +16,8 @@ const CagnotteCard = ({ id, image, titre, auteur, date, description }) => {
           <p className="cagnotte-card__date">Date : {date}</p>
 
           <div className="cagnotte-card__description">{description}</div>
+
+          
         </div>
       </div>
     </Link>

@@ -27,7 +27,26 @@ export const ProjetService = {
 
   // READ ALL
   async findAll(): Promise<Projet[]> {
-    const [rows] = await pool.query("SELECT * FROM Projets");
+     const [rows] = await pool.query(
+				`SELECT 
+      Projets.id AS projet_id,
+      Projets.titre,
+      Projets.description,
+      Projets.objectif_financier,
+      Projets.montant_collecte,
+      Projets.statut,
+      Projets.date_creation,
+      Projets.date_fin,
+      Projets.image_url,
+      Utilisateurs.nom AS porteur_nom,
+      Utilisateurs.prenom AS porteur_prenom,
+      Categories.nom AS categorie_nom,
+      Categories.description AS categorie_description
+     FROM Projets
+     INNER JOIN Utilisateurs ON Projets.porteur_id = Utilisateurs.id
+     LEFT JOIN Categories ON Projets.categorie_id = Categories.id`
+			);
+
     return rows as Projet[];
   },
 

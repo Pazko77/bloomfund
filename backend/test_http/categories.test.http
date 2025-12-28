@@ -27,12 +27,12 @@ DELETE http://localhost:3000/api/categories/1
 
 ### Création catégorie (admin)
 POST http://localhost:3000/api/categories
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibm9tIjoiUGllcnJlIiwicHJlbm9tIjoiWWNobmlnaHRkZXIiLCJlbWFpbCI6InBpZXJyZS55Y2huaWdodGRlckB0ZXN0LmNvbSIsIm1vdF9kZV9wYXNzZSI6IiQyYiQxMCRzdE1kZzBrTzZnaXpzQjJpT0NUWnkud25MV3BIcE9XVGhJQy83VHFJeGVYaTh5bUdMeHAxUyIsInJvbGUiOiJhZG1pbiIsImRhdGVfaW5zY3JpcHRpb24iOiIyMDI1LTEyLTIwVDIyOjQxOjM3LjAwMFoiLCJkZXBhcnRlbWVudCI6Ijc1IiwiaWF0IjoxNzY2MjcwNjYwLCJleHAiOjE3NjYyNzE1NjB9.0OxIe2NyJ_6L1XjfrKZJoHleq4MYX30eaJ31TXKARw4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjY5NjMwMjMsImV4cCI6MTc2Njk2MzkyM30.shkUkgmjgu_attjGv95OFZM6Gc25_wpDv5FegPGDN20
 Content-Type: application/json
 
 {
-  "nom": "Culture",
-  "description": "Projets culturels"
+  "nom": "Services",
+  "description": "Projets "
 }
 
 
