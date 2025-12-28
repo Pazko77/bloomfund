@@ -43,12 +43,12 @@ export interface UtilisateurInput {
  */
 export interface UtilisateurOutput {
   id: number;
-  nom: string;
-  prenom: string;
+  // nom: string;
+  // prenom: string;
   email: string;
-  departement: string;
+  // departement: string;
   role: RoleUtilisateur;
-  date_inscription: Date;
+  // date_inscription: Date;
 }
 
 /** * Payload contenu dans le JWT pour un utilisateur.
