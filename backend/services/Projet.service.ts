@@ -6,19 +6,20 @@ export const ProjetService = {
   async create(data: ProjetInput, porteur_id: number): Promise<boolean> {
     const sql = `
 			INSERT INTO Projets 
-			(titre, description, objectif_financier, localisation, date_fin, porteur_id, categorie_id)
-			VALUES (?, ?, ?, ?, ?, ?, ?)
+			(titre, description, objectif_financier, localisation, date_fin, porteur_id, categorie_id , image_url)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 		`;
 
-    const params = [
-      data.titre,
-      data.description,
-      data.objectif_financier,
-      data.localisation ?? null,
-      data.date_fin ?? null,
-      porteur_id,
-      data.categorie_id ?? null,
-    ];
+		const params = [
+			data.titre,
+			data.description,
+			data.objectif_financier,
+			data.localisation ?? null,
+			data.date_fin ?? null,
+			porteur_id,
+			data.categorie_id ?? null,
+			data.image_url ?? null,
+		];
 
     const [result]: any = await pool.execute(sql, params);
     return result.affectedRows === 1;
