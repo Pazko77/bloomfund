@@ -43,7 +43,7 @@ const Rechercher = ({ onSelect }) => {
 		const fetchCategories = async () => {
 			try {
 				const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories`);
-				console.log('Catégories récupérées :', response.data);
+				// console.log('Catégories récupérées :', response.data);
 				setCategories(response.data);
 			} catch (error) {
 				console.error('Erreur lors de la récupération des catégories :', error);
