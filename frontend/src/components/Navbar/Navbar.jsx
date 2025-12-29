@@ -16,7 +16,7 @@ function Navbar() {
 				{ href: '/rechercher', text: 'Rechercher', icon: searchIcon },
 				{ href: '/about', text: 'À propos' },
 				{ href: '/', icon: logoNoText, alt: 'LogoBloomFund' },
-				{ href: '/form', text: 'Démarrer une cagnotte' },
+				{ href: '/formCagnotte', text: 'Démarrer une cagnotte' },
 				{ href: '/connexion', text: 'Connexion' },
 			];
 
