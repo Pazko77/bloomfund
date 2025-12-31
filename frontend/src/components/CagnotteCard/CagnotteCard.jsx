@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './CagnotteCard.scss';
 
-const CagnotteCard = ({ id, image, titre, auteur, date, description }) => {
+const CagnotteCard = ({ id, image, titre, auteur, date, description, categorie }) => {
 	return (
 		<Link to={`/cagnotte/${id}`} className="cagnotte-card-link">
 			<div className="cagnotte-card">
@@ -14,8 +14,9 @@ const CagnotteCard = ({ id, image, titre, auteur, date, description }) => {
 					<h3 className="cagnotte-card__titre">{titre}</h3>
 					<p className="cagnotte-card__auteur">{auteur}</p>
 					<p className="cagnotte-card__date">Date : {date}</p>
-
-					<div className="cagnotte-card__description">{description}</div>
+					<div className="cagnotte-card__description">
+						{description} <br /> {categorie}
+					</div>
 				</div>
 			</div>
 		</Link>

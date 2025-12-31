@@ -28,3 +28,23 @@ Content-Type: application/json
 ### DELETE
 DELETE http://localhost:3000/api/projets/1
 Authorization: Bearer TOKEN
+
+
+
+
+###
+
+POST http://localhost:3000/api/projets
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjcwNTczOTksImV4cCI6MTc2NzA1ODI5OX0.C7x3ojAUAnmqEYf21J-37H29ALv_ieV8XC2apyNFzNw
+Content-Type: application/json
+
+{
+  "titre": "Reforestation urbaine et îlots de fraîcheur à Paris",
+  "description": "fddd",
+  "image_url": "https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg",
+  "objectif_financier": 12000,
+  "date_fin": "2025-03-31",
+  "localisation": "Paris",
+  "porteur_id": 4
+
+}

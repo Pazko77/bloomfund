@@ -19,23 +19,42 @@ function CagnottePageHero() {
 		fetchProjet();
 	}, [id]);
 
-	// console.log(id);
-	// console.log(projet);
+	const [Contributions, setContributions] = useState(0);
 
-	const progress = (Number(projet?.montant_collecte ?? 0) / Number(projet?.objectif_financier ?? 0)) * 100;
+	useEffect(() => {
+		// http://localhost:3000/api/contributions/projet/1
 
-	if (!projet) {
-		return (
-			<div className="w-full h-190 flex justify-center items-center">
-				<img src="/shared/loader.svg" alt="Loading..." />
-			</div>
-		);
+		const fetchContribution = async () => {
+			try {
+				const response = await axios.get(`${import.meta.env.VITE_API_URL}/contributions/projet/${id}`); // GET pour récupérer les contributions
+				setContributions(response.data.length);
+			} catch (error) {
+				console.error('Erreur lors de la récupération des contributions :', error);
+			}
+		};
+		fetchContribution();
+	}, [id]);
+
+	console.log(id);
+	console.log(projet);
+	console.log(Contributions);
+
+	const progress = projet && projet.objectif_financier > 0 ? (Number(projet.montant_collecte) / Number(projet.objectif_financier)) * 100 : 0;
+	let projetLoaded = projet !== null;
+	while (projetLoaded === false) {
+		projetLoaded = projet !== null;
+		if (!projet) {
+			return (
+				<div className="w-full h-190 flex justify-center items-center">
+					<img src="/shared/loader.svg" alt="Loading..." />
+				</div>
+			);
+		}
 	}
 
 	const dateFin = new Date(projet.date_fin);
 	const aujourdHui = new Date();
-
-	const diffMs = dateFin - aujourdHui;
+	const diffMs = aujourdHui - dateFin;
 	const diffJours = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
 	return (
@@ -61,8 +80,9 @@ function CagnottePageHero() {
 								style={{ transform: `scaleX(${progress / 100})` }}
 							/>
 						</div>
+
 						<div className={'flex flex-row w-full justify-around'}>
-							<p className={''}>45 contributions</p>
+							<p className={''}>{Contributions} contributions</p>
 
 							<p className={''}>{diffJours} jours restants</p>
 						</div>
@@ -84,7 +104,7 @@ function CagnottePageHero() {
 						<div className={'flex flex-row gap-3'}>
 							<img className={'w-3.75 '} src="/shared/pin.svg" />
 							<p>{projet.localisation}</p>
-							<img className={'w-3.75'} />
+							<img className={'w-3.75'} src="/shared/label.svg" />
 							<p>{projet.categorie_nom}</p>
 						</div>
 					</div>
@@ -93,5 +113,4 @@ function CagnottePageHero() {
 		</div>
 	);
 }
-
 export default CagnottePageHero;

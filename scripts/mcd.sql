@@ -15,13 +15,14 @@ CREATE TABLE utilisateurs (
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
-    description TEXT
+    description TEXT,
+    icon VARCHAR(1255)
 );
 
 
 CREATE TABLE projets (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    titre VARCHAR(150) NOT NULL,
+    titre TEXT NOT NULL,
     description TEXT NOT NULL,
     objectif_financier DECIMAL(10,2) NOT NULL,
     montant_collecte DECIMAL(10,2) DEFAULT 0,

@@ -73,7 +73,8 @@ export const ProjetService = {
       Categories.description AS categorie_description
      FROM Projets
      INNER JOIN Utilisateurs ON Projets.porteur_id = Utilisateurs.id
-     LEFT JOIN Categories ON Projets.categorie_id = Categories.id`,
+     LEFT JOIN Categories ON Projets.categorie_id = Categories.id 
+     WHERE Projets.id = ?`,
 			[id]
 		);
     return rows[0] || null;
