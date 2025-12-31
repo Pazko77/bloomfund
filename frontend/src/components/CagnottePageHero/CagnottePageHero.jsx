@@ -35,21 +35,18 @@ function CagnottePageHero() {
 		fetchContribution();
 	}, [id]);
 
-	console.log(id);
-	console.log(projet);
-	console.log(Contributions);
+	// console.log(id);
+	// console.log(projet);
+	// console.log(Contributions);
 
 	const progress = projet && projet.objectif_financier > 0 ? (Number(projet.montant_collecte) / Number(projet.objectif_financier)) * 100 : 0;
-	let projetLoaded = projet !== null;
-	while (projetLoaded === false) {
-		projetLoaded = projet !== null;
-		if (!projet) {
-			return (
-				<div className="w-full h-190 flex justify-center items-center">
-					<img src="/shared/loader.svg" alt="Loading..." />
-				</div>
-			);
-		}
+
+	if (!projet) {
+		return (
+			<div className="w-full h-screen flex justify-center items-center">
+				<img src="/shared/loader.svg" alt="Loading..." />
+			</div>
+		);
 	}
 
 	const dateFin = new Date(projet.date_fin);
@@ -65,7 +62,12 @@ function CagnottePageHero() {
 					{/* <p>{projet ? projet.description : 'Petite description'}</p> */}
 				</div>
 				<div className={'flex flex-row px-6 gap-3'}>
-					<img className={'w-140 rounded-2xl'} src={projet ? projet.image_url : 'https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg'} />
+					<img
+						className={`w-140 rounded-2xl transition-opacity duration-500 `}
+						src={projet?.image_url || 'https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg'}
+						alt={projet?.titre}
+					/>
+
 					<div className={'flex flex-col w-full items-center justify-center gap-3'}>
 						<div className={'flex flex-row items-center gap-3'}>
 							<img className={'size-10'} src={`${logo}`} />
