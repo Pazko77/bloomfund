@@ -62,7 +62,7 @@ function CagnottePageHero() {
 			<div className={'w-full bg h-175 bg-red-400 flex justify-center items-center flex-col  bg-linear-to-b from-green-600 from-50% to-white to-50%'}>
 				<div className={'w-4/6 h-4/5 bg-white shadow-2xl rounded-2xl'}>
 					<div className={'flex flex-col items-center justify-center w-full m-6 gap-3'}>
-						<h1 className={'text-2xl font-bold '}>{projet ? projet.titre : 'titre'}</h1>
+						<h1 className={'text-2xl  '}>{projet ? projet.titre : 'titre'}</h1>
 						{/* <p>{projet ? projet.description : 'Petite description'}</p> */}
 					</div>
 					<div className={'flex flex-row px-6 gap-3'}>
@@ -76,7 +76,7 @@ function CagnottePageHero() {
 							<div className={'flex flex-row items-center gap-3'}>
 								<img className={'size-10'} src={`${logo}`} />
 								<p className="text-xl">
-									{projet ? projet.montant_collecte : '0'}€ collectés sur {projet ? projet.objectif_financier : '0'}€
+									{projet ? projet.montant_collecte.split('.')[0] : '0'}€ collectés sur {projet ? projet.objectif_financier.split('.')[0] : '0'}€
 								</p>
 							</div>
 							{/* Progress bar*/}
