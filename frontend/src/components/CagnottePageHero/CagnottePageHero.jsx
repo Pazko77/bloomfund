@@ -102,7 +102,11 @@ function CagnottePageHero() {
 						</div>
 					</div>
 					<div className={'flex flex-row gap-3 p-6'}>
-						<img className={'w-12 rounded-full hover:scale-75'} src="https://i.pravatar.cc/300" />
+						{/* <img className={'w-12 rounded-full hover:scale-75'} src="https://i.pravatar.cc/300" /> */}
+						<div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center font-semibold shrink-0 text-sm">
+							{projet.porteur_prenom.charAt(0)}
+							{projet.porteur_nom.charAt(0)}
+						</div>
 						<div className={'flex flex-col'}>
 							<p>
 								{projet.porteur_prenom} {projet.porteur_nom}
