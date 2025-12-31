@@ -271,6 +271,16 @@ const Rechercher = ({ onSelect }) => {
 		}
 	};
 
+
+	if (!cagnottes && !Categories) {
+		return (
+			<div className="w-full h-screen flex justify-center items-center">
+				<img src="/shared/loader.svg" alt="Loading..." />
+			</div>
+		);
+	}
+
+
 	return (
 		<div className="rechercher">
 			{/* 1. Barre de recherche principale */}
@@ -286,7 +296,7 @@ const Rechercher = ({ onSelect }) => {
 								strokeLinejoin="round"
 							/>
 						</svg>
-						<input
+						<input 
 							type="text"
 							className="rechercher_input"
 							placeholder="Rechercher"
