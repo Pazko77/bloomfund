@@ -1,0 +1,21 @@
+### Ajouter un commentaire à un projet
+POST http://localhost:3000/api/commentaires
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjcyMjQyNjUsImV4cCI6MTc2NzIyNTE2NX0.LZ7xq_SpTugaMh2zigOix_UYjn3e2e2Pr0NNchfDqVs
+
+{
+  "contenu": "Super projet, bon courage pour la suite !",
+  "projet_id": 2,
+  "utilisateur_id": 4
+}
+
+
+
+
+### Récupérer les commentaires d’un projet
+GET http://localhost:3000/api/commentaires/projet/2
+
+
+### Projet inexistant
+DELETE  http://localhost:3000/api/commentaires/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjcyMjQyNjUsImV4cCI6MTc2NzIyNTE2NX0.LZ7xq_SpTugaMh2zigOix_UYjn3e2e2Pr0NNchfDqVs

@@ -12,6 +12,16 @@ Content-Type: application/json
   
 }
 
+### Ajouter un commentaire à un projet
+POST http://localhost:3000/api/commentaires
+Content-Type: application/json
+
+{
+  "contenu": "Super projet, bon courage pour la suite !",
+  "projet_id": 2,
+  "utilisateur_id": 4
+}
+
 
 ### Login pour récupérer le token JWT
 POST http://localhost:3000/api/utilisateurs/login

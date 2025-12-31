@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { FormUtils } from '../../helpers/formUtils/form-utils';
 import axios from 'axios';
 export function TabNavigation({ projet, contributions, commentaires }) {
 	const [activeTab, setActiveTab] = useState('collecte');
@@ -8,7 +7,7 @@ export function TabNavigation({ projet, contributions, commentaires }) {
 	const tabs = [
 		{ id: 'collecte', label: 'Collecte' },
 		{ id: 'contreparties', label: 'Contreparties' },
-		{ id: 'contributions', label: `Contributions ${contributions.length}` },
+		{ id: 'contributions', label: `Contributions ${contributions.length ?? 0} ` },
 		{ id: 'commentaires', label: `Commentaires ${commentaires.length ?? 0}` },
 	];
 
@@ -289,7 +288,7 @@ export function TabNavigation({ projet, contributions, commentaires }) {
 				);
 			case 'contributions':
 				return (
-					<div className="w-full">
+					<div className="w-full ">
 						<h2 className="text-2xl">{contributions.length} Contributions</h2>
 
 						<div className="my-6 flex flex-col  w-full">
@@ -502,7 +501,7 @@ export function TabNavigation({ projet, contributions, commentaires }) {
 			</div>
 
 			{/* Content Area */}
-			<div className="w-full flex flex-row py-10 px-80 gap-10">
+			<div className="w-full flex flex-row py-10  px-80 gap-15">
 				<div className=" w-3/4 flex  items-center">{renderContent()}</div>
 				<div className="w-1/4 flex flex-col items-center justify-start">
 					<div className="w-80 h-40 border-2 border-[#b8afa4] flex items-center justify-center flex-col gap-4 ">
