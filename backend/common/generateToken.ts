@@ -17,6 +17,6 @@ export function generateAccessToken(user: UtilisateurOutput): string {
 			departement: user.departement,
 		},
 		SECRET_KEY,
-		{ expiresIn: '1h' }
+		{ expiresIn: '30m' }
 	);
 }
