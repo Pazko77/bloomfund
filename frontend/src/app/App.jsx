@@ -8,25 +8,28 @@ import Rechercher from "../pages/Rechercher/Rechercher.jsx";
 import Cagnotte from "../pages/FormulaireCagnotte/FormulaireCagnotte.jsx";
 import LayoutMain from "../layouts/LayoutMain/LayoutMain.jsx";
 import CagnottePageTemplate from "../pages/CagnottePageTemplate/CagnottePageTemplate.jsx";
+import Profil from '../pages/Profil/Profil.jsx';
+
 function App() {
   return (
-    <>
-      <Routes>
-        {/* Pages AVEC navbar */}
-        <Route element={<LayoutMain />}>
-          <Route path="/" element={<Accueil />} />
-          <Route path="/accueil" element={<Accueil />} />
-          <Route path="" element={<Accueil />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/connexion" element={<Connexion />} />
-          <Route path="/inscription" element={<Inscription />} />
-          <Route path="/rechercher" element={<Rechercher />} />
-          <Route path="/formCagnotte" element={<Cagnotte />} />
-          <Route path="/cagnotte/:id" element={<CagnottePageTemplate />} />
-        </Route>
-      </Routes>
-    </>
-  );
+		<>
+			<Routes>
+				{/* Pages AVEC navbar */}
+				<Route element={<LayoutMain />}>
+					<Route path="/" element={<Accueil />} />
+					<Route path="/accueil" element={<Accueil />} />
+					<Route path="" element={<Accueil />} />
+					<Route path="/about" element={<About />} />
+					<Route path="/connexion" element={<Connexion />} />
+					<Route path="/inscription" element={<Inscription />} />
+					<Route path="/rechercher" element={<Rechercher />} />
+					<Route path="/formCagnotte" element={<Cagnotte />} />
+					<Route path="/cagnotte/:id" element={<CagnottePageTemplate />} />
+					<Route path="/profil" element={<Profil />} />
+				</Route>
+			</Routes>
+		</>
+	);
 }
 
 export default App;

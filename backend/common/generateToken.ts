@@ -11,8 +11,12 @@ export function generateAccessToken(user: UtilisateurOutput): string {
 			id: user.id,
 			email: user.email,
 			role: user.role,
+			nom: user.nom,
+			prenom: user.prenom,
+			date_inscription: user.date_inscription,
+			departement: user.departement,
 		},
 		SECRET_KEY,
-		{ expiresIn: '15m' }
+		{ expiresIn: '1h' }
 	);
 }

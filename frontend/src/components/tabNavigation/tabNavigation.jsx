@@ -7,8 +7,8 @@ export function TabNavigation({ projet, contributions }) {
 	// ----------------------- --------------------------------------------------
 	// Gestion des Collect
 	// --------------------------------------------------------------------------
-	// const [activeTab, setActiveTab] = useState('collecte');
-	const [activeTab, setActiveTab] = useState('commentaires');
+	const [activeTab, setActiveTab] = useState('collecte');
+	// const [activeTab, setActiveTab] = useState('commentaires');
 
 	const tabs = [
 		{ id: 'collecte', label: 'Collecte' },
@@ -177,9 +177,9 @@ export function TabNavigation({ projet, contributions }) {
 		try {
 			const data = await login(formData.email, formData.password);
 
-			if (formData.remember) {
-				localStorage.setItem('token', data.token);
-			}
+			// if (formData.remember) {
+			localStorage.setItem('token', data.token);
+			// }
 
 			setShowSuccess(true);
 			// Simulate redirect
@@ -363,8 +363,8 @@ export function TabNavigation({ projet, contributions }) {
 				);
 			case 'contreparties':
 				return (
-					<div className="bg-amber-500">
-						<h2 className="text-2xl">Contreparties</h2>
+					<div className="w-full ">
+						<h2 className="text-2xl"> /!\ Indisponible /!\</h2>
 						<div className="my-6 flex flex-col "></div>
 					</div>
 				);

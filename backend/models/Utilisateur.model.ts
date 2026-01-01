@@ -42,13 +42,13 @@ export interface UtilisateurInput {
  * (sans informations sensibles).
  */
 export interface UtilisateurOutput {
-  id: number;
-  // nom: string;
-  // prenom: string;
-  email: string;
-  // departement: string;
-  role: RoleUtilisateur;
-  // date_inscription: Date;
+	id: number;
+	nom: string;
+	prenom: string;
+	email: string;
+	departement: string;
+	role: RoleUtilisateur;
+	date_inscription: Date;
 }
 
 /** * Payload contenu dans le JWT pour un utilisateur.

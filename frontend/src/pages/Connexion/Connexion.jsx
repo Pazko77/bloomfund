@@ -142,9 +142,7 @@ export default function Connexion() {
 		try {
 			const data = await login(formData.email, formData.password);
 
-			if (formData.remember) {
-				localStorage.setItem('token', data.token);
-			}
+			localStorage.setItem('token', data.token);
 
 			setShowSuccess(true);
 			// Simulate redirect

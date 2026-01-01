@@ -38,7 +38,7 @@ POST http://localhost:3000/api/utilisateurs/logout
 
 ### Accéder au profil protégé (remplacer TOKEN par celui reçu au login)
 GET http://localhost:3000/api/utilisateurs/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjY4OTM0MjMsImV4cCI6MTc2Njg5NDMyM30.oNSMSQnXTkvubMVAs3-I5st2ahqROjmRcVbBHZRMyh0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJub20iOiJQaWVycmUiLCJwcmVub20iOiJZY2huaWdodGRlciIsImRhdGVfaW5zY3JpcHRpb24iOiIyMDI1LTEyLTIwVDIyOjQxOjM3LjAwMFoiLCJkZXBhcnRlbWVudCI6Ijc1IiwiaWF0IjoxNzY3MjgyMzE1LCJleHAiOjE3NjcyODMyMTV9.3bWoZ4Ku5o6rpZ1rT1BRlsW-GFZlsqhDYSxDR048-UY
   
 
 ### ADAMIN - Register un nouvel utilisateur avec le rôle admin
