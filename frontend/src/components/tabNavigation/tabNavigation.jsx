@@ -1,8 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-export function TabNavigation({ projet, contributions, commentaires }) {
-	const [activeTab, setActiveTab] = useState('collecte');
-	// const [activeTab, setActiveTab] = useState('commentaires');
+export function TabNavigation({ projet, contributions }) {
+	// console.log('TabNavigation props:', { projet, contributions });
+	const [commentaires, setCommentaires] = useState([]);
+
+	// ----------------------- --------------------------------------------------
+	// Gestion des Collect
+	// --------------------------------------------------------------------------
+	// const [activeTab, setActiveTab] = useState('collecte');
+	const [activeTab, setActiveTab] = useState('commentaires');
 
 	const tabs = [
 		{ id: 'collecte', label: 'Collecte' },
@@ -34,6 +40,10 @@ export function TabNavigation({ projet, contributions, commentaires }) {
 	const visibleContributions = showAll ? contributions : contributions.slice(0, 5);
 
 	const borderClass = index => (index === visibleContributions.length - 1 ? 'border-b-2' : '');
+
+	// ----------------------- --------------------------------------------------
+	// Formulaire de connexion et gestion des commentaires
+	// --------------------------------------------------------------------------
 
 	const [formData, setFormData] = useState({
 		email: '',
@@ -219,27 +229,61 @@ export function TabNavigation({ projet, contributions, commentaires }) {
 	const [isLoggedIn, setIsLoggedIn] = useState(false); // récupérer vrai état depuis ton auth
 	const [commentText, setCommentText] = useState('');
 
+	function isTokenExpired(token) {
+		try {
+			const payload = JSON.parse(atob(token.split('.')[1]));
+			const now = Date.now() / 1000; // en secondes
+			return payload.exp < now;
+		} catch (e) {
+			console.error('Erreur lors de la vérification du token :', e);
+			return true;
+		}
+	}
+
+	useEffect(() => {
+		const token = localStorage.getItem('token');
+
+		if (!token || isTokenExpired(token)) {
+			localStorage.removeItem('token');
+			setIsLoggedIn(false);
+		} else {
+			setIsLoggedIn(true);
+		}
+	}, []);
+
 	const handleCommentSubmit = async e => {
 		e.preventDefault();
 		if (!commentText.trim()) return;
 
 		const token = localStorage.getItem('token');
-		if (!token) {
-			showNotification('Vous devez être connecté pour envoyer un commentaire', 'error');
+
+		if (!token || isTokenExpired(token)) {
+			localStorage.removeItem('token');
 			setIsLoggedIn(false);
+			showNotification('Session expirée, veuillez vous reconnecter', 'error');
 			return;
 		}
 
 		try {
+			const currentUserResponse = await axios.get(`${import.meta.env.VITE_API_URL}/utilisateurs/profile`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			const currentUser = currentUserResponse.data;
+			// console.log('Current User:', currentUser.Utilisateur.id);
+
 			await axios.post(
 				`${import.meta.env.VITE_API_URL}/commentaires`,
 				{
-					projetId: projet.id,
-					commentaire: commentText,
+					projet_id: projet.projet_id,
+					contenu: commentText,
+					utilisateur_id: currentUser.Utilisateur.id,
 				},
 				{
 					headers: {
-						Authorization: `Bearer ${token}`, // envoi du token au backend
+						Authorization: `Bearer ${token}`,
 					},
 				}
 			);
@@ -251,6 +295,44 @@ export function TabNavigation({ projet, contributions, commentaires }) {
 			showNotification("Erreur lors de l'envoi du commentaire", 'error');
 		}
 	};
+
+	useEffect(() => {
+		const fetchCommentaires = async () => {
+			try {
+				const response = await axios.get(`${import.meta.env.VITE_API_URL}/commentaires/projet/${projet.projet_id}`);
+
+				let commentaires = response.data.commentaires.map(c => ({
+					name: `${c.prenom.toLowerCase()}-${c.nom.toLowerCase()}`,
+					comment: c.contenu,
+					date: timeAgo(c.date_commentaire),
+					avatar: `${c.prenom[0]}${c.nom[0]}`.toUpperCase(),
+				}));
+				setCommentaires(commentaires);
+				// console.log('Commentaires fetched:', response.data);s
+			} catch (error) {
+				console.error('Erreur lors de la récupération des commentaires :', error);
+			}
+		};
+		if (projet?.projet_id) {
+			fetchCommentaires();
+		}
+	}, [projet.projet_id]);
+
+	function timeAgo(dateString) {
+		const now = new Date();
+		const date = new Date(dateString);
+		const diffMs = now - date;
+
+		const minutes = Math.floor(diffMs / (1000 * 60));
+		const hours = Math.floor(diffMs / (1000 * 60 * 60));
+		const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+		const months = Math.floor(days / 30);
+
+		if (minutes < 60) return `Il y a ${minutes} min`;
+		if (hours < 24) return `Il y a ${hours} heures`;
+		if (days < 30) return `Il y a ${days} jours`;
+		return `Il y a ${months} mois`;
+	}
 
 	const renderContent = () => {
 		switch (activeTab) {
@@ -293,18 +375,6 @@ export function TabNavigation({ projet, contributions, commentaires }) {
 
 						<div className="my-6 flex flex-col  w-full">
 							{visibleContributions.map((contribution, index) => {
-								const diffMs = new Date() - new Date(contribution.date_contribution);
-								const diffMinutes = Math.round(diffMs / (1000 * 60));
-								const diffHours = Math.round(diffMs / (1000 * 60 * 60));
-								const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
-								const diffMonths = Math.round(diffDays / 30);
-
-								let timeAgo;
-								if (diffMinutes < 60) timeAgo = `${diffMinutes} minutes`;
-								else if (diffHours < 24) timeAgo = `${diffHours} heures`;
-								else if (diffDays < 30) timeAgo = `${diffDays} jours`;
-								else timeAgo = `${diffMonths} mois`;
-
 								return (
 									<div
 										key={index}
@@ -319,7 +389,7 @@ export function TabNavigation({ projet, contributions, commentaires }) {
 											</p>
 										</div>
 										<div className="flex items-center justify-end w-1/4 mr-10">
-											<p>Environ {timeAgo}</p>
+											<p>Environ {timeAgo(contribution.date_contribution)}</p>
 										</div>
 									</div>
 								);
@@ -443,6 +513,8 @@ export function TabNavigation({ projet, contributions, commentaires }) {
 						{/* Liste des commentaires */}
 						<div className="space-y-6 mt-8">
 							{[
+								...commentaires,
+
 								{
 									name: 'serge-hunkley',
 									comment: 'Bravo, vous avez tout mon soutien !',

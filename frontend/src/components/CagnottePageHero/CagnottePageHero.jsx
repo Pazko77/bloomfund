@@ -122,7 +122,7 @@ function CagnottePageHero() {
 				</div>
 			</div>
 			<div className="w-full h-auto flex justify-center items-center mt-10 mb-10 ">
-				<TabNavigation projet={projet} contributions={Contributions} commentaires={0}></TabNavigation>
+				<TabNavigation projet={projet} contributions={Contributions}></TabNavigation>
 			</div>
 		</>
 	);
