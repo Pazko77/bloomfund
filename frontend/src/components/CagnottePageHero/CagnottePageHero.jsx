@@ -72,19 +72,15 @@ function CagnottePageHero() {
 						{/* <p>{projet ? projet.description : 'Petite description'}</p> */}
 					</div>
 					<div className="flex flex-col lg:flex-row px-6 gap-10 justify-between items-start w-full">
-
 						{/* COLONNE GAUCHE (60%) */}
 						<div className="w-full lg:w-[60%] flex flex-col gap-4">
-							<img
-								className="w-full h-auto rounded-3xl object-cover shadow-sm transition-opacity duration-500"
-								src={projet?.image_url || 'https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg'}
-								alt={projet?.titre}
-							/>
+							<img className="w-full h-64 object-cover rounded-2xl" src={images.length > 0 ? images[0] : images} alt={projet?.titre} />
 
 							{/* Infos Porteur */}
 							<div className="flex flex-row gap-4 items-center py-2">
 								<div className="w-12 h-12 bg-gray-200 text-gray-700 rounded-full flex items-center justify-center font-bold shrink-0">
-									{projet?.porteur_prenom?.charAt(0)}{projet?.porteur_nom?.charAt(0)}
+									{projet?.porteur_prenom?.charAt(0)}
+									{projet?.porteur_nom?.charAt(0)}
 								</div>
 								<div className="flex flex-col">
 									<p className="font-semibold text-lg leading-tight">
@@ -104,13 +100,10 @@ function CagnottePageHero() {
 							</div>
 						</div>
 						<div className="w-full lg:w-[35%] flex flex-col gap-6 p-6 border border-gray-100 rounded-3xl shadow-xl bg-white top-10">
-
 							<div className="flex flex-col gap-2 text-center lg:text-left">
 								<div className="flex items-center gap-3 justify-center lg:justify-start">
 									<img className="size-8 object-contain" src={logo} alt="Logo" />
-									<p className="text-2xl font-bold text-gray-900">
-										{projet ? projet.montant_collecte.split('.')[0] : '0'}€
-									</p>
+									<p className="text-2xl font-bold text-gray-900">{projet ? projet.montant_collecte.split('.')[0] : '0'}€</p>
 								</div>
 								<p className="text-gray-500">
 									collectés sur <span className="font-medium">{projet ? projet.objectif_financier.split('.')[0] : '0'}€</span>
@@ -142,7 +135,14 @@ function CagnottePageHero() {
 							</button>
 
 							<div className="flex items-center justify-center gap-2 text-gray-400 text-xs">
-								<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+								<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+									/>
+								</svg>
 								<p>Paiement 100% sécurisé</p>
 							</div>
 						</div>
