@@ -11,7 +11,7 @@ function Navbar() {
 	const location = useLocation();
 	const [userProfil, setUserProfil] = useState(null);
 
-	const formRoutes = ['/form', '/formCagnotte', '/inscription', '/connexion', '/profil'];
+	const formRoutes = ['/form', '/formCagnotte', '/inscription', '/connexion', '/profil', '/payment/'];
 	const isFormPage = formRoutes.includes(location.pathname);
 	const token = localStorage.getItem('token');
 
@@ -48,6 +48,7 @@ function Navbar() {
 	if (location.pathname.includes('/payment')) {
 		return null;
 	}
+	
 	return (
 		<div className={`navbar ${isFormPage ? 'navbar--logo-only' : ''}`}>
 			<nav>
