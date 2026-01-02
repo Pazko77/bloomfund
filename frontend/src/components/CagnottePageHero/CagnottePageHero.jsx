@@ -59,63 +59,85 @@ function CagnottePageHero() {
 
 	return (
 		<>
-			<div className={'w-full bg h-175 bg-red-400 flex justify-center items-center flex-col  bg-linear-to-b from-green-600 from-50% to-white to-50%'}>
-				<div className={'w-4/6 h-4/5 bg-white shadow-2xl rounded-2xl'}>
+			<div className={'w-full bg h-175 flex justify-center items-center flex-col  bg-linear-to-b from-green-600 from-50% to-white to-50%'}>
+				<div className={'w-4/6 h-fit py-2 bg-white shadow-2xl rounded-2xl'}>
 					<div className={'flex flex-col items-center justify-center w-full m-6 gap-3'}>
 						<h1 className={'text-2xl  '}>{projet ? projet.titre : 'titre'}</h1>
 						{/* <p>{projet ? projet.description : 'Petite description'}</p> */}
 					</div>
-					<div className={'flex flex-row px-6 gap-3'}>
-						<img
-							className={`w-140 rounded-2xl transition-opacity duration-500 `}
-							src={projet?.image_url || 'https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg'}
-							alt={projet?.titre}
-						/>
+					<div className="flex flex-col lg:flex-row px-6 gap-10 justify-between items-start w-full">
 
-						<div className={'flex flex-col w-full items-center justify-center gap-3'}>
-							<div className={'flex flex-row items-center gap-3'}>
-								<img className={'size-10'} src={`${logo}`} />
-								<p className="text-xl">
-									{projet ? projet.montant_collecte.split('.')[0] : '0'}€ collectés sur {projet ? projet.objectif_financier.split('.')[0] : '0'}€
+						{/* COLONNE GAUCHE (60%) */}
+						<div className="w-full lg:w-[60%] flex flex-col gap-4">
+							<img
+								className="w-full h-auto rounded-3xl object-cover shadow-sm transition-opacity duration-500"
+								src={projet?.image_url || 'https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg'}
+								alt={projet?.titre}
+							/>
+
+							{/* Infos Porteur */}
+							<div className="flex flex-row gap-4 items-center py-2">
+								<div className="w-12 h-12 bg-gray-200 text-gray-700 rounded-full flex items-center justify-center font-bold shrink-0">
+									{projet?.porteur_prenom?.charAt(0)}{projet?.porteur_nom?.charAt(0)}
+								</div>
+								<div className="flex flex-col">
+									<p className="font-semibold text-lg leading-tight">
+										{projet?.porteur_prenom} {projet?.porteur_nom}
+									</p>
+									<div className="flex flex-row gap-4 text-sm text-gray-500 mt-1">
+										<div className="flex items-center gap-1">
+											<img className="w-4 h-4" src="/shared/pin.svg" alt="Localisation" />
+											<span>{projet?.localisation}</span>
+										</div>
+										<div className="flex items-center gap-1">
+											<img className="w-4 h-4" src="/shared/label.svg" alt="Catégorie" />
+											<span>{projet?.categorie_nom}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className="w-full lg:w-[35%] flex flex-col gap-6 p-6 border border-gray-100 rounded-3xl shadow-xl bg-white top-10">
+
+							<div className="flex flex-col gap-2 text-center lg:text-left">
+								<div className="flex items-center gap-3 justify-center lg:justify-start">
+									<img className="size-8 object-contain" src={logo} alt="Logo" />
+									<p className="text-2xl font-bold text-gray-900">
+										{projet ? projet.montant_collecte.split('.')[0] : '0'}€
+									</p>
+								</div>
+								<p className="text-gray-500">
+									collectés sur <span className="font-medium">{projet ? projet.objectif_financier.split('.')[0] : '0'}€</span>
 								</p>
 							</div>
-							{/* Progress bar*/}
-							<div className="w-full h-5 border-2 border-black rounded-2xl overflow-hidden bg-gray-100">
+
+							{/* Progress bar améliorée */}
+							<div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
 								<div
-									className="h-full w-full bg-green-600 rounded-3xl origin-left transition-transform duration-1000 ease-out"
-									style={{ transform: `scaleX(${progress / 100})` }}
+									className="h-full bg-green-500 origin-left transition-transform duration-1000 ease-out"
+									style={{ transform: `scaleX(${Math.min(progress, 100) / 100})` }}
 								/>
 							</div>
 
-							<div className={'flex flex-row w-full justify-around'}>
-								<p className={''}>{Contributions.length} contributions</p>
+							<div className="flex flex-row w-full justify-between text-sm font-medium">
+								<div className="flex flex-col items-center lg:items-start">
+									<span className="text-gray-900">{Contributions.length}</span>
+									<span className="text-gray-400 font-normal">contributions</span>
+								</div>
+								<div className="flex flex-col items-center lg:items-end">
+									<span className="text-gray-900">{diffJours}</span>
+									<span className="text-gray-400 font-normal">jours restants</span>
+								</div>
+							</div>
 
-								<p className={''}>{diffJours} jours restants</p>
-							</div>
-							<div>
-								<button className={'w-full bg-green-600 text-white py-4 px-4 rounded-2xl hover:bg-green-700 transition-colors duration-300'}>
-									<p>Contribuer</p>
-									<p>A partir de 1€</p>
-								</button>
-							</div>
-							<p>Paiement sécurisé</p>
-						</div>
-					</div>
-					<div className={'flex flex-row gap-3 p-6'}>
-						{/* <img className={'w-12 rounded-full hover:scale-75'} src="https://i.pravatar.cc/300" /> */}
-						<div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center font-semibold shrink-0 text-sm">
-							{projet.porteur_prenom.charAt(0)}
-							{projet.porteur_nom.charAt(0)}
-						</div>
-						<div className={'flex flex-col'}>
-							<p>
-								{projet.porteur_prenom} {projet.porteur_nom}
-							</p>
-							<div className={'flex flex-row gap-3'}>
-								<img className={'w-3.75 '} src="/shared/pin.svg" />
-								<p>{projet.localisation}</p>
-								<img className={'w-3.75'} src="/shared/label.svg" />
-								<p>{projet.categorie_nom}</p>
+							<button className="w-full bg-green-600 text-white py-4 px-4 rounded-2xl hover:bg-green-700 transition-all transform active:scale-95 shadow-lg shadow-green-100">
+								<p className="font-bold text-lg">Contribuer</p>
+								<p className="text-xs opacity-90 uppercase tracking-wide">À partir de 1€</p>
+							</button>
+
+							<div className="flex items-center justify-center gap-2 text-gray-400 text-xs">
+								<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+								<p>Paiement 100% sécurisé</p>
 							</div>
 						</div>
 					</div>

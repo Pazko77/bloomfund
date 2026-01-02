@@ -1,4 +1,4 @@
-.cagnotte {
+.formulaire-cagnotte {
   font-family: Poppins, sans-serif;
   min-height: 100vh;
   background-image: url("https://images.unsplash.com/photo-1717900127460-165a54266392");
@@ -11,7 +11,7 @@
   position: relative;
 }
 
-.cagnotte::before {
+.formulaire-cagnotte::before {
   content: "";
   position: absolute;
   top: 0;
@@ -24,7 +24,7 @@
   z-index: 0;
 }
 
-.cagnotte-container {
+.formulaire-cagnotte-container {
   background-color: #fff;
   width: 100%;
   max-width: 600px;
@@ -34,7 +34,7 @@
   z-index: 1;
 }
 
-.cagnotte-card {
+.formulaire-cagnotte-card {
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 24px;
@@ -46,25 +46,25 @@
   overflow: hidden;
 }
 
-.cagnotte-header {
+.formulaire-cagnotte-header {
   text-align: center;
   margin-bottom: 32px;
 }
 
-.cagnotte-header img {
+.formulaire-cagnotte-header img {
   display: block;
   margin: 0 auto 16px auto;
   width: 120px;
 }
 
-.cagnotte-header h2 {
+.formulaire-cagnotte-header h2 {
   color: #162816;
   font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 8px;
 }
 
-.cagnotte-header p {
+.formulaire-cagnotte-header p {
   color: #162816;
   font-size: 0.95rem;
   font-weight: 400;
@@ -631,21 +631,21 @@
 
 /* Mobile Responsive */
 @media (max-width: 640px) {
-  .cagnotte {
+  .formulaire-cagnotte {
     padding: 80px 10px 20px 10px;
   }
 
-  .cagnotte-card {
+  .formulaire-cagnotte-card {
     padding: 24px;
     margin: 10px;
     border-radius: 20px;
   }
 
-  .cagnotte-header h2 {
+  .formulaire-cagnotte-header h2 {
     font-size: 1.5rem;
   }
 
-  .cagnotte-header img {
+  .formulaire-cagnotte-header img {
     width: 100px;
   }
 

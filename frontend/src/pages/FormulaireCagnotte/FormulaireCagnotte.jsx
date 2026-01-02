@@ -330,10 +330,10 @@ export default function FormulaireCagnotte() {
 		}, [formData.titre]);
 
 		return (
-			<div className="cagnotte">
-				<div className="cagnotte-container">
-					<div className="cagnotte-card">
-						<div className="cagnotte-header">
+			<div className="formulaire-cagnotte">
+				<div className="formulaire-cagnotte-container">
+					<div className="formulaire-cagnotte-card">
+						<div className="formulaire-cagnotte-header">
 							<img src={Logo} alt="BloomFund Logo" />
 							<h2>Créer une cagnotte</h2>
 							<p>Donnez vie à votre projet</p>

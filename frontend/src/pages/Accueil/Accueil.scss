@@ -5,7 +5,7 @@
   width: 100vw;
   background-color: #ffffff;
   background-image: url("/fontGrayLogo.svg");
-  background-size: 120px;
+  background-size: 10em;
 }
 
 .accueil-content {
@@ -67,6 +67,13 @@
 .accueil-button:hover {
   background-color: #128813;
   cursor: pointer;
+  transform: scale(1.05) translate(0, -10px);
+  transition: ease-out 0.3s;
+}
+
+.accueil-button:active {
+  transform: scale(1.05) translate(0, 0px);
+  transition: ease-out 0.3s;
 }
 
 #ellipse1 {
