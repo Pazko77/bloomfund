@@ -129,10 +129,12 @@ function CagnottePageHero() {
 								</div>
 							</div>
 
-							<button className="w-full bg-green-600 text-white py-4 px-4 rounded-2xl hover:bg-green-700 transition-all transform active:scale-95 shadow-lg shadow-green-100">
+							<a
+								href={`/payment/${projet ? projet.projet_id : ''}`}
+								className="w-full bg-green-600 text-white py-4 px-4 rounded-2xl hover:bg-green-700 transition-all transform active:scale-95 shadow-lg shadow-green-100">
 								<p className="font-bold text-lg">Contribuer</p>
 								<p className="text-xs opacity-90 uppercase tracking-wide">À partir de 1€</p>
-							</button>
+							</a>
 
 							<div className="flex items-center justify-center gap-2 text-gray-400 text-xs">
 								<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

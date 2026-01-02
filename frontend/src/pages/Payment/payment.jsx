@@ -1,13 +1,13 @@
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { isTokenExpired } from './../../helpers/token/tokenExpire';
 
-const stripePromise = loadStripe('pk_test_51Sl6P9GXKqhH0ez38lPOTJLcGpyeitYY1K3W1jIMXTms9bWFoPQrDLVbs2SBDMhHRtlNWMbC3knZZFEy6vlLd2Gx00UXWjYqYs');
+ const stripePromise = loadStripe('pk_test_51Sl6P9GXKqhH0ez38lPOTJLcGpyeitYY1K3W1jIMXTms9bWFoPQrDLVbs2SBDMhHRtlNWMbC3knZZFEy6vlLd2Gx00UXWjYqYs');
 
-function CheckoutForm() {
+ function CheckoutForm() {
 	const [projet, setProjet] = useState(null);
 	const [utilisateur, setUtilisateur] = useState(null);
 	const [amount, setAmount] = useState(10);
@@ -103,13 +103,15 @@ function CheckoutForm() {
 			{message && <p>{message}</p>}
 		</form>
 	);
-}
+ }
 
 export default function PaymentPage() {
 	return (
-		<Elements stripe={stripePromise}>
-			<CheckoutForm />
-			<p className="text-sm text-gray-500">Carte test : 4242 4242 4242 4242 – date future – CVC au hasard</p>
-		</Elements>
+		<>
+			<Elements stripe={stripePromise}>
+				<CheckoutForm />
+				<p className="text-sm text-gray-500">Carte test : 4242 4242 4242 4242 – date future – CVC au hasard</p>
+			</Elements>
+		</>
 	);
 }
