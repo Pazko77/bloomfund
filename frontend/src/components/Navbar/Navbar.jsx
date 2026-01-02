@@ -45,6 +45,9 @@ function Navbar() {
 				isTokenExpiredValue ? { href: '/connexion', text: 'Se connecter' } : { href: '/profil', text: 'Mon profil' },
 			];
 
+	if (location.pathname.includes('/payment')) {
+		return null;
+	}
 	return (
 		<div className={`navbar ${isFormPage ? 'navbar--logo-only' : ''}`}>
 			<nav>

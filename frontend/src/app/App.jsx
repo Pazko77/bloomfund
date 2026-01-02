@@ -12,6 +12,7 @@ const Rechercher = lazy(() => import("../pages/Rechercher/Rechercher.jsx"));
 const Cagnotte = lazy(() => import("../pages/FormulaireCagnotte/FormulaireCagnotte.jsx"));
 const CagnottePageTemplate = lazy(() => import("../pages/CagnottePageTemplate/CagnottePageTemplate.jsx"));
 const Profil = lazy(() => import("../pages/Profil/Profil.jsx"));
+const Payment = lazy(() => import('../pages/Payment/Payment.jsx'));
 
 // Composant Loader
 const Loader = () => (
@@ -21,7 +22,7 @@ const Loader = () => (
 );
 
 function App() {
-  return (
+	return (
 		<Suspense fallback={<Loader />}>
 			<Routes>
 				{/* Pages AVEC navbar */}
@@ -36,6 +37,7 @@ function App() {
 					<Route path="/formCagnotte" element={<Cagnotte />} />
 					<Route path="/cagnotte/:id" element={<CagnottePageTemplate />} />
 					<Route path="/profil" element={<Profil />} />
+					<Route path="/payment/:id" element={<Payment />} />
 				</Route>
 			</Routes>
 		</Suspense>
