@@ -3,6 +3,9 @@ import logo from '/BloomfundNoText.svg';
 import { TabNavigation } from '../tabNavigation/tabNavigation';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { parseImages } from '../../helpers/image/parseImg.js';
+
+// Parse les images depuis le format JSON ou autres formats
 
 function CagnottePageHero() {
 	const { id } = useParams(); //  ID du projet
@@ -48,7 +51,7 @@ function CagnottePageHero() {
 
 	const dateFin = new Date(projet.date_fin);
 	const aujourdHui = new Date();
-	const diffMs = aujourdHui - dateFin;
+	const diffMs = dateFin - aujourdHui;
 	const diffJours = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
 	// console.log(id);
@@ -56,6 +59,9 @@ function CagnottePageHero() {
 	// console.log(Contributions);
 
 	// const [Commentaires, setCommentaires] = useState([]);
+
+	const images = parseImages(projet);
+	console.log('Parsed images:', images);
 
 	return (
 		<>
@@ -66,11 +72,9 @@ function CagnottePageHero() {
 						{/* <p>{projet ? projet.description : 'Petite description'}</p> */}
 					</div>
 					<div className={'flex flex-row px-6 gap-3'}>
-						<img
-							className={`w-140 rounded-2xl transition-opacity duration-500 `}
-							src={projet?.image_url || 'https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg'}
-							alt={projet?.titre}
-						/>
+						<div className={'flex flex-col w-2/5 items-center justify-center'}>
+							<img className="w-full h-64 object-cover rounded-2xl" src={images.length > 0 ? images[0] : images} alt={projet?.titre} />
+						</div>
 
 						<div className={'flex flex-col w-full items-center justify-center gap-3'}>
 							<div className={'flex flex-row items-center gap-3'}>

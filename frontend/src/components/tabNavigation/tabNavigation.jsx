@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { parseImages } from '../../helpers/image/parseImg.js';
+
 export function TabNavigation({ projet, contributions }) {
 	// console.log('TabNavigation props:', { projet, contributions });
 	const [commentaires, setCommentaires] = useState([]);
@@ -17,11 +19,9 @@ export function TabNavigation({ projet, contributions }) {
 		{ id: 'commentaires', label: `Commentaires ${commentaires.length ?? 0}` },
 	];
 
-	const test = ['https://picsum.photos/800/400?1', 'https://picsum.photos/800/400?2'];
+	const images = parseImages(projet);
 
-	const images = projet?.images?.length ? projet.images : projet?.image_url ? [projet.image_url] : [];
-
-	images.push(...test);
+	// images.push(...test);
 
 	const [currentIndex, setCurrentIndex] = useState(0);
 

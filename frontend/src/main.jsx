@@ -5,8 +5,10 @@ import "./index.scss";
 import "./tailwind.css";
 import App from "./app/App.jsx";
 
-createRoot(document.getElementById("root")).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+createRoot(document.getElementById('root')).render(
+	<StrictMode>
+		<BrowserRouter>
+			<App />
+		</BrowserRouter>
+	</StrictMode>
 );

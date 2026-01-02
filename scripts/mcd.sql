@@ -32,7 +32,7 @@ CREATE TABLE projets (
     date_fin DATE,
     porteur_id INT NOT NULL,
     categorie_id INT,
-    image_url VARCHAR(855),
+    image_url VARCHAR(15855),
     FOREIGN KEY (porteur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
     FOREIGN KEY (categorie_id) REFERENCES categories(id) ON DELETE CASCADE
 );

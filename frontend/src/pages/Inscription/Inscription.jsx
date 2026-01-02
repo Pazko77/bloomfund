@@ -162,19 +162,17 @@ export default function Inscription() {
 				email: userData.email,
 				mot_de_passe: userData.password,
 			});
-			return response.data;
+			return { success: true, data: response.data };
 		} catch (error) {
 			// Gérer les erreurs du serveur
 			if (error.response) {
 				// Erreur renvoyée par le serveur
-				// throw new Error(error.response.data.message || 'Erreur serveur');
 				showNotification(error.response.data.message, 'error');
 			} else {
 				// Erreur réseau ou autre
-				// throw new Error('Impossible de se connecter au serveur');
-
 				showNotification('Impossible de se connecter au serveur', 'error');
 			}
+			return { success: false };
 		}
 	};
 	// Handle form submission
@@ -211,8 +209,18 @@ export default function Inscription() {
 		// Submit form
 		setIsSubmitting(true);
 		try {
-			 await signup(formData);
+			const result = await signup(formData);
+
+			if (!result.success) {
+				setIsSubmitting(false);
+				return;
+			}
+
 			setShowSuccess(true);
+			// Redirect après succès
+			setTimeout(() => {
+				window.location.href = '/connexion';
+			}, 1500);
 			// Simulate redirect
 			setTimeout(() => {
 				// Reset form after demo
@@ -234,7 +242,6 @@ export default function Inscription() {
 					terms: '',
 				});
 				setPasswordStrength(0);
-				window.location.href = '/connexion';
 			}, 1000);
 		} catch (error) {
 			showNotification(error.response?.data?.message || "Échec de l'inscription. Veuillez réessayer.", 'error');

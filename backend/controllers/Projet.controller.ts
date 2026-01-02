@@ -7,12 +7,12 @@ export const ProjetController = {
     const porteur_id = req.Utilisateur?.id;
     if (!porteur_id) return res.sendStatus(401);
 
-    const success = await ProjetService.create(req.body, porteur_id);
-    if (!success) {
-      return res.status(500).json({ message: "Erreur création projet" });
-    }
+    const projetId = await ProjetService.create(req.body, porteur_id);
+		if (!projetId) {
+			return res.status(500).json({ message: 'Erreur création projet' });
+		}
 
-    return res.status(201).json({ success: true });
+    return res.status(201).json({ success: true, id: projetId });
   },
 
   // READ ALL

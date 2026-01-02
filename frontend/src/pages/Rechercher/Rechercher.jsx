@@ -33,9 +33,7 @@ const Rechercher = ({ onSelect }) => {
 	const locationRef = useRef(null);
 	const sortRef = useRef(null);
 
-
 	const sortOptions = ['Date', 'Pertinence'];
-
 
 	const [Categories, setCategories] = useState([]);
 
@@ -74,6 +72,7 @@ const Rechercher = ({ onSelect }) => {
 						id: item.projet_id,
 						auteur: `${item.porteur_nom} ${item.porteur_prenom.charAt(0)}.`,
 						date: formattedDate,
+						dateRaw: new Date(item.date_creation),
 						description: item.description,
 						image: item.image_url,
 						titre: item.titre,
@@ -88,6 +87,41 @@ const Rechercher = ({ onSelect }) => {
 
 		fetchCagnottes();
 	}, []);
+
+	// Filtrage et tri des cagnottes
+	const filteredCagnottes = cagnottes
+		.filter(cagnotte => {
+			// Filtre par catégorie
+			if (selectedCategory !== 'Catégories' && selectedCategory !== 'Toutes catégories') {
+				if (cagnotte.categorie !== selectedCategory) return false;
+			}
+			// Filtre par recherche texte
+			if (query.length >= 2) {
+				const searchLower = query.toLowerCase();
+				if (
+					!cagnotte.titre.toLowerCase().includes(searchLower) &&
+					!cagnotte.description.toLowerCase().includes(searchLower) &&
+					!cagnotte.auteur.toLowerCase().includes(searchLower)
+				) {
+					return false;
+				}
+			}
+			return true;
+		})
+		.sort((a, b) => {
+			// Tri par date (plus récent en premier)
+			if (selectedSort === 'Date') {
+				return b.dateRaw - a.dateRaw;
+			}
+			// Tri par pertinence (basé sur la correspondance avec la recherche)
+			if (selectedSort === 'Pertinence' && query.length >= 2) {
+				const searchLower = query.toLowerCase();
+				const scoreA = (a.titre.toLowerCase().includes(searchLower) ? 2 : 0) + (a.description.toLowerCase().includes(searchLower) ? 1 : 0);
+				const scoreB = (b.titre.toLowerCase().includes(searchLower) ? 2 : 0) + (b.description.toLowerCase().includes(searchLower) ? 1 : 0);
+				return scoreB - scoreA;
+			}
+			return 0;
+		});
 
 	//  cagnottes = [
 	// 	{
@@ -271,15 +305,13 @@ const Rechercher = ({ onSelect }) => {
 		}
 	};
 
-
-	if (!cagnottes && !Categories) {
-		return (
-			<div className="w-full h-screen flex justify-center items-center">
-				<img src="/shared/loader.svg" alt="Loading..." />
-			</div>
-		);
-	}
-
+	// if (!cagnottes && !Categories) {
+	// 	return (
+	// 		<div className="w-full h-screen flex justify-center items-center">
+	// 			<img src="/shared/loader.svg" alt="Loading..." />
+	// 		</div>
+	// 	);
+	// }
 
 	return (
 		<div className="rechercher">
@@ -296,7 +328,7 @@ const Rechercher = ({ onSelect }) => {
 								strokeLinejoin="round"
 							/>
 						</svg>
-						<input 
+						<input
 							type="text"
 							className="rechercher_input"
 							placeholder="Rechercher"
@@ -452,10 +484,10 @@ const Rechercher = ({ onSelect }) => {
 			{/* 3. Affichage des cagnottes */}
 			<div className="rechercher_cardwrapper">
 				{/* 4. Si le tableau est vide, on affiche un message, sinon on boucle */}
-				{cagnottes.length === 0 ? (
+				{filteredCagnottes.length === 0 ? (
 					<p>Aucune cagnotte trouvée.</p>
 				) : (
-					cagnottes.map(item => (
+					filteredCagnottes.map(item => (
 						<CagnotteCard
 							key={item.id}
 							id={item.id}
@@ -471,6 +503,6 @@ const Rechercher = ({ onSelect }) => {
 			</div>
 		</div>
 	);
-};
+};;
 
 export default Rechercher;

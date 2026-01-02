@@ -35,7 +35,7 @@ Content-Type: application/json
 POST http://localhost:3000/api/utilisateurs/logout
 
 
-
+https://images.unsplash.com/photo-1543906965-f9520aa2ed8a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y3VsdHVyZXxlbnwwfHwwfHx8MA%3D%3D
 ### Accéder au profil protégé (remplacer TOKEN par celui reçu au login)
 GET http://localhost:3000/api/utilisateurs/profile
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJub20iOiJQaWVycmUiLCJwcmVub20iOiJZY2huaWdodGRlciIsImRhdGVfaW5zY3JpcHRpb24iOiIyMDI1LTEyLTIwVDIyOjQxOjM3LjAwMFoiLCJkZXBhcnRlbWVudCI6Ijc1IiwiaWF0IjoxNzY3MjgyMzE1LCJleHAiOjE3NjcyODMyMTV9.3bWoZ4Ku5o6rpZ1rT1BRlsW-GFZlsqhDYSxDR048-UY

@@ -3,6 +3,7 @@ import "./Accueil.scss";
 
 function Accueil() {
   return (
+    
     <div className="accueil">
       <div className="accueil-content">
         <img className="accueil-logo" src={logo} alt="LogoBloomFund" />

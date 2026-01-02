@@ -3,8 +3,38 @@ import profileDeveloper from '/about/profile-developer.svg';
 import collaborationIcon from '/about/collaborateur.svg';
 import objectifIcon from '/about/objectif.svg';
 import bloomfundLogo from '/about/bloomfund.svg';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 
 export default function About() {
+	const [nbProjet, setNbProjet] = useState(0);
+	const [nbContributeur, setNbContributeur] = useState(0);
+	const [nbFondCollecte, setNbFondCollecte] = useState(0);
+
+	useEffect(() => {
+		try {
+			const response = axios
+				.get(`${import.meta.env.VITE_API_URL}/projets`)
+				.then(response => {
+					setNbProjet(response.data.length);
+				})
+				.catch(error => {
+					console.error('Erreur lors de la récupération du nombre de projets :', error);
+				});
+			const responseContributeur = axios
+				.get(`${import.meta.env.VITE_API_URL}/contributions/all`)
+				.then(responseContributeur => {
+					setNbContributeur(responseContributeur.data.contributions.length);
+					setNbFondCollecte(responseContributeur.data.total.split('.')[0]);
+				})
+				.catch(error => {
+					console.error('Erreur lors de la récupération du nombre de contributeurs :', error, responseContributeur, response);
+				});
+		} catch (error) {
+			console.error(error.message);
+		}
+	}, []);
+
 	return (
 		<>
 			<div className="min-h-screen bg-white pt-20">
@@ -30,7 +60,7 @@ export default function About() {
 									<img src={bloomfundLogo} alt="collaboration icon" />
 								</div>
 							</div>
-							<div className="text-2xl mb-1">000+</div>
+							<div className="text-2xl mb-1">{nbProjet}+</div>
 							<p className="text-gray-600">Projets financés</p>
 						</div>
 						<div>
@@ -39,7 +69,7 @@ export default function About() {
 									<img src={collaborationIcon} alt="collaboration icon" />
 								</div>
 							</div>
-							<div className="text-2xl mb-1">0000+</div>
+							<div className="text-2xl mb-1">{nbContributeur}+</div>
 							<p className="text-gray-600">Contributeurs</p>
 						</div>
 						<div>
@@ -48,7 +78,7 @@ export default function About() {
 									<img src={objectifIcon} alt="objectif icon" />
 								</div>
 							</div>
-							<div className="text-2xl mb-1">0M€$£</div>
+							<div className="text-2xl mb-1">{nbFondCollecte}€</div>
 							<p className="text-gray-600">Fonds collectés</p>
 						</div>
 					</div>
@@ -58,15 +88,21 @@ export default function About() {
 				<div className="max-w-5xl mx-auto px-4 py-16">
 					<h2 className="text-2xl mb-12 text-center">L'Équipe</h2>
 					<div className="flex justify-center gap-12">
-						{[1, 2, 3, 4, 5].map(id => (
-							<div key={id} className="text-center">
+						{[
+							{ id: 1, name: 'Ychnightder PIERRE' },
+							{ id: 2, name: 'Pascal LIU' },
+							{ id: 3, name: 'Bryan BARET' },
+							{ id: 4, name: 'Elias BOUTEBAKH' },
+							{ id: 5, name: 'Deynis BRIVAL LARUE' },
+						].map(member => (
+							<div key={member.id} className="text-center">
 								<img
 									src={profileDeveloper}
 									className="w-20 h-20 mx-auto mb-3 rounded-full flex items-center justify-center"
 									alt="profile developer"
 								/>
 
-								<p className="text-sm">John Doe</p>
+								<p className="text-sm">{member.name}</p>
 							</div>
 						))}
 					</div>
