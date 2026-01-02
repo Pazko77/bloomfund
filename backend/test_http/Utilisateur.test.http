@@ -49,19 +49,21 @@ Content-Type: application/json
 {
   "nom": "Pierre",
   "prenom": "Ychnightder",
-  "email": "pierre.ychnightder@test.com",
+  "email": "pierre.ychnightder@tes.com",
   "mot_de_passe": "monpassword",
   "departement": "75",
   "role": "admin"
 }
 
 
+# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJub20iOiJDaGFybGllIiwicHJlbm9tIjoiWWNobmlnaHRkZXIiLCJkYXRlX2luc2NyaXB0aW9uIjoiMjAyNS0xMi0yMFQyMjo0MTozNy4wMDBaIiwiZGVwYXJ0ZW1lbnQiOiI3NSIsImlhdCI6MTc2NzM0ODA1OCwiZXhwIjoxNzY3OTUyODU4fQ.KS-dk4AwIJO9GnLVf0AlEgaNdIOKsFLqWHktXT2jMpo
+
 ###
 POST http://localhost:3000/api/utilisateurs/login
 Content-Type: application/json
 
 {
-  "email": "pierre.ychnightder@test.com",
+  "email": "pierre.ychnightder@tes.com",
   "mot_de_passe": "monpassword"
 }
 ###

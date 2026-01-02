@@ -2,11 +2,13 @@ import './Profil.scss';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isTokenExpired } from './../../helpers/token/tokenExpire';
+import { getFirstImage } from './../../helpers/image/parseImg';
 import axios from 'axios';
 
 const Profil = () => {
 	const navigate = useNavigate();
 	const [user, setUser] = useState(null);
+	const [projets, setProjets] = useState([]);
 	const [isEditing, setIsEditing] = useState(false);
 	const [isChangingPassword, setIsChangingPassword] = useState(false);
 	const [passwordData, setPasswordData] = useState({
@@ -49,6 +51,22 @@ const Profil = () => {
 		};
 		fetchUserProfil();
 	}, [isTokenExpiredValue, token]);
+
+	// Récupérer les projets de l'utilisateur si porteur de projet
+	useEffect(() => {
+		const fetchProjets = async () => {
+			if (user && (user.role === 'porteur_projet' || user.role === 'admin')) {
+				try {
+					const response = await axios.get(`${import.meta.env.VITE_API_URL}/projets`);
+					const mesProjets = response.data.filter(projet => projet.porteur_nom === user.nom && projet.porteur_prenom === user.prenom);
+					setProjets(mesProjets);
+				} catch (error) {
+					console.error('Erreur lors de la récupération des projets:', error);
+				}
+			}
+		};
+		fetchProjets();
+	}, [user]);
 
 	const handleInputChange = e => {
 		setFormData({
@@ -392,6 +410,63 @@ const Profil = () => {
 							</div>
 						)}
 					</div>
+					{/* Section Mes Projets - visible uniquement pour les porteurs de projet */}
+					{(user.role === 'porteur_projet' || user.role === 'admin') && (
+						<div className="bg-white border border-gray-200 rounded-lg p-8 mb-6">
+							<div className="flex items-center justify-between mb-6">
+								<h2 className="text-2xl">Mes Projets</h2>
+							</div>
+
+							{projets.length === 0 ? (
+								<p className="text-gray-500 text-center py-8">Vous n'avez pas encore créé de projet.</p>
+							) : (
+								<div className="space-y-6">
+									{projets.map(projet => {
+										const progress = (Number(projet.montant_collecte) / Number(projet.objectif_financier)) * 100;
+										return (
+											<div
+												key={projet.projet_id}
+												onClick={() => navigate(`/cagnotte/${projet.projet_id}`)}
+												className="flex gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+												<img src={getFirstImage(projet.image_url)} alt={projet.titre} className="w-32 h-24 object-cover rounded-lg" />
+												<div className="flex-1">
+													<div className="flex items-start justify-between">
+														<div>
+															<h3 className="font-medium text-lg">{projet.titre}</h3>
+															<p className="text-sm text-gray-600 line-clamp-2">{projet.description}</p>
+														</div>
+														<span
+															className={`px-3 py-1 rounded-full text-xs font-medium ${
+																projet.statut === 'publie'
+																	? 'bg-green-100 text-green-700'
+																	: projet.statut === 'en_attente'
+																		? 'bg-yellow-100 text-yellow-700'
+																		: 'bg-gray-100 text-gray-700'
+															}`}>
+															{projet.statut === 'publie' ? 'publié' : projet.statut === 'en_attente' ? 'en attente' : projet.statut}
+														</span>
+													</div>
+													<div className="mt-2">
+														<div className="flex justify-between text-sm mb-1">
+															<span className="font-medium">{projet.montant_collecte}€ collectés</span>
+															<span className="text-gray-500">{projet.objectif_financier}€</span>
+														</div>
+														<div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+															<div className="h-full bg-green-500 rounded-full" style={{ width: `${Math.min(progress, 100)}%` }} />
+														</div>
+													</div>
+													<div className="flex justify-between text-sm text-gray-500 mt-2">
+														<span>{projet.localisation || 'France'}</span>
+														<span>Fin le {new Date(projet.date_fin).toLocaleDateString('fr-FR')}</span>
+													</div>
+												</div>
+											</div>
+										);
+									})}
+								</div>
+							)}
+						</div>
+					)}
 
 					{/* Section Liens Légaux */}
 					<div className="bg-white border border-gray-200 rounded-lg p-8">

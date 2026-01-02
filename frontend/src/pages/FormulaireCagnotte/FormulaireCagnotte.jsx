@@ -74,8 +74,16 @@ export default function FormulaireCagnotte() {
 	const [imagePreviews, setImagePreviews] = useState([]);
 	const [imageUrls, setImageUrls] = useState([]);
 
+	// États pour la recherche de localisation
+	const [locationSuggestions, setLocationSuggestions] = useState([]);
+	const [isLocationOpen, setIsLocationOpen] = useState(false);
+	const [isLocationLoading, setIsLocationLoading] = useState(false);
+	const [locationSelectedIndex, setLocationSelectedIndex] = useState(-1);
+
 	const formRef = useRef(null);
 	const titreRef = useRef(null);
+	const locationTimeoutRef = useRef(null);
+	const locationRef = useRef(null);
 
 	// Validation functions
 	const validateTitre = titre => {
@@ -314,9 +322,8 @@ export default function FormulaireCagnotte() {
 				image_url: JSON.stringify(finalImageUrls),
 			};
 
-
 			console.log('Données du projet à envoyer :', projetData);
-			console.log(projetData.image_url)
+			console.log(projetData.image_url);
 
 			const data = await creerProjet(projetData);
 
@@ -386,15 +393,98 @@ export default function FormulaireCagnotte() {
 		return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
 	}, [formData.titre]);
 
-		return (
-			<div className="formulaire-cagnotte">
-				<div className="formulaire-cagnotte-container">
-					<div className="formulaire-cagnotte-card">
-						<div className="formulaire-cagnotte-header">
-							<img src={Logo} alt="BloomFund Logo" />
-							<h2>Créer une cagnotte</h2>
-							<p>Donnez vie à votre projet</p>
-						</div>
+	// Recherche de localisation (départements uniquement)
+	useEffect(() => {
+		if (formData.localisation.length < 2) {
+			setLocationSuggestions([]);
+			setIsLocationOpen(false);
+			return;
+		}
+
+		setIsLocationLoading(true);
+		clearTimeout(locationTimeoutRef.current);
+
+		locationTimeoutRef.current = setTimeout(async () => {
+			try {
+				const departements = await fetch(`https://geo.api.gouv.fr/departements?nom=${encodeURIComponent(formData.localisation)}&limit=8`).then(r =>
+					r.json()
+				);
+
+				const formattedSuggestions = departements.map(d => ({
+					type: 'departement',
+					code: d.code,
+					nom: d.nom,
+					displayValue: `${d.nom} (${d.code})`,
+				}));
+
+				setLocationSuggestions(formattedSuggestions);
+				setIsLocationOpen(formattedSuggestions.length > 0);
+				setLocationSelectedIndex(-1);
+			} catch (error) {
+				console.error('Erreur lors de la récupération des suggestions:', error);
+				setLocationSuggestions([]);
+			} finally {
+				setIsLocationLoading(false);
+			}
+		}, 400);
+
+		return () => clearTimeout(locationTimeoutRef.current);
+	}, [formData.localisation]);
+
+	// Fermer les suggestions au clic extérieur
+	useEffect(() => {
+		const handleClickOutside = e => {
+			if (locationRef.current && !locationRef.current.contains(e.target)) {
+				setIsLocationOpen(false);
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => document.removeEventListener('mousedown', handleClickOutside);
+	}, []);
+
+	const handleLocationSelect = suggestion => {
+		setFormData(prev => ({ ...prev, localisation: suggestion.displayValue }));
+		setIsLocationOpen(false);
+		setLocationSuggestions([]);
+	};
+
+	const handleLocationKeyDown = e => {
+		if (!isLocationOpen || locationSuggestions.length === 0) return;
+
+		switch (e.key) {
+			case 'ArrowDown':
+				e.preventDefault();
+				setLocationSelectedIndex(prev => (prev < locationSuggestions.length - 1 ? prev + 1 : prev));
+				break;
+			case 'ArrowUp':
+				e.preventDefault();
+				setLocationSelectedIndex(prev => (prev > 0 ? prev - 1 : -1));
+				break;
+			case 'Enter':
+				e.preventDefault();
+				if (locationSelectedIndex >= 0) {
+					handleLocationSelect(locationSuggestions[locationSelectedIndex]);
+				}
+				break;
+			case 'Escape':
+				setIsLocationOpen(false);
+				setLocationSelectedIndex(-1);
+				break;
+			default:
+				break;
+		}
+	};
+
+	return (
+		<div className="formulaire-cagnotte">
+			<div className="formulaire-cagnotte-container">
+				<div className="formulaire-cagnotte-card">
+					<div className="formulaire-cagnotte-header">
+						<img src={Logo} alt="BloomFund Logo" />
+						<h2>Créer une cagnotte</h2>
+						<p>Donnez vie à votre projet</p>
+					</div>
 
 					{notification && <div className={`notification notification-${notification.type}`}>{notification.message}</div>}
 
@@ -463,20 +553,62 @@ export default function FormulaireCagnotte() {
 						</div>
 
 						{/* Localisation */}
-						<div className={`form-group ${errors.localisation ? 'has-error' : ''}`}>
-							<div className={`input-wrapper ${focusedField === 'localisation' ? 'focused' : ''}`}>
+						<div className={`form-group ${errors.localisation ? 'has-error' : ''}`} ref={locationRef}>
+							<div className={`input-wrapper ${focusedField === 'localisation' ? 'focused' : ''}`} style={{ position: 'relative' }}>
 								<input
 									type="text"
 									id="localisation"
 									name="localisation"
 									value={formData.localisation}
 									onChange={handleChange}
-									onFocus={() => setFocusedField('localisation')}
+									onFocus={() => {
+										setFocusedField('localisation');
+										if (locationSuggestions.length > 0) setIsLocationOpen(true);
+									}}
 									onBlur={() => handleBlur('localisation')}
+									onKeyDown={handleLocationKeyDown}
 									className={formData.localisation ? 'has-value' : ''}
+									autoComplete="off"
 								/>
-								<label htmlFor="localisation">Localisation (optionnel)</label>
+								<label htmlFor="localisation">Département (optionnel)</label>
+								{isLocationLoading && (
+									<div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)' }}>
+										<div className="btn-loader" style={{ width: '20px', height: '20px', borderWidth: '2px' }}></div>
+									</div>
+								)}
 							</div>
+							{isLocationOpen && locationSuggestions.length > 0 && (
+								<div
+									style={{
+										position: 'absolute',
+										zIndex: 1000,
+										width: '100%',
+										maxHeight: '200px',
+										overflowY: 'auto',
+										background: 'white',
+										border: '1px solid #e5e7eb',
+										borderRadius: '8px',
+										boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+										marginTop: '4px',
+									}}>
+									{locationSuggestions.map((suggestion, index) => (
+										<div
+											key={`${suggestion.type}-${suggestion.code}`}
+											onClick={() => handleLocationSelect(suggestion)}
+											onMouseEnter={() => setLocationSelectedIndex(index)}
+											style={{
+												padding: '10px 12px',
+												cursor: 'pointer',
+												display: 'flex',
+												alignItems: 'center',
+												justifyContent: 'space-between',
+												background: index === locationSelectedIndex ? '#f3f4f6' : 'white',
+											}}>
+											<span>{suggestion.displayValue}</span>
+										</div>
+									))}
+								</div>
+							)}
 							{errors.localisation && <span className="error-message show">{errors.localisation}</span>}
 						</div>
 
@@ -494,7 +626,7 @@ export default function FormulaireCagnotte() {
 									className={formData.date_fin ? 'has-value' : ''}
 									min={new Date().toISOString().split('T')[0]}
 								/>
-								<label htmlFor="date_fin">Date de fin (optionnel)</label>
+								<label htmlFor="date_fin">Date de fin </label>
 							</div>
 							{errors.date_fin && <span className="error-message show">{errors.date_fin}</span>}
 						</div>
@@ -525,7 +657,7 @@ export default function FormulaireCagnotte() {
 										</option>
 									))}
 								</select>
-								<label htmlFor="categorie_id">Catégorie (optionnel)</label>
+								<label htmlFor="categorie_id">Catégorie </label>
 							</div>
 							{errors.categorie_id && <span className="error-message show">{errors.categorie_id}</span>}
 						</div>

@@ -126,13 +126,14 @@
   left: 16px;
   top: 12px;
   background: #fff;
-  padding: 0 4px;
+  padding: 0 10px;
   color: #162816;
   font-size: 16px;
   font-weight: 400;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
   transform-origin: left top;
+  white-space: nowrap;
 }
 
 .textarea-wrapper label {
@@ -658,6 +659,7 @@
 
   .input-wrapper label {
     font-size: 14px;
+    width: 150px;
   }
 
   .upload-placeholder {
