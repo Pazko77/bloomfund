@@ -13,6 +13,7 @@ const Cagnotte = lazy(() => import("../pages/FormulaireCagnotte/FormulaireCagnot
 const CagnottePageTemplate = lazy(() => import("../pages/CagnottePageTemplate/CagnottePageTemplate.jsx"));
 const Profil = lazy(() => import("../pages/Profil/Profil.jsx"));
 const Payment = lazy(() => import('../pages/Payment/Payment.jsx'));
+const LegalPages = lazy(() => import('../pages/LegalPages/LegalPages.jsx'));
 
 // Composant Loader
 const Loader = () => (
@@ -38,6 +39,7 @@ function App() {
 					<Route path="/cagnotte/:id" element={<CagnottePageTemplate />} />
 					<Route path="/profil" element={<Profil />} />
 					<Route path="/payment/:id" element={<Payment />} />
+					<Route path="/legal" element={<LegalPages />} />
 				</Route>
 			</Routes>
 		</Suspense>

@@ -11,7 +11,7 @@ function Navbar() {
 	const location = useLocation();
 	const [userProfil, setUserProfil] = useState(null);
 
-	const formRoutes = ['/form', '/formCagnotte', '/inscription', '/connexion', '/profil', '/payment/'];
+	const formRoutes = ['/form', '/formCagnotte', '/inscription', '/connexion', '/profil', '/legal'];
 	const isFormPage = formRoutes.includes(location.pathname);
 	const token = localStorage.getItem('token');
 

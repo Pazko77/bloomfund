@@ -49,7 +49,7 @@ Content-Type: application/json
 {
   "nom": "Pierre",
   "prenom": "Ychnightder",
-  "email": "pierre.ychnightder@tes.com",
+  "email": "pierre.ychnightder@test.com",
   "mot_de_passe": "monpassword",
   "departement": "75",
   "role": "admin"

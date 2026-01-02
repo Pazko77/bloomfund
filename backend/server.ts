@@ -8,7 +8,7 @@ import CategorieRouter from './routes/Categorie.routes';
 import projetRouter from './routes/Projet.route';
 import contributionRouter from './routes/Contribution.route';
 import CommentaireRouter from './routes/commentaire.routes';
-import PaymentIntentsRouter from './routes/paymentintent.route';
+import PaymentIntentsRouter from './routes/paymentIntent.route';
 
 const app = express();
 app.use(express.json());

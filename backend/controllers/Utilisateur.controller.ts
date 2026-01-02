@@ -106,12 +106,8 @@ export const UtilisateurController = {
 
 	// CHANGE PASSWORD
 	async changePassword(req: Request, res: Response) {
-		const { ancienMotDePasse, nouveauMotDePasse } = req.body;
+		const { ancienMotDePasse, nouveauMotDePasse, email } = req.body;
 		const userId = req.Utilisateur?.id;
-
-		if (!userId) {
-			return res.status(401).json({ message: 'Non autorisé', success: false });
-		}
 
 		if (!ancienMotDePasse || !nouveauMotDePasse) {
 			return res.status(400).json({
@@ -126,8 +122,13 @@ export const UtilisateurController = {
 				success: false,
 			});
 		}
+		let utilisateur = null;
 
-		const utilisateur = await UtilisateurService.findById(userId);
+		if (userId === null) {
+			utilisateur = await UtilisateurService.findByEmail(email);
+		} else {
+			utilisateur = await UtilisateurService.findById(userId ?? 0);
+		}
 
 		if (!utilisateur) {
 			return res.status(404).json({ message: 'Utilisateur non trouvé', success: false });
@@ -140,7 +141,7 @@ export const UtilisateurController = {
 		}
 
 		const hashedPassword = await hashP(nouveauMotDePasse);
-		const updated = await UtilisateurService.update(userId, {
+		const updated = await UtilisateurService.update(userId ?? 0, {
 			mot_de_passe: hashedPassword,
 		});
 

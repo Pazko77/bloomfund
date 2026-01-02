@@ -472,9 +472,7 @@ const Profil = () => {
 					<div className="bg-white border border-gray-200 rounded-lg p-8">
 						<h2 className="text-2xl mb-6">Informations Légales</h2>
 						<div className="space-y-4">
-							<a
-								href="/mentions-legales"
-								className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+							<a href="/legal" className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
 								<div className="flex items-center gap-3">
 									<svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path
@@ -494,9 +492,7 @@ const Profil = () => {
 								</svg>
 							</a>
 
-							<a
-								href="/conditions-generales"
-								className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+							<a href="/legal" className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
 								<div className="flex items-center gap-3">
 									<svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path
@@ -516,9 +512,7 @@ const Profil = () => {
 								</svg>
 							</a>
 
-							<a
-								href="/confidentialite"
-								className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+							<a href="/legal" className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
 								<div className="flex items-center gap-3">
 									<svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path
