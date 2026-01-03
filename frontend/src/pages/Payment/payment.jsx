@@ -25,7 +25,7 @@ import { parseImages } from './../../helpers/image/parseImg';
 		// Vérifier le token et rediriger si expiré
 		useEffect(() => {
 			if (isTokenExpired(token)) {
-				navigate('/login');
+				navigate('/connexion');
 			}
 		}, [token, navigate]);
 

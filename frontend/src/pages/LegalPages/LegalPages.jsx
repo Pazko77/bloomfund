@@ -20,26 +20,42 @@ export default function LegalPages() {
 		{
 			title: 'Mentions Légales',
 			content: [
-				"Toutes les informations concernant l'éditeur et l'hébergeur sont disponibles sur cette page.",
-				"L'utilisation de la plateforme implique l'acceptation de nos mentions légales.",
+				"Le site et chacun des éléments qui le composent (architecture, textes, photographies, illustrations, programmes informatiques) sont la propriété exclusive de l'éditeur, conformément au Code de la propriété intellectuelle.",
+				"Toute reproduction ou représentation, totale ou partielle, du site ou de l'un de ses éléments, sans l'autorisation expresse de l'éditeur, est interdite et constituerait une contrefaçon sanctionnée par les articles L.335-2 et suivants du Code de la propriété intellectuelle.",
+				"L'éditeur ne saurait être tenu responsable des erreurs typographiques ou de l'inexactitude des informations présentes sur le site.",
 			],
 		},
 		{
 			title: "Conditions Générales d'Utilisation",
 			content: [
-				"Les présentes conditions régissent l'utilisation de la plateforme BloomFund.",
-				"L'utilisateur s'engage à respecter les règles de publication et d'utilisation des services.",
-				'Tout manquement peut entraîner la suspension ou la suppression du compte utilisateur.',
+				"L'accès et l'utilisation de la plateforme BloomFund valent acceptation sans réserve des présentes conditions générales. L'éditeur met en œuvre une obligation de moyens pour assurer la disponibilité du service mais ne saurait garantir une accessibilité permanente.",
+				"L'utilisateur s'interdit de publier tout contenu contraire à l'ordre public, aux bonnes mœurs ou portant atteinte aux droits de tiers. Il est seul responsable des données qu'il diffuse et des transactions qu'il initie.",
+				"En cas de manquement aux présentes règles, BloomFund se réserve le droit de suspendre ou de supprimer le compte de l'utilisateur de plein droit et sans préavis, sans préjudice d'éventuels dommages et intérêts.",
+			],
+		},
+		{
+			title: 'Propriété Intellectuelle des Utilisateurs',
+			content: [
+				"L'utilisateur reste titulaire de l'ensemble des droits de propriété intellectuelle sur les contenus (textes, images, projets) qu'il publie sur BloomFund.",
+				"Toutefois, en publiant sur la plateforme, l'utilisateur concède à l'éditeur une licence non exclusive, gratuite et mondiale permettant de reproduire et de diffuser ces contenus pour les besoins du fonctionnement du service.",
+				"L'utilisateur garantit qu'il dispose des droits nécessaires à la publication de ces contenus et qu'ils ne portent pas atteinte aux droits de tiers.",
 			],
 		},
 		{
 			title: 'Politique de Confidentialité',
 			content: [
-				'Nous attachons une grande importance à la protection de vos données personnelles.',
-				'Les informations collectées sont utilisées uniquement pour le bon fonctionnement de la plateforme.',
-				"Vous pouvez exercer vos droits d'accès, de rectification et de suppression de vos données à tout moment.",
+				"Le traitement de vos données personnelles est effectué dans le strict respect du Règlement Général sur la Protection des Données (RGPD) et de la loi « Informatique et Libertés ».",
+				"Les données collectées sont strictement limitées à celles nécessaires à l'exécution des services proposés par la plateforme (création de compte, gestion technique) et ne sont en aucun cas cédées à des tiers à des fins commerciales.",
+				"Conformément à la réglementation en vigueur, vous disposez d'un droit d'accès, de rectification, d'effacement et de portabilité de vos données, que vous pouvez exercer en contactant l'éditeur par email.",
 			],
 		},
+		{
+			title: 'Droit Applicable et Juridiction',
+			content: [
+				"Les présentes conditions d'utilisation sont régies, interprétées et appliquées conformément au droit français.",
+				"En cas de litige relatif à l'interprétation ou à l'exécution des présentes, et à défaut d'accord amiable, compétence exclusive est attribuée aux tribunaux français du ressort du siège social de l'éditeur.",
+			],
+		}
 	];
 
 	return (

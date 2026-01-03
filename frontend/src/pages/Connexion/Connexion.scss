@@ -566,6 +566,17 @@
   color: #15a019;
 }
 
+/* Form states */
+.form-hidden {
+  display: none;
+}
+
+.hidden {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s;
+}
+
 /* Mobile Responsive */
 @media (max-width: 480px) {
   .login-card {
