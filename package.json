@@ -17,6 +17,8 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@faker-js/faker": "^10.1.0",
+    "axios": "^1.13.2",
     "concurrently": "^9.2.1"
   },
   "devDependencies": {

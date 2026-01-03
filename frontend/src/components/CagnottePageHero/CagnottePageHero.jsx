@@ -61,7 +61,7 @@ function CagnottePageHero() {
 	// const [Commentaires, setCommentaires] = useState([]);
 
 	const images = parseImages(projet);
-	console.log('Parsed images:', images);
+	// console.log('Parsed images:', images);
 
 	return (
 		<>

@@ -9,15 +9,30 @@ dotenv.config();
  */
 export async function createPaymentIntent(montant: number, utilisateur_id: number, projet_id: number): Promise<string | void> {
 	try {
-		 const paymentIntent = await stripe.paymentIntents.create({
-		 	amount: Math.round(montant * 100), // en centimes
-		 	currency: 'eur',
-		 	payment_method_types: ['card'],
-		 });
+		const paymentIntent = await stripe.paymentIntents.create({
+			amount: Math.round(montant * 100), // en centimes
+			currency: 'eur',
+			payment_method_types: ['card'],
+		});
 
-		
+		// Insérer la contribution
 		await pool.query('INSERT INTO Contributions (montant, utilisateur_id, projet_id) VALUES (?, ?, ?)', [montant, utilisateur_id, projet_id]);
-		 return paymentIntent.client_secret;
+
+		// Mettre à jour le montant collecté du projet avec la somme de toutes les contributions
+		await pool.query(
+			`
+			UPDATE Projets 
+			SET montant_collecte = (
+				SELECT COALESCE(SUM(montant), 0) 
+				FROM Contributions 
+				WHERE projet_id = ?
+			) 
+			WHERE id = ?
+		`,
+			[projet_id, projet_id]
+		);
+
+		return paymentIntent.client_secret;
 	} catch (error) {
 		console.error('Error creating payment intent:', error);
 		throw error;

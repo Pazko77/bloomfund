@@ -77,6 +77,7 @@ const Rechercher = ({ onSelect }) => {
 						image: item.image_url,
 						titre: item.titre,
 						categorie: item.categorie_nom,
+						localisation: item.localisation,
 					};
 				});
 				setCagnottes(adaptedCagnottes);
@@ -94,6 +95,18 @@ const Rechercher = ({ onSelect }) => {
 			// Filtre par catégorie
 			if (selectedCategory !== 'Catégories' && selectedCategory !== 'Toutes catégories') {
 				if (cagnotte.categorie !== selectedCategory) return false;
+			}
+			// Filtre par localisation (département)
+			if (selectedLocation !== 'Villes/Dep') {
+				// Extraire le code département du filtre sélectionné (ex: "Paris (75)" -> "75")
+				const codeMatch = selectedLocation.match(/\((\d+[A-B]?)\)/);
+				if (codeMatch) {
+					const codeDep = codeMatch[1];
+					// Vérifier si la localisation de la cagnotte contient ce département
+					if (!cagnotte.localisation || !cagnotte.localisation.includes(`(${codeDep})`)) {
+						return false;
+					}
+				}
 			}
 			// Filtre par recherche texte
 			if (query.length >= 2) {
@@ -377,6 +390,11 @@ const Rechercher = ({ onSelect }) => {
 								<path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
 							</svg>
 						</button>
+						{selectedCategory !== 'Catégories' && (
+							<button className="rechercher_filterclear" onClick={() => setSelectedCategory('Catégories')} title="Supprimer le filtre">
+								×
+							</button>
+						)}
 						{showCategoryDropdown && (
 							<div className="rechercher_filtermenu">
 								{categories.map(cat => (
@@ -405,6 +423,11 @@ const Rechercher = ({ onSelect }) => {
 								<path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
 							</svg>
 						</button>
+						{selectedLocation !== 'Villes/Dep' && (
+							<button className="rechercher_filterclear" onClick={() => setSelectedLocation('Villes/Dep')} title="Supprimer le filtre">
+								×
+							</button>
+						)}
 						{showLocationDropdown && (
 							<div className="rechercher_filtermenu location">
 								<div className="rechercher_filtersearch">

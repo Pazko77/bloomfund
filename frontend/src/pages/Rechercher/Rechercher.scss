@@ -195,6 +195,31 @@
 
   &_filterdropdown {
     position: relative;
+    display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    &_filterclear {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      background: #ff4444;
+      border: none;
+      border-radius: 50%;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    
+      &:hover {
+        background: #cc0000;
+        transform: scale(1.1);
+      }
   }
 
   &_filterbutton {

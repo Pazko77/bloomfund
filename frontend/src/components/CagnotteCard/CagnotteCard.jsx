@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import './CagnotteCard.scss';
 import { getFirstImage } from '../../helpers/image/parseImg.js';
 const CagnotteCard = ({ id, image, titre, auteur, date, description, categorie }) => {
-	// Gérer les différents formats d'image (string, array, JSON string, ou séparé par |)
 	return (
 		<Link to={`/cagnotte/${id}`} className="cagnotte-card-link ">
 			<div className="cagnotte-card flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
@@ -24,6 +23,6 @@ const CagnotteCard = ({ id, image, titre, auteur, date, description, categorie }
 			</div>
 		</Link>
 	);
-};;;;;;;;
+};
 
 export default CagnotteCard;
