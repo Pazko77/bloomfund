@@ -1,0 +1,45 @@
+### Récupérer toutes les catégories
+GET http://localhost:3000/api/categories
+Accept: application/json
+
+
+### Récupérer une catégorie par ID
+GET http://localhost:3000/api/categories/2
+Accept: application/json
+
+
+### Créer une nouvelle catégorie
+POST http://localhost:3000/api/categories
+Content-Type: application/json
+
+{
+  "nom": "Environnement",
+  "description": "Projets liés à l'écologie et au développement durable"
+}
+
+
+### Supprimer une catégorie
+DELETE http://localhost:3000/api/categories/1
+
+
+
+
+
+### Création catégorie (admin)
+POST http://localhost:3000/api/categories
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjY5NjMwMjMsImV4cCI6MTc2Njk2MzkyM30.shkUkgmjgu_attjGv95OFZM6Gc25_wpDv5FegPGDN20
+Content-Type: application/json
+
+{
+  "nom": "Services",
+  "description": "Projets "
+}
+
+
+### Test création sans nom (doit renvoyer 400)
+POST http://localhost:3000/api/categories
+Content-Type: application/json
+
+{
+  "description": "Test invalide"
+}

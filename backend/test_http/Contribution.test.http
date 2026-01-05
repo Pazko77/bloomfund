@@ -1,0 +1,14 @@
+### CONTRIBUER À UN PROJET
+POST http://localhost:3000/api/contributions
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjcxOTY2MjAsImV4cCI6MTc2NzE5NzUyMH0.x08S4h6R0DROH_Idv2rDBMeiY7KVSEBcR1sAx9p7754
+Content-Type: application/json
+
+{
+  "montant": 125,
+  "projet_id": 2,
+  "utilisateur_id": 1
+}
+
+### VOIR LES CONTRIBUTIONS D’UN PROJET
+GET http://localhost:3000/api/contributions/projet/1
+

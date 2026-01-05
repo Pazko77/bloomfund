@@ -1,0 +1,69 @@
+### Register un nouvel utilisateur
+
+POST http://localhost:3000/api/utilisateurs/register
+Content-Type: application/json
+
+{
+  "nom": "Dupont",
+  "prenom": "Jean",
+  "email": "jean.dupont@test.com",
+  "mot_de_passe": "monpassword",
+  "departement": "75"
+  
+}
+
+### Ajouter un commentaire à un projet
+POST http://localhost:3000/api/commentaires
+Content-Type: application/json
+
+{
+  "contenu": "Super projet, bon courage pour la suite !",
+  "projet_id": 2,
+  "utilisateur_id": 4
+}
+
+
+### Login pour récupérer le token JWT
+POST http://localhost:3000/api/utilisateurs/login
+Content-Type: application/json
+
+{
+  "email": "pierre.ychnightder@test.com",
+  "mot_de_passe": "monpassword"
+}
+###
+POST http://localhost:3000/api/utilisateurs/logout
+
+
+https://images.unsplash.com/photo-1543906965-f9520aa2ed8a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y3VsdHVyZXxlbnwwfHwwfHx8MA%3D%3D
+### Accéder au profil protégé (remplacer TOKEN par celui reçu au login)
+GET http://localhost:3000/api/utilisateurs/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJub20iOiJQaWVycmUiLCJwcmVub20iOiJZY2huaWdodGRlciIsImRhdGVfaW5zY3JpcHRpb24iOiIyMDI1LTEyLTIwVDIyOjQxOjM3LjAwMFoiLCJkZXBhcnRlbWVudCI6Ijc1IiwiaWF0IjoxNzY3MjgyMzE1LCJleHAiOjE3NjcyODMyMTV9.3bWoZ4Ku5o6rpZ1rT1BRlsW-GFZlsqhDYSxDR048-UY
+  
+
+### ADAMIN - Register un nouvel utilisateur avec le rôle admin
+
+POST http://localhost:3000/api/utilisateurs/register
+Content-Type: application/json
+
+{
+  "nom": "Pierre",
+  "prenom": "Ychnightder",
+  "email": "pierre.ychnightder@test.com",
+  "mot_de_passe": "monpassword",
+  "departement": "75",
+  "role": "admin"
+}
+
+
+# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJub20iOiJDaGFybGllIiwicHJlbm9tIjoiWWNobmlnaHRkZXIiLCJkYXRlX2luc2NyaXB0aW9uIjoiMjAyNS0xMi0yMFQyMjo0MTozNy4wMDBaIiwiZGVwYXJ0ZW1lbnQiOiI3NSIsImlhdCI6MTc2NzM0ODA1OCwiZXhwIjoxNzY3OTUyODU4fQ.KS-dk4AwIJO9GnLVf0AlEgaNdIOKsFLqWHktXT2jMpo
+
+###
+POST http://localhost:3000/api/utilisateurs/login
+Content-Type: application/json
+
+{
+  "email": "pierre.ychnightder@tes.com",
+  "mot_de_passe": "monpassword"
+}
+###

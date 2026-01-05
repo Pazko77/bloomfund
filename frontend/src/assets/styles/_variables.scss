@@ -1,0 +1,13 @@
+/*Exemple d'utilisation  */
+
+/* Couleurs */
+
+$color-test: red;
+
+/* Fonts */
+$font-main: "Poppins", sans-serif;
+
+:root {
+  --font-main: #{$font-main};
+  --color-test: #{$color-test};
+}
