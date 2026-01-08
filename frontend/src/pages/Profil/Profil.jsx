@@ -78,11 +78,14 @@ const Profil = () => {
 	const handleSubmit = async e => {
 		e.preventDefault();
 		try {
-			await axios.put(`${import.meta.env.VITE_API_URL}/utilisateurs/profile/update`, formData, {
+			const response = await axios.put(`${import.meta.env.VITE_API_URL}/utilisateurs/profile/update`, formData, {
 				headers: {
 					Authorization: `Bearer ${token}`,
 				},
 			});
+			if (response.data.token) {
+				localStorage.setItem('token', response.data.token);
+			}
 			setUser({ ...user, ...formData });
 			setIsEditing(false);
 		} catch (error) {
@@ -292,8 +295,8 @@ const Profil = () => {
 							<div className="space-y-6">
 								<div className="flex items-center gap-6 pb-6 border-b border-gray-200">
 									<div className="w-24 h-24 bg-[#4c9a4e] rounded-full flex items-center justify-center text-white text-3xl">
-										{user.prenom[0]}
-										{user.nom[0]}
+										{user.prenom[0].toUpperCase()}
+										{user.nom[0].toUpperCase()}
 									</div>
 									<div>
 										<h3 className="text-2xl">

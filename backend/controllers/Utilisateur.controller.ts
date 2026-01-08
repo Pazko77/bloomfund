@@ -98,10 +98,21 @@ export const UtilisateurController = {
 			});
 		}
 
+
+			// Récupérer l'utilisateur mis à jour pour générer un nouveau token
+		const updatedUser = await UtilisateurService.findById(userId);
+		if (!updatedUser) {
+			return res.status(500).json({ message: 'Utilisateur non trouvé après modification', success: false });
+		}
+		const token = generateAccessToken(updatedUser);
+
 		return res.json({
 			message: 'Profil modifié avec succès',
 			success: true,
+			token,
 		});
+
+		
 	},
 
 	// CHANGE PASSWORD

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { parseImages } from '../../helpers/image/parseImg.js';
+import { isTokenExpired } from '../../helpers/token/tokenExpire.js';
 
 export function TabNavigation({ projet, contributions }) {
 	// console.log('TabNavigation props:', { projet, contributions });
@@ -16,7 +17,7 @@ export function TabNavigation({ projet, contributions }) {
 		{ id: 'collecte', label: 'Collecte' },
 		{ id: 'contreparties', label: 'Contreparties' },
 		{ id: 'contributions', label: `Contributions ${contributions.length ?? 0} ` },
-		{ id: 'commentaires', label: `Commentaires ${commentaires.length ?? 0}` },
+		{ id: 'commentaires', label: `Commentaires ${commentaires.length  ?? 0}` },
 	];
 
 	const images = parseImages(projet);
@@ -229,17 +230,6 @@ export function TabNavigation({ projet, contributions }) {
 	const [isLoggedIn, setIsLoggedIn] = useState(false); // récupérer vrai état depuis ton auth
 	const [commentText, setCommentText] = useState('');
 
-	function isTokenExpired(token) {
-		try {
-			const payload = JSON.parse(atob(token.split('.')[1]));
-			const now = Date.now() / 1000; // en secondes
-			return payload.exp < now;
-		} catch (e) {
-			console.error('Erreur lors de la vérification du token :', e);
-			return true;
-		}
-	}
-
 	useEffect(() => {
 		const token = localStorage.getItem('token');
 
@@ -272,7 +262,6 @@ export function TabNavigation({ projet, contributions }) {
 			});
 
 			const currentUser = currentUserResponse.data;
-			// console.log('Current User:', currentUser.Utilisateur.id);
 
 			await axios.post(
 				`${import.meta.env.VITE_API_URL}/commentaires`,
@@ -287,6 +276,17 @@ export function TabNavigation({ projet, contributions }) {
 					},
 				}
 			);
+
+			// Ajout local du commentaire
+			setCommentaires(prev => [
+				{
+					name: `${currentUser.Utilisateur.prenom.toLowerCase()}-${currentUser.Utilisateur.nom.toLowerCase()}`,
+					comment: commentText,
+					date: 'À l’instant',
+					avatar: `${currentUser.Utilisateur.prenom[0]}${currentUser.Utilisateur.nom[0]}`.toUpperCase(),
+				},
+				...prev,
+			]);
 
 			setCommentText('');
 			showNotification('Commentaire ajouté !', 'success');
