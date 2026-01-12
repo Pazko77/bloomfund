@@ -6,7 +6,7 @@ BloomFund est un projet full-stack avec un **frontend** et un **backend** sépar
 
 ## Prérequis
 
-Avant de commencer, assurez-vous d'avoir installé :
+Avant de commencer, assurez-vous d'avoir installé:
 
 - [Node.js](https://nodejs.org/) (version 18+ recommandée)
 - npm (livré avec Node.js)
