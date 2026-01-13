@@ -1,7 +1,7 @@
 import "./App.scss";
 import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from 'react';
-import LayoutMain from "../layouts/LayoutMain/LayoutMain.jsx" ;
+import LayoutMain from "../layouts/LayoutMain/LayoutMain.jsx";
 
 // Lazy loading des pages
 const About = lazy(() => import("../pages/About/About.jsx"));
