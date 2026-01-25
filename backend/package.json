@@ -5,11 +5,10 @@
 	"main": "dist/server.js",
 	"type": "commonjs",
 	"scripts": {
-		"dev": "nodemon --exec ts-node loadbalancer.ts",
-		"dev-c": "concurrently \"nodemon --exec ts-node Server/server-3000.ts\" \"nodemon --exec ts-node Server/server-3001.ts\" \"nodemon --exec ts-node Server/server-3002.ts\" \"nodemon --exec ts-node loadbalancer.ts\"",
-		"dev-p": "concurrently \"ts-node Server/server-3000.ts\" \"ts-node Server/server-3001.ts\" \"ts-node Server/server-3002.ts\"",
+		"dev": "nodemon --exec ts-node multi-servers.ts",
+		"dev-c": "concurrently \"nodemon --exec ts-node multi-servers.ts\"  \"nodemon --exec ts-node Server/loadbalancer.ts\"",
 		"build": "tsc",
-		"start": "ts-node loadbalancer.ts",
+		"start": "ts-node Server/loadbalancer.ts",
 		"startJs": "node dist/loadbalancer.js"
 	},
 	"dependencies": {

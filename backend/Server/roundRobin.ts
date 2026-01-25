@@ -6,8 +6,8 @@ const proxy = httpProxy.createProxyServer({});
 proxy.on('error', (err, req, res: any) => {
 	console.error('Erreur Proxy:', err.message);
 	if (!res.headersSent) {
-		res.writeHead(502, { 'Content-Type': 'text/plain' });
-		res.end('Le serveur de destination est indisponible.');
+		res.writeHead(502, { 'Content-Type': 'application/json' });
+		res.end(JSON.stringify({ error: 'Le serveur de destination est indisponible.' }));
 	}
 });
 
