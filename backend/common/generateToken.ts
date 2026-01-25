@@ -1,3 +1,4 @@
+
 import { UtilisateurOutput } from "../models/Utilisateur.model";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -18,5 +19,19 @@ export function generateAccessToken(user: UtilisateurOutput): string {
 		},
 		SECRET_KEY,
 		{ expiresIn: '30m' }
+	);
+}
+
+
+
+export function generateRefreshToken(user: UtilisateurOutput): string {
+	return jwt.sign(
+		{
+			id: user.id,
+			email: user.email,
+			role: user.role,
+		},
+		SECRET_KEY,
+		{ expiresIn: '7d' }
 	);
 }

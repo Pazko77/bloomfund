@@ -8,6 +8,7 @@ CREATE TABLE utilisateurs (
     role VARCHAR(30) NOT NULL DEFAULT 'citoyen',
     departement VARCHAR(100) ,
     date_inscription TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    refresh_token VARCHAR(500),
     CHECK (role IN ('citoyen', 'porteur_projet', 'admin'))
 );
 

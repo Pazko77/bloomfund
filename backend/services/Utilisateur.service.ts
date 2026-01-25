@@ -89,12 +89,7 @@ export const UtilisateurService = {
       const fields = keys.map((key) => `${key} = ?`).join(", ");
       const values = Object.values(data);
       values.push(id);
-
-      const [result] = await pool.query<ResultSetHeader>(
-        `UPDATE Utilisateurs SET ${fields} WHERE id = ?`,
-        values,
-      );
-
+			const [result] = await pool.query<ResultSetHeader>(`UPDATE Utilisateurs SET ${fields} WHERE id = ?`, values);
       return result.affectedRows > 0;
     } catch (error) {
       console.error("Erreur update utilisateur:", error);

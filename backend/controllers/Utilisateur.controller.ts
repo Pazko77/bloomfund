@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
-import { generateAccessToken } from "../common/generateToken";
-import { hashP } from "../common/hashPassword";
-import { UtilisateurService } from "./../services/Utilisateur.service";
-import bcrypt from "bcrypt";
-import { Utilisateur, UtilisateurInput } from "./../models/Utilisateur.model";
+import { generateAccessToken, generateRefreshToken } from '../common/generateToken';
+import { hashP } from '../common/hashPassword';
+import { UtilisateurService } from './../services/Utilisateur.service';
+import bcrypt from 'bcrypt';
+import { Utilisateur, UtilisateurInput } from './../models/Utilisateur.model';
+import jwt from 'jsonwebtoken';
 
 export const UtilisateurController = {
 	// REGISTER
@@ -43,17 +44,53 @@ export const UtilisateurController = {
 			return res.status(401).json({ message: 'Mot de passe incorrect', success: false });
 		}
 
-		// Add password verification and token generation logic here
-		const token = generateAccessToken(existingUtilisateur);
+		// Génère les tokens
+		// const token = generateAccessToken(existingUtilisateur);
+		const refreshToken = generateRefreshToken(existingUtilisateur);
 
-		res.cookie('token', token, {
+		// Stocke le refresh token en base (pour l'utilisateur)
+		await UtilisateurService.update(existingUtilisateur.id, { refresh_token: refreshToken });
+
+		// Envoie le refresh token en httpOnly cookie (ou dans le body si tu préfères)
+		// res.cookie('token', token, {
+		// 	httpOnly: true,
+		// 	maxAge: 30 * 60 * 1000, // 30 min
+		// });
+
+		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
-			// secure: process.env.NODE_ENV === 'production',
-			// sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
 			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
 		});
 
-		return res.json({ token, success: true });
+		return res.json({ success: true });
+	},
+
+	// REFRESH TOKEN
+	async refreshToken(req: Request, res: Response) {
+		// Récupère le refresh token depuis le cookie ou le body
+		const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
+		if (!refreshToken) {
+			return res.status(401).json({ message: 'Refresh token manquant', success: false });
+		}
+		try {
+			// Vérifie le refresh token
+			const decoded = (jwt as any).verify(refreshToken, process.env.JWT_SECRET || 'supersecrety');
+			// Vérifie qu'il correspond à celui stocké en base
+			const user = await UtilisateurService.findById(decoded.id);
+			if (!user || user.refresh_token !== refreshToken) {
+				return res.status(403).json({ message: 'Refresh token invalide', success: false });
+			}
+			// Génère un nouveau token d'accès
+			const token = generateAccessToken(user);
+			const newRefreshToken = generateRefreshToken(user);
+			await UtilisateurService.update(user.id, { refresh_token: newRefreshToken });
+			res.cookie('refreshToken', newRefreshToken, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
+
+			res.cookie('token', token, { httpOnly: true, maxAge: 30 * 60 * 1000 });
+			return res.json({ token, success: true });
+		} catch (err) {
+			return res.status(403).json({ message: 'Refresh token invalide', success: false });
+		}
 	},
 
 	// LOGOUT

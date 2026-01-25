@@ -23,7 +23,7 @@ Content-Type: application/json
 }
 
 
-### Login pour récupérer le token JWT
+### Login pour récupérer le token JWT et le refresh token
 POST http://localhost:3000/api/utilisateurs/login
 Content-Type: application/json
 
@@ -31,6 +31,19 @@ Content-Type: application/json
   "email": "pierre.ychnightder@test.com",
   "mot_de_passe": "monpassword"
 }
+
+### Utiliser le refresh token pour obtenir un nouveau token d'accès
+POST http://localhost:3000/api/utilisateurs/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjkzNzMzOTEsImV4cCI6MTc2OTk3ODE5MX0.O1KTEU3OcGBN0XrH7nkgrqvRGoS4IIlZoO7T-UgoWjw"
+}
+
+### Exemple d'utilisation (explications)
+# 1. Faites un login pour obtenir le token et le refreshToken
+# 2. Quand le token d'accès expire, appelez /refresh-token avec le refreshToken
+# 3. Utilisez le nouveau token d'accès pour accéder aux routes protégées
 ###
 POST http://localhost:3000/api/utilisateurs/logout
 
