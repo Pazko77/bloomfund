@@ -25,4 +25,6 @@ app.use('/api/payment-intents', PaymentIntentsRouter);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`--Local: http://localhost:${PORT}/--`));
 
+export default app;
+
 
