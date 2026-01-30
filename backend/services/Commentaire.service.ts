@@ -1,5 +1,5 @@
 import pool from "../config/db";
-import { Commentaire, CommentaireInput } from '../models/commentaire.model';
+import { Commentaire, CommentaireInput } from '../models/Commentaire.model';
 
 
 
