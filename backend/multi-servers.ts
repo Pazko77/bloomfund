@@ -11,7 +11,12 @@ import PaymentIntentsRouter from './routes/paymentIntent.route';
 function createApp() {
 	const app = express();
 	app.use(express.json());
-	app.use(cors({ origin: '*', credentials: true }));
+	app.use(
+		cors({
+			origin: process.env.FRONTEND_URL || '*',
+			credentials: true,
+		})
+	);
 
 	app.use('/api/utilisateurs', userRoutes);
 	app.use('/api/categories', CategorieRouter);
@@ -21,11 +26,10 @@ function createApp() {
 	app.use('/api/payment-intents', PaymentIntentsRouter);
 	return app;
 }
-const ports = process.env.PORTS ? process.env.PORTS.split(',').map(Number) : [3000, 3001, 3002, 3003, 3004];
+const ports = process.env.PORTS ? process.env.PORTS.split(',').map(Number) : [3000, 3001];
 ports.forEach(port => {
 	const app = createApp();
 	app.listen(port, () => {
 		console.log(`-|Local: http://localhost:${port}/|-`);
 	});
 });
-

@@ -4,10 +4,10 @@ import { roundRobin } from './roundRobin';
 const app = express();
 
 // Liste dynamique des serveurs à partir de la variable d'environnement PORTS
-const ports = process.env.PORTS ? process.env.PORTS.split(',').map(Number) : [3000, 3001, 3002, 3003, 3004];
+const ports = process.env.PORTS ? process.env.PORTS.split(',').map(Number) : [3000, 3001];
 const servers = ports.map(port => ({ host: process.env.HOST || 'localhost', port }));
 // Le Load Balancer intercepte tout
-app.all(/(.*)/, (req, res) => {
+app.all(process.env.FRONTEND_URL || /(.*)/, (req, res) => {
 	// console.log(`[LB] Requête reçue : ${req.method} ${req.url}`);
 	roundRobin(req, res, servers);
 });

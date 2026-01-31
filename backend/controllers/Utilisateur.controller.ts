@@ -6,6 +6,13 @@ import bcrypt from 'bcrypt';
 import { Utilisateur, UtilisateurInput } from './../models/Utilisateur.model';
 import jwt from 'jsonwebtoken';
 
+const isProduction = process.env.NODE_ENV === 'production';
+const cookieOptions = {
+	httpOnly: true,
+	secure: isProduction, // true en prod (HTTPS), false en dev
+	sameSite: isProduction ? ('strict' as const) : ('lax' as const),
+};
+
 export const UtilisateurController = {
 	// REGISTER
 	async register(req: Request, res: Response) {
@@ -45,24 +52,24 @@ export const UtilisateurController = {
 		}
 
 		// Génère les tokens
-		// const token = generateAccessToken(existingUtilisateur);
+		const token = generateAccessToken(existingUtilisateur);
 		const refreshToken = generateRefreshToken(existingUtilisateur);
 
 		// Stocke le refresh token en base (pour l'utilisateur)
 		await UtilisateurService.update(existingUtilisateur.id, { refresh_token: refreshToken });
 
 		// Envoie le refresh token en httpOnly cookie (ou dans le body si tu préfères)
-		// res.cookie('token', token, {
-		// 	httpOnly: true,
-		// 	maxAge: 30 * 60 * 1000, // 30 min
-		// });
+		res.cookie('token', token, {
+			...cookieOptions,
+			maxAge: 30 * 60 * 1000, // 30 min
+		});
 
 		res.cookie('refreshToken', refreshToken, {
-			httpOnly: true,
+			...cookieOptions,
 			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
 		});
 
-		return res.json({ success: true });
+		return res.json({ token, success: true });
 	},
 
 	// REFRESH TOKEN
@@ -84,9 +91,9 @@ export const UtilisateurController = {
 			const token = generateAccessToken(user);
 			const newRefreshToken = generateRefreshToken(user);
 			await UtilisateurService.update(user.id, { refresh_token: newRefreshToken });
-			res.cookie('refreshToken', newRefreshToken, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
+			res.cookie('refreshToken', newRefreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 });
 
-			res.cookie('token', token, { httpOnly: true, maxAge: 30 * 60 * 1000 });
+			res.cookie('token', token, { ...cookieOptions, maxAge: 30 * 60 * 1000 });
 			return res.json({ token, success: true });
 		} catch (err) {
 			return res.status(403).json({ message: 'Refresh token invalide', success: false });
@@ -95,7 +102,8 @@ export const UtilisateurController = {
 
 	// LOGOUT
 	async logout(req: Request, res: Response) {
-		res.clearCookie('token');
+		res.clearCookie('token', cookieOptions);
+		res.clearCookie('refreshToken', cookieOptions);
 		return res.json({ success: true });
 	},
 
