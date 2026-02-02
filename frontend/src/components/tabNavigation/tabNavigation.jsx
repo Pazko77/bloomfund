@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import { parseImages } from '../../helpers/image/parseImg.js';
+import api from '../../helpers/request/api.js';
 
 export function TabNavigation({ projet, contributions }) {
 	// console.log('TabNavigation props:', { projet, contributions });
@@ -135,7 +136,7 @@ export function TabNavigation({ projet, contributions }) {
 	};
 
 	const login = async (email, password) => {
-		const response = await axios.post(`${import.meta.env.VITE_API_URL}/utilisateurs/login`, {
+		const response = await api.post(`/utilisateurs/login`, {
 			email,
 			mot_de_passe: password,
 		});
@@ -265,27 +266,19 @@ export function TabNavigation({ projet, contributions }) {
 		}
 
 		try {
-			const currentUserResponse = await axios.get(`${import.meta.env.VITE_API_URL}/utilisateurs/profile`, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
+			const currentUserResponse = await api.get(`/utilisateurs/profile`);
 
 			const currentUser = currentUserResponse.data;
 			// console.log('Current User:', currentUser.Utilisateur.id);
 
-			await axios.post(
-				`${import.meta.env.VITE_API_URL}/commentaires`,
+			await api.post(
+				`/commentaires`,
 				{
 					projet_id: projet.projet_id,
 					contenu: commentText,
 					utilisateur_id: currentUser.Utilisateur.id,
 				},
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				}
+			
 			);
 
 			setCommentText('');
@@ -299,7 +292,7 @@ export function TabNavigation({ projet, contributions }) {
 	useEffect(() => {
 		const fetchCommentaires = async () => {
 			try {
-				const response = await axios.get(`${import.meta.env.VITE_API_URL}/commentaires/projet/${projet.projet_id}`);
+				const response = await api.get(`/commentaires/projet/${projet.projet_id}`);
 
 				let commentaires = response.data.commentaires.map(c => ({
 					name: `${c.prenom.toLowerCase()}-${c.nom.toLowerCase()}`,

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from 'axios';
+// import axios from 'axios';
 import './Rechercher.scss';
 import CagnotteCard from '../../components/CagnotteCard/CagnotteCard.jsx';
+import api from '../../helpers/request/api.js';
 
 const Rechercher = ({ onSelect }) => {
 	// États pour la recherche principale
@@ -40,7 +41,7 @@ const Rechercher = ({ onSelect }) => {
 	useEffect(() => {
 		const fetchCategories = async () => {
 			try {
-				const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories`);
+				const response = await api.get(`/categories`);
 				// console.log('Catégories récupérées :', response.data);
 				setCategories(response.data);
 			} catch (error) {
@@ -59,7 +60,7 @@ const Rechercher = ({ onSelect }) => {
 	useEffect(() => {
 		const fetchCagnottes = async () => {
 			try {
-				const response = await axios.get(`${import.meta.env.VITE_API_URL}/projets`);
+				const response = await api.get(`/projets`);
 				const adaptedCagnottes = response.data.map(item => {
 					const dateObj = new Date(item.date_creation);
 					const formattedDate = dateObj.toLocaleDateString('fr-FR', {

@@ -1,5 +1,5 @@
 import httpProxy from 'http-proxy';
-
+import crypto from 'crypto';
 const proxy = httpProxy.createProxyServer({});
 
 // Gestionnaire d'erreur global pour le proxy

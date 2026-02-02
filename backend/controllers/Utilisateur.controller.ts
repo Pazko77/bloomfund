@@ -6,12 +6,6 @@ import bcrypt from 'bcrypt';
 import { Utilisateur, UtilisateurInput } from './../models/Utilisateur.model';
 import jwt from 'jsonwebtoken';
 
-const isProduction = process.env.NODE_ENV === 'production';
-const cookieOptions = {
-	httpOnly: true,
-	secure: isProduction, // true en prod (HTTPS), false en dev
-	sameSite: isProduction ? ('strict' as const) : ('lax' as const),
-};
 
 export const UtilisateurController = {
 	// REGISTER
@@ -55,46 +49,72 @@ export const UtilisateurController = {
 		const token = generateAccessToken(existingUtilisateur);
 		const refreshToken = generateRefreshToken(existingUtilisateur);
 
-		// Stocke le refresh token en base (pour l'utilisateur)
+		// Stocke le refresh token en base de données pour cet utilisateur
 		await UtilisateurService.update(existingUtilisateur.id, { refresh_token: refreshToken });
-
 		// Envoie le refresh token en httpOnly cookie (ou dans le body si tu préfères)
 		res.cookie('token', token, {
-			...cookieOptions,
-			maxAge: 30 * 60 * 1000, // 30 min
-		});
-
-		res.cookie('refreshToken', refreshToken, {
-			...cookieOptions,
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'lax', // 'lax' est nécessaire pour le cross-port (5173 -> 8080)
+			path: '/',
 			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
 		});
 
-		return res.json({ token, success: true });
+		res.cookie('refreshToken', refreshToken, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'lax', // 'lax' est nécessaire pour le cross-port (5173 -> 8080)
+			path: '/',
+			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+		});
+
+		return res.json({token : token,  success: true });
 	},
 
 	// REFRESH TOKEN
 	async refreshToken(req: Request, res: Response) {
 		// Récupère le refresh token depuis le cookie ou le body
 		const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
+
+		// console.log('[RefreshToken] Received refresh token:', refreshToken);
+
 		if (!refreshToken) {
 			return res.status(401).json({ message: 'Refresh token manquant', success: false });
 		}
+
 		try {
 			// Vérifie le refresh token
-			const decoded = (jwt as any).verify(refreshToken, process.env.JWT_SECRET || 'supersecrety');
+			const decoded = (jwt as any).verify(refreshToken, process.env.REFRESH_TOKEN_SECRET || 'supersecrety');
 			// Vérifie qu'il correspond à celui stocké en base
 			const user = await UtilisateurService.findById(decoded.id);
+
+			// console.log('[RefreshToken] Token valid for user ID:', user, refreshToken);
+
 			if (!user || user.refresh_token !== refreshToken) {
-				return res.status(403).json({ message: 'Refresh token invalide', success: false });
+				return res.status(403).json({ message: 'Refresh token invalide correspondant à un utilisateur différent', success: false });
 			}
 			// Génère un nouveau token d'accès
-			const token = generateAccessToken(user);
-			const newRefreshToken = generateRefreshToken(user);
-			await UtilisateurService.update(user.id, { refresh_token: newRefreshToken });
-			res.cookie('refreshToken', newRefreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 });
+			const token = generateAccessToken(user as Utilisateur);
+			const newRefreshToken = generateRefreshToken(user as Utilisateur);
 
-			res.cookie('token', token, { ...cookieOptions, maxAge: 30 * 60 * 1000 });
-			return res.json({ token, success: true });
+			await UtilisateurService.update(user.id, { refresh_token: newRefreshToken });
+			res.cookie('refreshToken', newRefreshToken, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				sameSite: 'lax', // 'lax' est nécessaire pour le cross-port (5173 -> 8080)
+				path: '/',
+				maxAge: 7 * 24 * 60 * 60 * 1000,
+			});
+
+			res.cookie('token', token, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				path: '/',
+				maxAge: 30 * 60 * 1000,
+				sameSite: 'lax',
+			});
+
+			return res.json({ success: true });
 		} catch (err) {
 			return res.status(403).json({ message: 'Refresh token invalide', success: false });
 		}
@@ -102,8 +122,8 @@ export const UtilisateurController = {
 
 	// LOGOUT
 	async logout(req: Request, res: Response) {
-		res.clearCookie('token', cookieOptions);
-		res.clearCookie('refreshToken', cookieOptions);
+		res.clearCookie('token', );
+		res.clearCookie('refreshToken', );
 		return res.json({ success: true });
 	},
 

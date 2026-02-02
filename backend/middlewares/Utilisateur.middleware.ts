@@ -20,15 +20,22 @@ export function authenticateToken(
   res: Response,
   next: NextFunction,
 ) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1]; // format "Bearer TOKEN"
-  if (!token) return res.sendStatus(401);
+	const authHeader = req.headers['authorization'];
+	let token: string | undefined = authHeader && authHeader.split(' ')[1]; // format "Bearer TOKEN"
 
-  jwt.verify(token, SECRET_KEY, (err: any, Utilisateur: any) => {
-    if (err) {
-      return res.status(403).json({ message: err.message });
-    }
-    req.Utilisateur = Utilisateur as UtilisateurPayload;
-    next();
-  });
+	if (!token) {
+		token = req.cookies?.token;
+	}
+
+	if (!token) {
+		return res.status(401).json({ message: 'Non authentifié' });
+	}
+
+	jwt.verify(token, SECRET_KEY, (err: any, Utilisateur: any) => {
+		if (err) {
+			return res.status(403).json({ message: err.message });
+		}
+		req.Utilisateur = Utilisateur as UtilisateurPayload;
+		next();
+	});
 }

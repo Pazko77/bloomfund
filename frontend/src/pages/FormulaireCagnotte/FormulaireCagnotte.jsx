@@ -1,27 +1,24 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 
 import './FormulaireCagnotte.scss';
 import Logo from '/BloomfundLogo.svg';
-import { isTokenExpired } from './../../helpers/token/tokenExpire';
+import api from '../../helpers/request/api';
+import { useAuth } from '../../hook/useAuth';
+
 export default function FormulaireCagnotte() {
-	const token = localStorage.getItem('token');
+	const userProfil = useAuth();
 
 	const [user, setUser] = useState(null);
 
-	if (!token || isTokenExpired(token)) {
+	if (!userProfil.isLogged) {
 		window.location.href = '/connexion';
 	}
 
 	useEffect(() => {
 		const fetchUserData = async () => {
 			try {
-				const response = await axios.get(`${import.meta.env.VITE_API_URL}/utilisateurs/profile`, {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				});
+				const response = await api.get(`/utilisateurs/profile`);
 				setUser(response.data.Utilisateur);
 			} catch (error) {
 				console.error('Erreur lors de la récupération des données utilisateur :', error);
@@ -30,14 +27,14 @@ export default function FormulaireCagnotte() {
 		};
 
 		fetchUserData();
-	}, [token]);
+	}, [userProfil]);
 
-	const [Categories, setCategories] = useState([]);
+	const [categories, setCategories] = useState([]);
 
 	useEffect(() => {
 		const fetchCategories = async () => {
 			try {
-				const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories`);
+				const response = await api.get(`/categories`);
 				// console.log('Catégories récupérées :', response.data);
 				setCategories(response.data);
 			} catch (error) {
@@ -254,11 +251,7 @@ export default function FormulaireCagnotte() {
 	};
 
 	const creerProjet = async projetData => {
-		const response = await axios.post(`${import.meta.env.VITE_API_URL}/projets`, projetData, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+		const response = await api.post(`/projets`, projetData);
 		return response.data;
 	};
 
@@ -651,7 +644,7 @@ export default function FormulaireCagnotte() {
 									<option value="6">Santé</option>
 									<option value="7">Technologie</option>
 									<option value="8">Autre</option> */}
-									{Categories.map(categorie => (
+									{categories.map(categorie => (
 										<option key={categorie.id} value={categorie.id}>
 											{categorie.nom}
 										</option>

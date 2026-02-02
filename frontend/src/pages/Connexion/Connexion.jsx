@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import axios from 'axios';
-
+// import axios from 'axios';
 import './Connexion.scss';
 import Logo from '/BloomfundLogo.svg';
+import api from "../../helpers/request/api";
 
 export default function Connexion() {
 	const [formData, setFormData] = useState({
@@ -100,7 +100,7 @@ export default function Connexion() {
 	};
 
 	const login = async (email, password) => {
-		const response = await axios.post(`${import.meta.env.VITE_API_URL}/utilisateurs/login`, {
+		const response = await api.post(`/utilisateurs/login`, {
 			email,
 			mot_de_passe: password,
 		});

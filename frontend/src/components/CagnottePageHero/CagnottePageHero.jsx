@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 import logo from '/BloomfundNoText.svg';
 import { TabNavigation } from '../tabNavigation/tabNavigation';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import { parseImages } from '../../helpers/image/parseImg.js';
-
+import api from '../../helpers/request/api.js';
 // Parse les images depuis le format JSON ou autres formats
 
 function CagnottePageHero() {
@@ -14,7 +13,7 @@ function CagnottePageHero() {
 	useEffect(() => {
 		const fetchProjet = async () => {
 			try {
-				const response = await axios.get(`${import.meta.env.VITE_API_URL}/projets/${id}`); // GET pour récupérer les projets
+				const response = await api.get(`/projets/${id}`); // GET pour récupérer les projets
 				setProjet(response.data);
 			} catch (error) {
 				console.error('Erreur lors de la récupération du projet :', error);
@@ -30,7 +29,7 @@ function CagnottePageHero() {
 
 		const fetchContribution = async () => {
 			try {
-				const response = await axios.get(`${import.meta.env.VITE_API_URL}/contributions/projet/${id}`); // GET pour récupérer les contributions
+				const response = await api.get(`/contributions/projet/${id}`); // GET pour récupérer les contributions
 				setContributions(response.data);
 			} catch (error) {
 				console.error('Erreur lors de la récupération des contributions :', error);

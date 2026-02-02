@@ -3,9 +3,8 @@ import profileDeveloper from '/about/profile-developer.svg';
 import collaborationIcon from '/about/collaborateur.svg';
 import objectifIcon from '/about/objectif.svg';
 import bloomfundLogo from '/about/bloomfund.svg';
-import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-
+import api from "../../helpers/request/api";
 export default function About() {
 	const [nbProjet, setNbProjet] = useState(0);
 	const [nbContributeur, setNbContributeur] = useState(0);
@@ -13,16 +12,16 @@ export default function About() {
 
 	useEffect(() => {
 		try {
-			const response = axios
-				.get(`${import.meta.env.VITE_API_URL}/projets`)
+			const response = api
+				.get(`/projets`)
 				.then(response => {
 					setNbProjet(response.data.length);
 				})
 				.catch(error => {
 					console.error('Erreur lors de la récupération du nombre de projets :', error);
 				});
-			const responseContributeur = axios
-				.get(`${import.meta.env.VITE_API_URL}/contributions/all`)
+			const responseContributeur = api
+				.get(`/contributions/all`)
 				.then(responseContributeur => {
 					setNbContributeur(responseContributeur.data.contributions.length);
 					setNbFondCollecte(responseContributeur.data.total.split('.')[0]);

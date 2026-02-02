@@ -1,12 +1,14 @@
 import './Profil.scss';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isTokenExpired } from './../../helpers/token/tokenExpire';
 import { getFirstImage } from './../../helpers/image/parseImg';
-import axios from 'axios';
+import { useAuth } from '../../hook/useAuth';
+import api from '../../helpers/request/api';
 
 const Profil = () => {
 	const navigate = useNavigate();
+	const userProfil = useAuth();
+
 	const [user, setUser] = useState(null);
 	const [projets, setProjets] = useState([]);
 	const [isEditing, setIsEditing] = useState(false);
@@ -25,39 +27,21 @@ const Profil = () => {
 		departement: '',
 	});
 
-	const token = localStorage.getItem('token');
-	const isTokenExpiredValue = isTokenExpired(token);
-
 	useEffect(() => {
 		const fetchUserProfil = async () => {
-			if (!isTokenExpiredValue && token) {
-				try {
-					const response = await axios.get(`${import.meta.env.VITE_API_URL}/utilisateurs/profile`, {
-						headers: {
-							Authorization: `Bearer ${token}`,
-						},
-					});
-					setUser(response.data.Utilisateur);
-					setFormData({
-						nom: response.data.Utilisateur.nom || '',
-						prenom: response.data.Utilisateur.prenom || '',
-						email: response.data.Utilisateur.email || '',
-						departement: response.data.Utilisateur.departement || '',
-					});
-				} catch (error) {
-					console.error(error);
-				}
+			if (userProfil.isLogged) {
+				setUser(userProfil.userCtx);
 			}
 		};
 		fetchUserProfil();
-	}, [isTokenExpiredValue, token]);
+	}, [userProfil.isLogged, userProfil.userCtx]);
 
 	// Récupérer les projets de l'utilisateur si porteur de projet
 	useEffect(() => {
 		const fetchProjets = async () => {
 			if (user && (user.role === 'porteur_projet' || user.role === 'admin')) {
 				try {
-					const response = await axios.get(`${import.meta.env.VITE_API_URL}/projets`);
+					const response = await api.get(`/projets`);
 					const mesProjets = response.data.filter(projet => projet.porteur_nom === user.nom && projet.porteur_prenom === user.prenom);
 					setProjets(mesProjets);
 				} catch (error) {
@@ -78,11 +62,7 @@ const Profil = () => {
 	const handleSubmit = async e => {
 		e.preventDefault();
 		try {
-			await axios.put(`${import.meta.env.VITE_API_URL}/utilisateurs/profile/update`, formData, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
+			await api.put(`/utilisateurs/profile/update`, formData);
 			setUser({ ...user, ...formData });
 			setIsEditing(false);
 		} catch (error) {
@@ -124,18 +104,10 @@ const Profil = () => {
 		}
 
 		try {
-			await axios.put(
-				`${import.meta.env.VITE_API_URL}/utilisateurs/password`,
-				{
-					ancienMotDePasse: passwordData.ancienMotDePasse,
-					nouveauMotDePasse: passwordData.nouveauMotDePasse,
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
+			await api.put(`/utilisateurs/password`, {
+				ancienMotDePasse: passwordData.ancienMotDePasse,
+				nouveauMotDePasse: passwordData.nouveauMotDePasse,
+			});
 			setPasswordSuccess('Mot de passe modifié avec succès');
 			setPasswordData({
 				ancienMotDePasse: '',
@@ -164,19 +136,10 @@ const Profil = () => {
 
 	const handleLogout = async () => {
 		try {
-			await axios.post(
-				`${import.meta.env.VITE_API_URL}/utilisateurs/logout`,
-				{},
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
+			await api.post(`/utilisateurs/logout`);
 		} catch (error) {
 			console.error(error);
 		}
-		localStorage.removeItem('token');
 		navigate('/');
 	};
 

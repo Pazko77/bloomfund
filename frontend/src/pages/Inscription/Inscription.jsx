@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from "react";
-import axios from 'axios';
+import { useState, useEffect, useRef } from 'react';
 import './Inscription.scss';
 import Logo from '/BloomfundLogo.svg';
+import api from '../../helpers/request/api';
 
 export default function Inscription() {
 	const [formData, setFormData] = useState({
@@ -156,7 +156,7 @@ export default function Inscription() {
 	};
 	const signup = async userData => {
 		try {
-			const response = await axios.post(`${import.meta.env.VITE_API_URL}/utilisateurs/register`, {
+			const response = await api.post(`/utilisateurs/register`, {
 				prenom: userData.firstName,
 				nom: userData.lastName,
 				email: userData.email,
