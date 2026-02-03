@@ -21,14 +21,13 @@ function CheckoutForm() {
 	const elements = useElements();
 	const userProfil = useAuth();
 
-	// const token = localStorage.getItem('token');
 
-	// Vérifier le token et rediriger si expiré
+
 	useEffect(() => {
-		if (userProfil) {
+		if (userProfil.isLogged === false) {
 			navigate('/connexion');
 		}
-	}, [userProfil, navigate]);
+	}, [userProfil.isLogged, navigate]);
 
 	// Récupérer le projet
 	useEffect(() => {

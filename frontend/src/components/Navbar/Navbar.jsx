@@ -9,23 +9,20 @@ function Navbar() {
 	const location = useLocation();
 	const userProfil = useAuth();
 
-	// console.log('User Profil dans Navbar : ', userProfil);
+	if (location.pathname.includes('/payment')) return null;
+	console.log('User Profil dans Navbar : ', userProfil);
 	const formRoutes = ['/form', '/formCagnotte', '/inscription', '/connexion', '/profil', '/legal', '/payment'];
-	const isFormPage = formRoutes.includes(location.pathname);
+	const isFormPage = formRoutes.some(route => location.pathname.startsWith(route));
 
 	const navLinks = isFormPage
 		? [{ href: '/', icon: arrow, alt: 'Retour' }]
 		: [
-				{ href: '/rechercher', text: 'Rechercher', icon: searchIcon },
-				{ href: '/about', text: 'À propos' },
-				{ href: '/', icon: logoNoText, alt: 'LogoBloomFund' },
-				{ href: '/formCagnotte', text: 'Démarrer une cagnotte' },
-				userProfil.isLogged ? { href: '/profil', text: 'Mon profil' } : { href: '/connexion', text: 'Se connecter' },
-			];
-
-	if (location.pathname.includes('/payment')) {
-		return null;
-	}
+			{ href: '/rechercher', text: 'Rechercher', icon: searchIcon },
+			{ href: '/about', text: 'À propos' },
+			{ href: '/', icon: logoNoText, alt: 'LogoBloomFund' },
+			{ href: '/formCagnotte', text: 'Démarrer une cagnotte' },
+			userProfil.isLogged ? { href: '/profil', text: 'Mon profil' } : { href: '/connexion', text: 'Se connecter' },
+		];
 
 	return (
 		<div className={`navbar ${isFormPage ? 'navbar--logo-only' : ''}`}>
@@ -36,8 +33,8 @@ function Navbar() {
 							{link.href === '/profil' && userProfil ? (
 								<Link className="flex items-center justify-center px-4 w-45  " to={link.href}>
 									<div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center font-semibold shrink-0 text-sm hover:bg-[#4c9a4e] hover:text-white transition duration-300">
-										{userProfil.userCtx.prenom?.charAt(0)}
-										{userProfil.userCtx.nom?.charAt(0)}
+										{userProfil.userCtx.prenom?.charAt(0).toUpperCase()}
+										{userProfil.userCtx.nom?.charAt(0).toUpperCase()}
 									</div>
 								</Link>
 							) : (

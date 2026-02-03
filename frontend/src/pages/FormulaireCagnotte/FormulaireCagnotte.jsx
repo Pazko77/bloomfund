@@ -5,15 +5,18 @@ import './FormulaireCagnotte.scss';
 import Logo from '/BloomfundLogo.svg';
 import api from '../../helpers/request/api';
 import { useAuth } from '../../hook/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 export default function FormulaireCagnotte() {
 	const userProfil = useAuth();
-
+	const navigate = useNavigate();
 	const [user, setUser] = useState(null);
 
-	if (!userProfil.isLogged) {
-		window.location.href = '/connexion';
-	}
+	useEffect(() => {
+		if (userProfil.isLogged === false) {
+			navigate('/connexion');
+		}
+	}, [userProfil.isLogged, navigate]);
 
 	useEffect(() => {
 		const fetchUserData = async () => {
