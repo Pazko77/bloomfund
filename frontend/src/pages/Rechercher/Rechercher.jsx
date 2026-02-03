@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 // import axios from 'axios';
 import './Rechercher.scss';
-import CagnotteCard from '../../components/CagnotteCard/CagnotteCard.jsx';
 import api from '../../helpers/request/api.js';
+import SearchBar from '../../components/search/SearchBar';
+import Filters from '../../components/search/Filters';
+import ResultsGrid from '../../components/search/ResultsGrid';
 
 const Rechercher = ({ onSelect }) => {
 	// États pour la recherche principale
@@ -136,25 +138,6 @@ const Rechercher = ({ onSelect }) => {
 			}
 			return 0;
 		});
-
-	//  cagnottes = [
-	// 	{
-	// 		id: 1,
-	// 		auteur: 'moi',
-	// 		date: '20510',
-	// 		description: 'SSKJDS',
-	// 		image: 'https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg',
-	// 		titre: 'Yo',
-	// 	},
-	// 	{
-	// 		id: 2,
-	// 		auteur: 'Léa',
-	// 		date: '2024',
-	// 		description: 'Une autre description',
-	// 		image: 'https://www.skyweaver.net/images/media/wallpapers/wallpaper1.jpg',
-	// 		titre: 'Aventure',
-	// 	},
-	// ];
 
 	useEffect(() => {
 		const handleClickOutside = e => {
@@ -319,212 +302,53 @@ const Rechercher = ({ onSelect }) => {
 		}
 	};
 
-	// if (!cagnottes && !Categories) {
-	// 	return (
-	// 		<div className="w-full h-screen flex justify-center items-center">
-	// 			<img src="/shared/loader.svg" alt="Loading..." />
-	// 		</div>
-	// 	);
-	// }
-
 	return (
 		<div className="rechercher">
-			{/* 1. Barre de recherche principale */}
-			<div className="rechercher_searchbar">
-				<div className="rechercher_container" ref={searchRef}>
-					<div className="rechercher_inputwrapper">
-						<svg className="rechercher_searchicon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-							<path
-								d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35"
-								stroke="currentColor"
-								strokeWidth="2"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							/>
-						</svg>
-						<input
-							type="text"
-							className="rechercher_input"
-							placeholder="Rechercher"
-							value={query}
-							onChange={e => setQuery(e.target.value)}
-							onKeyDown={handleKeyDown}
-							onFocus={() => suggestions.length > 0 && setIsOpen(true)}
-						/>
-						{isLoading && (
-							<div className="rechercher_spinner">
-								<div className="spinner"></div>
-							</div>
-						)}
-					</div>
+			<SearchBar
+				query={query}
+				setQuery={setQuery}
+				suggestions={suggestions}
+				isOpen={isOpen}
+				setIsOpen={setIsOpen}
+				isLoading={isLoading}
+				selectedIndex={selectedIndex}
+				setSelectedIndex={setSelectedIndex}
+				handleSelect={handleSelect}
+				handleKeyDown={handleKeyDown}
+				searchRef={searchRef}
+			/>
 
-					{isOpen && suggestions.length > 0 && (
-						<div className="rechercher_dropdown show">
-							{suggestions.map((suggestion, index) => (
-								<div
-									key={suggestion.id}
-									className={`rechercher_item ${index === selectedIndex ? 'selected' : ''}`}
-									onClick={() => handleSelect(suggestion)}
-									onMouseEnter={() => setSelectedIndex(index)}>
-									<div className="rechercher_itemmain">{suggestion.text}</div>
-								</div>
-							))}
-						</div>
-					)}
+			<Filters
+				selectedCategory={selectedCategory}
+				setSelectedCategory={setSelectedCategory}
+				selectedLocation={selectedLocation}
+				setSelectedLocation={setSelectedLocation}
+				selectedSort={selectedSort}
+				setSelectedSort={setSelectedSort}
+				showCategoryDropdown={showCategoryDropdown}
+				setShowCategoryDropdown={setShowCategoryDropdown}
+				showLocationDropdown={showLocationDropdown}
+				setShowLocationDropdown={setShowLocationDropdown}
+				showSortDropdown={showSortDropdown}
+				setShowSortDropdown={setShowSortDropdown}
+				categories={categories}
+				locationQuery={locationQuery}
+				setLocationQuery={setLocationQuery}
+				locationSuggestions={locationSuggestions}
+				isLocationOpen={isLocationOpen}
+				setIsLocationOpen={setIsLocationOpen}
+				isLocationLoading={isLocationLoading}
+				locationSelectedIndex={locationSelectedIndex}
+				setLocationSelectedIndex={setLocationSelectedIndex}
+				handleLocationSelect={handleLocationSelect}
+				handleLocationKeyDown={handleLocationKeyDown}
+				categoryRef={categoryRef}
+				locationRef={locationRef}
+				sortRef={sortRef}
+				sortOptions={sortOptions}
+			/>
 
-					{isOpen && !isLoading && suggestions.length === 0 && query.length >= 2 && (
-						<div className="rechercher_dropdown show">
-							<div className="rechercher_item noresults">Aucun résultat trouvé</div>
-						</div>
-					)}
-				</div>
-			</div>
-			{/* 2. Filtres */}
-			<div className="rechercher_filters">
-				{/* Filtre Catégories */}
-				<div className="rechercher_filtergroup">
-					<label className="rechercher_filterlabel">Filtre :</label>
-					<div className="rechercher_filterdropdown" ref={categoryRef}>
-						<button className="rechercher_filterbutton" onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}>
-							{selectedCategory}
-							<svg className="rechercher_filterarrow" width="12" height="12" viewBox="0 0 12 12">
-								<path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-							</svg>
-						</button>
-						{selectedCategory !== 'Catégories' && (
-							<button className="rechercher_filterclear" onClick={() => setSelectedCategory('Catégories')} title="Supprimer le filtre">
-								×
-							</button>
-						)}
-						{showCategoryDropdown && (
-							<div className="rechercher_filtermenu">
-								{categories.map(cat => (
-									<div
-										key={cat}
-										className="rechercher_filteroption"
-										onClick={() => {
-											setSelectedCategory(cat);
-											setShowCategoryDropdown(false);
-										}}>
-										{cat}
-									</div>
-								))}
-							</div>
-						)}
-					</div>
-				</div>
-
-				{/* Filtre Lieu avec recherche séparée */}
-				<div className="rechercher_filtergroup">
-					<label className="rechercher_filterlabel">Lieu :</label>
-					<div className="rechercher_filterdropdown" ref={locationRef}>
-						<button className="rechercher_filterbutton" onClick={() => setShowLocationDropdown(!showLocationDropdown)}>
-							{selectedLocation}
-							<svg className="rechercher_filterarrow" width="12" height="12" viewBox="0 0 12 12">
-								<path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-							</svg>
-						</button>
-						{selectedLocation !== 'Villes/Dep' && (
-							<button className="rechercher_filterclear" onClick={() => setSelectedLocation('Villes/Dep')} title="Supprimer le filtre">
-								×
-							</button>
-						)}
-						{showLocationDropdown && (
-							<div className="rechercher_filtermenu location">
-								<div className="rechercher_filtersearch">
-									<input
-										type="text"
-										placeholder="Rechercher une ville ou département..."
-										value={locationQuery}
-										onChange={e => setLocationQuery(e.target.value)}
-										onKeyDown={handleLocationKeyDown}
-										onFocus={() => locationSuggestions.length > 0 && setIsLocationOpen(true)}
-									/>
-									{isLocationLoading && (
-										<div className="rechercher_locationspinner">
-											<div className="spinner"></div>
-										</div>
-									)}
-								</div>
-
-								{isLocationOpen && locationSuggestions.length > 0 && (
-									<div className="rechercher_locationresults">
-										{locationSuggestions.map((suggestion, index) => (
-											<div
-												key={`${suggestion.type}-${suggestion.code}`}
-												className={`rechercher_filteroption ${index === locationSelectedIndex ? 'selected' : ''}`}
-												onClick={() => handleLocationSelect(suggestion)}
-												onMouseEnter={() => setLocationSelectedIndex(index)}>
-												<div className="rechercher_filteroptionmain">
-													{suggestion.nom}
-													<span className={`rechercher_filterbadge ${suggestion.type}`}>{suggestion.type === 'ville' ? 'Ville' : 'Dép.'}</span>
-												</div>
-												<div className="rechercher_filteroptionsub">{suggestion.subText}</div>
-											</div>
-										))}
-									</div>
-								)}
-
-								{isLocationOpen && !isLocationLoading && locationSuggestions.length === 0 && locationQuery.length >= 2 && (
-									<div className="rechercher_locationresults">
-										<div className="rechercher_filteroption empty">Aucun résultat trouvé</div>
-									</div>
-								)}
-
-								{!isLocationOpen && locationQuery.length < 2 && <div className="rechercher_filteroption empty">Tapez au moins 2 caractères...</div>}
-							</div>
-						)}
-					</div>
-				</div>
-
-				{/* Filtre Tri */}
-				<div className="rechercher_filtergroup">
-					<label className="rechercher_filterlabel">Tri :</label>
-					<div className="rechercher_filterdropdown" ref={sortRef}>
-						<button className="rechercher_filterbutton" onClick={() => setShowSortDropdown(!showSortDropdown)}>
-							{selectedSort}
-							<svg className="rechercher_filterarrow" width="12" height="12" viewBox="0 0 12 12">
-								<path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-							</svg>
-						</button>
-						{showSortDropdown && (
-							<div className="rechercher_filtermenu">
-								{sortOptions.map(option => (
-									<div
-										key={option}
-										className="rechercher_filteroption"
-										onClick={() => {
-											setSelectedSort(option);
-											setShowSortDropdown(false);
-										}}>
-										{option}
-									</div>
-								))}
-							</div>
-						)}
-					</div>
-				</div>
-			</div>
-			{/* 3. Affichage des cagnottes */}
-			<div className="rechercher_cardwrapper">
-				{/* 4. Si le tableau est vide, on affiche un message, sinon on boucle */}
-				{filteredCagnottes.length === 0 ? (
-					<p>Aucune cagnotte trouvée.</p>
-				) : (
-					filteredCagnottes.map(item => (
-						<CagnotteCard
-							key={item.id}
-							id={item.id}
-							auteur={item.auteur}
-							date={item.date}
-							description={item.description}
-							image={item.image}
-							titre={item.titre}
-							categorie={item.categorie} // si ton composant gère ça
-						/>
-					))
-				)}
-			</div>
+			<ResultsGrid filteredCagnottes={filteredCagnottes} />
 		</div>
 	);
 };;

@@ -73,16 +73,17 @@ export const UtilisateurController = {
 
 	// REFRESH TOKEN
 	async refreshToken(req: Request, res: Response) {
-		// Récupère le refresh token depuis le cookie ou le body
-		const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
-
-		// console.log('[RefreshToken] Received refresh token:', refreshToken);
-
-		if (!refreshToken) {
-			return res.status(401).json({ message: 'Refresh token manquant', success: false });
-		}
+		
 
 		try {
+			// Récupère le refresh token depuis le cookie ou le body
+			const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
+
+			// console.log('[RefreshToken] Received refresh token:', refreshToken);
+
+			if (!refreshToken) {
+				return res.status(401).json({ message: 'Refresh token manquant', success: false });
+			}
 			// Vérifie le refresh token
 			const decoded = (jwt as any).verify(refreshToken, process.env.REFRESH_TOKEN_SECRET || 'supersecrety');
 			// Vérifie qu'il correspond à celui stocké en base
