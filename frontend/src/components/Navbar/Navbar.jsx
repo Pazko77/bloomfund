@@ -8,21 +8,21 @@ import { useAuth } from '../../hook/useAuth';
 function Navbar() {
 	const location = useLocation();
 	const userProfil = useAuth();
+	// const navigate = useNavigate();
 
 	if (location.pathname.includes('/payment')) return null;
-	console.log('User Profil dans Navbar : ', userProfil);
 	const formRoutes = ['/form', '/formCagnotte', '/inscription', '/connexion', '/profil', '/legal', '/payment'];
 	const isFormPage = formRoutes.some(route => location.pathname.startsWith(route));
 
 	const navLinks = isFormPage
 		? [{ href: '/', icon: arrow, alt: 'Retour' }]
 		: [
-			{ href: '/rechercher', text: 'Rechercher', icon: searchIcon },
-			{ href: '/about', text: 'À propos' },
-			{ href: '/', icon: logoNoText, alt: 'LogoBloomFund' },
-			{ href: '/formCagnotte', text: 'Démarrer une cagnotte' },
-			userProfil.isLogged ? { href: '/profil', text: 'Mon profil' } : { href: '/connexion', text: 'Se connecter' },
-		];
+				{ href: '/rechercher', text: 'Rechercher', icon: searchIcon },
+				{ href: '/about', text: 'À propos' },
+				{ href: '/', icon: logoNoText, alt: 'LogoBloomFund' },
+				{ href: '/formCagnotte', text: 'Démarrer une cagnotte' },
+				userProfil.isLogged ? { href: '/profil', text: 'Mon profil' } : { href: '/connexion', text: 'Se connecter' },
+			];
 
 	return (
 		<div className={`navbar ${isFormPage ? 'navbar--logo-only' : ''}`}>

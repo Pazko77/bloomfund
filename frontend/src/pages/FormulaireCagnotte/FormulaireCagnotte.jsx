@@ -25,7 +25,6 @@ export default function FormulaireCagnotte() {
 				setUser(response.data.Utilisateur);
 			} catch (error) {
 				console.error('Erreur lors de la récupération des données utilisateur :', error);
-				// window.location.href = '/connexion';
 			}
 		};
 

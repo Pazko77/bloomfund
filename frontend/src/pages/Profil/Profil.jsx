@@ -146,6 +146,7 @@ const Profil = () => {
 		} catch (error) {
 			console.error(error);
 		}
+		userProfil.refreshUser();
 		navigate('/');
 	};
 
