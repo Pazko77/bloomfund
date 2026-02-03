@@ -124,9 +124,9 @@ export default function Connexion() {
 		setIsSubmitting(true);
 
 		try {
+			// eslint-disable-next-line no-unused-vars
 			const data = await login(formData.email, formData.password);
 
-			localStorage.setItem('token', data.token);
 
 			setShowSuccess(true);
 			// Simulate redirect
@@ -167,6 +167,7 @@ export default function Connexion() {
 		document.addEventListener('visibilitychange', handleVisibilityChange);
 		return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
 	}, [formData.email]);
+
 
 	return (
 		<div className="login">

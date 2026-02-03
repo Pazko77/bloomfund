@@ -5,7 +5,9 @@ import { UtilisateurService } from './../services/Utilisateur.service';
 import bcrypt from 'bcrypt';
 import { Utilisateur, UtilisateurInput } from './../models/Utilisateur.model';
 import jwt from 'jsonwebtoken';
-
+import { OAuth2Client } from 'google-auth-library';
+const client = new OAuth2Client(process.env.GOOGLE_OAUTH_CLIENT_ID);
+import axios from 'axios';
 
 export const UtilisateurController = {
 	// REGISTER
@@ -68,13 +70,11 @@ export const UtilisateurController = {
 			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
 		});
 
-		return res.json({token : token,  success: true });
+		return res.json({ token: token, success: true });
 	},
 
 	// REFRESH TOKEN
 	async refreshToken(req: Request, res: Response) {
-		
-
 		try {
 			// Récupère le refresh token depuis le cookie ou le body
 			const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
@@ -123,8 +123,8 @@ export const UtilisateurController = {
 
 	// LOGOUT
 	async logout(req: Request, res: Response) {
-		res.clearCookie('token', );
-		res.clearCookie('refreshToken', );
+		res.clearCookie('token');
+		res.clearCookie('refreshToken');
 		return res.json({ success: true });
 	},
 
@@ -222,5 +222,68 @@ export const UtilisateurController = {
 			message: 'Mot de passe modifié avec succès',
 			success: true,
 		});
+	},
+
+	//Google Social Login
+	async googleLogin(req: Request, res: Response) {
+		try {
+			const { token } = req.body; 
+
+			const googleRes = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+				headers: { Authorization: `Bearer ${token}` },
+			});
+
+			const payload = googleRes.data;
+
+			if (!payload || !payload.email) {
+				return res.status(400).json({ message: 'Token Google invalide ou expiré', success: false });
+			}
+
+			let user = await UtilisateurService.findByEmail(payload.email);
+
+			if (!user) {
+				const newUser: UtilisateurInput = {
+					nom: payload.family_name || '',
+					prenom: payload.given_name || '',
+					email: payload.email,
+					mot_de_passe: await hashP(Math.random().toString(36).slice(-10)),
+					departement: '',
+					role: 'citoyen' ,
+				};
+				user = await UtilisateurService.create(newUser);
+			}
+
+			const accessToken = generateAccessToken(user as Utilisateur);
+			const refreshToken = generateRefreshToken(user as Utilisateur);
+
+			await UtilisateurService.update((user as Utilisateur).id, { refresh_token: refreshToken });
+
+			const isProd = process.env.NODE_ENV === 'production';
+
+			res.cookie('token', accessToken, {
+				httpOnly: true,
+				secure: isProd,
+				sameSite: 'lax',
+				path: '/',
+				maxAge: 30 * 60 * 1000,
+			});
+
+			res.cookie('refreshToken', refreshToken, {
+				httpOnly: true,
+				secure: isProd,
+				sameSite: 'lax',
+				path: '/',
+				maxAge: 7 * 24 * 60 * 60 * 1000,
+			});
+
+			console.log('Login Google réussi pour :', payload.email);
+			return res.json({ token: accessToken, success: true });
+		} catch (error: any) {
+			console.error('Erreur Google Login :', error.response?.data || error.message);
+			return res.status(500).json({
+				message: 'Erreur lors de la connexion avec Google',
+				success: false,
+			});
+		}
 	},
 };
