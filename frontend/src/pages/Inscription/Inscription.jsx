@@ -6,7 +6,7 @@ import { FormUtils } from '../../helpers/formUtils/form-utils';
 
 import SuccessMessage from '../../components/login/SuccessMessage';
 import SignupForm from '../../components/Signup/SignupForm';
-import SocialLogin from '../../components/login/SocialLogin';
+import SocialLogin from '../../components/shared/SocialLogin';
 import LoginLink from '../../components/Signup/LoginLink';
 
 export default function Inscription() {

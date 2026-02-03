@@ -4,7 +4,7 @@ import api from '../../helpers/request/api';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hook/useAuth';
 
-export default function SocialLogin({ showSuccess, handleSocialLogin, containerClass = 'social-login' }) {
+export default function SocialLogin({ showSuccess, handleSocialLogin, containerClass = 'social-login' , redirction = true }) {
 	const navigate = useNavigate();
 	const userProfil = useAuth();
 
@@ -17,7 +17,9 @@ export default function SocialLogin({ showSuccess, handleSocialLogin, containerC
 
 				if (res.data.success) {
 					userProfil.refreshUser();
-					navigate('/rechercher');
+					if (redirction) {
+						navigate('/rechercher');
+					}
 				}
 			} catch (error) {
 				console.error('Erreur backend Google:', error);

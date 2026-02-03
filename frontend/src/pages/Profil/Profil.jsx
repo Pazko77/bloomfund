@@ -28,7 +28,6 @@ const Profil = () => {
 	});
 
 	useEffect(() => {
-		userProfil.refreshUser();
 		if (userProfil.isLogged === false) {
 			navigate('/connexion');
 		}

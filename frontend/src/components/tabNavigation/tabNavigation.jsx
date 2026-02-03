@@ -7,12 +7,12 @@ import { Contrepartie } from './contreparties/Contrepartie.jsx';
 import { Contribution } from './contributions/Contribution.jsx';
 import { Commentaire } from './commentaires/Commentaire.jsx';
 import { FormUtils } from '../../helpers/formUtils/form-utils';
-
+import { useAuth } from '../../hook/useAuth.js';
 
 export function TabNavigation({ projet, contributions }) {
 	// console.log('TabNavigation props:', { projet, contributions });
 	const [commentaires, setCommentaires] = useState([]);
-
+	const userProfil = useAuth();
 	// ----------------------- --------------------------------------------------
 	// Gestion des Collect
 	// --------------------------------------------------------------------------
@@ -72,7 +72,6 @@ export function TabNavigation({ projet, contributions }) {
 	const formRef = useRef(null);
 	const emailRef = useRef(null);
 	const passwordRef = useRef(null);
-
 
 	// Handle input changes
 	const handleChange = e => {
@@ -204,44 +203,18 @@ export function TabNavigation({ projet, contributions }) {
 		return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
 	}, [formData.email]);
 
-	useEffect(() => {
-		const token = localStorage.getItem('token');
-		setIsLoggedIn(!!token);
-	}, []);
-
-	const [isLoggedIn, setIsLoggedIn] = useState(false); // récupérer vrai état depuis ton auth
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [commentText, setCommentText] = useState('');
 
-	function isTokenExpired(token) {
-		try {
-			const payload = JSON.parse(atob(token.split('.')[1]));
-			const now = Date.now() / 1000; // en secondes
-			return payload.exp < now;
-		} catch (e) {
-			console.error('Erreur lors de la vérification du token :', e);
-			return true;
-		}
-	}
-
 	useEffect(() => {
-		const token = localStorage.getItem('token');
-
-		if (!token || isTokenExpired(token)) {
-			localStorage.removeItem('token');
-			setIsLoggedIn(false);
-		} else {
-			setIsLoggedIn(true);
-		}
-	}, []);
+		setIsLoggedIn(userProfil.isLogged);
+	}, [userProfil.isLogged]);
 
 	const handleCommentSubmit = async e => {
 		e.preventDefault();
 		if (!commentText.trim()) return;
 
-		const token = localStorage.getItem('token');
-
-		if (!token || isTokenExpired(token)) {
-			localStorage.removeItem('token');
+		if (!userProfil.isLogged) {
 			setIsLoggedIn(false);
 			showNotification('Session expirée, veuillez vous reconnecter', 'error');
 			return;
@@ -249,15 +222,23 @@ export function TabNavigation({ projet, contributions }) {
 
 		try {
 			const currentUserResponse = await api.get(`/utilisateurs/profile`);
-
 			const currentUser = currentUserResponse.data;
-			// console.log('Current User:', currentUser.Utilisateur.id);
-
 			await api.post(`/commentaires`, {
 				projet_id: projet.projet_id,
 				contenu: commentText,
 				utilisateur_id: currentUser.Utilisateur.id,
 			});
+
+			// Ajout direct du commentaire dans le state
+			setCommentaires(prev => [
+				{
+					name: `${(currentUser.Utilisateur.prenom || '').toLowerCase()}-${(currentUser.Utilisateur.nom || '').toLowerCase()}`,
+					comment: commentText,
+					date: timeAgo(new Date()),
+					avatar: `${(currentUser.Utilisateur.prenom && currentUser.Utilisateur.prenom[0] ? currentUser.Utilisateur.prenom[0].toUpperCase() : '')}${(currentUser.Utilisateur.nom && currentUser.Utilisateur.nom[0] ? currentUser.Utilisateur.nom[0].toUpperCase() : '')}`,
+				},
+				...prev,
+			]);
 
 			setCommentText('');
 			showNotification('Commentaire ajouté !', 'success');
@@ -273,10 +254,10 @@ export function TabNavigation({ projet, contributions }) {
 				const response = await api.get(`/commentaires/projet/${projet.projet_id}`);
 
 				let commentaires = response.data.commentaires.map(c => ({
-					name: `${c.prenom.toLowerCase()}-${c.nom.toLowerCase()}`,
+					name: `${(c.prenom || '').toLowerCase()}-${(c.nom || '').toLowerCase()}`,
 					comment: c.contenu,
 					date: timeAgo(c.date_commentaire),
-					avatar: `${c.prenom[0]}${c.nom[0]}`.toUpperCase(),
+					avatar: `${(c.prenom && c.prenom[0] ? c.prenom[0].toUpperCase() : '')}${(c.nom && c.nom[0] ? c.nom[0].toUpperCase() : '')}`,
 				}));
 				setCommentaires(commentaires);
 				// console.log('Commentaires fetched:', response.data);s
@@ -324,29 +305,33 @@ export function TabNavigation({ projet, contributions }) {
 				);
 			case 'commentaires':
 				return (
-					<Commentaire
-						commentaires={commentaires}
-						isLoggedIn={isLoggedIn}
-						handleCommentSubmit={handleCommentSubmit}
-						commentText={commentText}
-						setCommentText={setCommentText}
-						notification={notification}
-						formData={formData}
-						handleChange={handleChange}
-						handleSubmit={handleSubmit}
-						errors={errors}
-						focusedField={focusedField}
-						setFocusedField={setFocusedField}
-						handleBlur={handleBlur}
-						showPassword={showPassword}
-						setShowPassword={setShowPassword}
-						isSubmitting={isSubmitting}
-						showSuccess={showSuccess}
-						handleForgotPassword={handleForgotPassword}
-						formRef={formRef}
-						emailRef={emailRef}
-						passwordRef={passwordRef}
-					/>
+					<>
+						
+
+						<Commentaire
+							commentaires={commentaires}
+							isLoggedIn={isLoggedIn}
+							handleCommentSubmit={handleCommentSubmit}
+							commentText={commentText}
+							setCommentText={setCommentText}
+							notification={notification}
+							formData={formData}
+							handleChange={handleChange}
+							handleSubmit={handleSubmit}
+							errors={errors}
+							focusedField={focusedField}
+							setFocusedField={setFocusedField}
+							handleBlur={handleBlur}
+							showPassword={showPassword}
+							setShowPassword={setShowPassword}
+							isSubmitting={isSubmitting}
+							showSuccess={showSuccess}
+							handleForgotPassword={handleForgotPassword}
+							formRef={formRef}
+							emailRef={emailRef}
+							passwordRef={passwordRef}
+						/>
+					</>
 				);
 		}
 	};
@@ -370,7 +355,7 @@ export function TabNavigation({ projet, contributions }) {
 
 			{/* Content Area */}
 			<div className="w-full flex flex-row py-10  px-80 gap-15">
-				<div className=" w-3/4 flex  ">{renderContent()}</div>
+				<div className=" w-3/4 flex flex-col  ">{renderContent()}</div>
 				{/* <div className="w-1/4 flex flex-col items-center justify-start">
 					<div className="w-80 h-40 border-2 border-[#b8afa4] flex items-center justify-center flex-col gap-4 ">
 						<p className="text-center">Soutenez la collecte et recevez des contreparties en échange.</p>

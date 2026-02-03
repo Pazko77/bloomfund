@@ -3,7 +3,7 @@ import './Connexion.scss';
 import Logo from '/BloomfundLogo.svg';
 import api from "../../helpers/request/api";
 import LoginForm from '../../components/login/LoginForm';
-import SocialLogin from '../../components/login/SocialLogin';
+import SocialLogin from '../../components/shared/SocialLogin';
 import SignupLink from '../../components/login/SignupLink';
 import SuccessMessage from '../../components/login/SuccessMessage';
 import { FormUtils } from '../../helpers/formUtils/form-utils';
