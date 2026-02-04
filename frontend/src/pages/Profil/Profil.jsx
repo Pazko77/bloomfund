@@ -1,7 +1,7 @@
 import './Profil.scss';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getFirstImage } from './../../helpers/image/parseImg';
+import { getFirstImage } from '../../helpers/image/parseImg';
 import { useAuth } from '../../hook/useAuth';
 import api from '../../helpers/request/api';
 

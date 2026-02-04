@@ -59,9 +59,9 @@ export interface UtilisateurOutput {
  * @typedef {UtilisateurPayload}
  */
 export interface UtilisateurPayload {
-  id: number;
-  email: string;
-  role: "citoyen" | "porteur_projet" | "admin";
+	id: number;
+	email: string;
+	role: RoleUtilisateur;
 }
 
 /**

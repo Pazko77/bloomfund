@@ -10,7 +10,7 @@ function Navbar() {
 	const userProfil = useAuth();
 	// const navigate = useNavigate();
 
-	if (location.pathname.includes('/payment')) return null;
+	if (location.pathname.includes('/payment') || location.pathname.includes('/admin')) return null;
 	const formRoutes = ['/form', '/formCagnotte', '/inscription', '/connexion', '/profil', '/legal', '/payment'];
 	const isFormPage = formRoutes.some(route => location.pathname.startsWith(route));
 

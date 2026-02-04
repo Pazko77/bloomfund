@@ -286,4 +286,14 @@ export const UtilisateurController = {
 			});
 		}
 	},
+	// GET ALL USERS
+	async getAll(req: Request, res: Response) {
+		try {
+			const utilisateurs = await UtilisateurService.getAll();
+			return res.json(utilisateurs);
+		} catch (error) {
+			console.error('Erreur getAll utilisateurs :', error);
+			return res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs', success: false });
+		}
+	},
 };

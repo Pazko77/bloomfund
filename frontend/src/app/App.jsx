@@ -15,6 +15,7 @@ const CagnottePageTemplate = lazy(() => import('../pages/CagnottePageTemplate/Ca
 const Profil = lazy(() => import('../pages/Profil/Profil.jsx'));
 const LegalPages = lazy(() => import('../pages/LegalPages/LegalPages.jsx'));
 const Payment = lazy(() => import('../pages/Payment/payment.jsx'));
+const DashboardAdmin = lazy(() => import('../pages/Admin/DashboardAdmin.jsx'));
 
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
 					<Route path="/profil" element={<Profil />} />
 					<Route path="/payment/:id" element={<Payment />} />
 					<Route path="/legal" element={<LegalPages />} />
+					<Route path="/admin" element={<DashboardAdmin />} />
 				</Route>
 			</Routes>
 		</Suspense>

@@ -16,6 +16,7 @@
     "@tailwindcss/postcss": "^4.1.18",
     "axios": "^1.13.2",
     "dotenv": "^17.2.3",
+    "hashids": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.10.1"

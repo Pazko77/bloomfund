@@ -28,7 +28,7 @@ CREATE TABLE projets (
     objectif_financier DECIMAL(10,2) NOT NULL,
     montant_collecte DECIMAL(10,2) DEFAULT 0,
     localisation VARCHAR(150),
-    statut VARCHAR(30) DEFAULT 'publie',
+    statut VARCHAR(30) DEFAULT 'brouillon',
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     date_fin DATE,
     porteur_id INT NOT NULL,

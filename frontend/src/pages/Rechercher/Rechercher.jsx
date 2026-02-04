@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 // import axios from 'axios';
 import './Rechercher.scss';
 import api from '../../helpers/request/api.js';
-import SearchBar from '../../components/search/SearchBar';
-import Filters from '../../components/search/Filters';
-import ResultsGrid from '../../components/search/ResultsGrid';
+import SearchBar from '../../components/search/SearchBar.jsx';
+import Filters from '../../components/search/Filters.jsx';
+import ResultsGrid from '../../components/search/ResultsGrid.jsx';
 
 const Rechercher = ({ onSelect }) => {
 	// États pour la recherche principale

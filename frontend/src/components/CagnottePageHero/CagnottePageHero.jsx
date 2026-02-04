@@ -4,39 +4,40 @@ import { TabNavigation } from '../tabNavigation/tabNavigation';
 import { useParams } from 'react-router-dom';
 import { parseImages } from '../../helpers/image/parseImg.js';
 import api from '../../helpers/request/api.js';
+import { decodeId } from '../../helpers/hashId.js';
 // Parse les images depuis le format JSON ou autres formats
 
 function CagnottePageHero() {
-	const { id } = useParams(); //  ID du projet
+	const { id } = useParams(); // id hashé dans l'URL
+	const realId = decodeId(id);
 	const [projet, setProjet] = useState(null);
 
 	useEffect(() => {
 		const fetchProjet = async () => {
 			try {
-				const response = await api.get(`/projets/${id}`); // GET pour récupérer les projets
+				const response = await api.get(`/projets/${realId}`); // GET pour récupérer les projets
 				setProjet(response.data);
 			} catch (error) {
 				console.error('Erreur lors de la récupération du projet :', error);
 			}
 		};
-		fetchProjet();
-	}, [id]);
+		if (realId) fetchProjet();
+	}, [realId]);
 
 	const [Contributions, setContributions] = useState([]);
 
 	useEffect(() => {
 		// http://localhost:3000/api/contributions/projet/1
-
 		const fetchContribution = async () => {
 			try {
-				const response = await api.get(`/contributions/projet/${id}`); // GET pour récupérer les contributions
+				const response = await api.get(`/contributions/projet/${realId}`); // GET pour récupérer les contributions
 				setContributions(response.data);
 			} catch (error) {
 				console.error('Erreur lors de la récupération des contributions :', error);
 			}
 		};
-		fetchContribution();
-	}, [id]);
+		if (realId) fetchContribution();
+	}, [realId]);
 
 	if (!projet) {
 		return (
@@ -129,7 +130,7 @@ function CagnottePageHero() {
 							</div>
 
 							<a
-								href={`/payment/${projet ? projet.projet_id : ''}`}
+								href={`/payment/${id}`}
 								className="w-full bg-green-600 text-white py-4 px-4 rounded-2xl hover:bg-green-700 transition-all transform active:scale-95 shadow-lg shadow-green-100">
 								<p className="font-bold text-lg">Contribuer</p>
 								<p className="text-xs opacity-90 uppercase tracking-wide">À partir de 1€</p>

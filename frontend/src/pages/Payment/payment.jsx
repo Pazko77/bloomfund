@@ -2,7 +2,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { parseImages } from './../../helpers/image/parseImg';
+import { parseImages } from '../../helpers/image/parseImg';
 import api from '../../helpers/request/api';
 import { useAuth } from '../../hook/useAuth';
 
