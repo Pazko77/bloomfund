@@ -5,17 +5,16 @@ import { useParams } from 'react-router-dom';
 import { parseImages } from '../../helpers/image/parseImg.js';
 import api from '../../helpers/request/api.js';
 import { decodeId } from '../../helpers/hashId.js';
-// Parse les images depuis le format JSON ou autres formats
 
 function CagnottePageHero() {
-	const { id } = useParams(); // id hashé dans l'URL
+	const { id } = useParams(); 
 	const realId = decodeId(id);
 	const [projet, setProjet] = useState(null);
 
 	useEffect(() => {
 		const fetchProjet = async () => {
 			try {
-				const response = await api.get(`/projets/${realId}`); // GET pour récupérer les projets
+				const response = await api.get(`/projets/${realId}`); 
 				setProjet(response.data);
 			} catch (error) {
 				console.error('Erreur lors de la récupération du projet :', error);
@@ -53,15 +52,7 @@ function CagnottePageHero() {
 	const aujourdHui = new Date();
 	const diffMs = dateFin - aujourdHui;
 	const diffJours = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-
-	// console.log(id);
-	// console.log(projet);
-	// console.log(Contributions);
-
-	// const [Commentaires, setCommentaires] = useState([]);
-
 	const images = parseImages(projet);
-	// console.log('Parsed images:', images);
 
 	return (
 		<>

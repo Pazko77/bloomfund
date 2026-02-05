@@ -10,5 +10,7 @@ Content-Type: application/json
 }
 
 ### VOIR LES CONTRIBUTIONS D’UN PROJET
-GET http://localhost:3000/api/contributions/projet/1
+GET http://localhost:3000/api/contributions/projet/308
 
+### VOIR LES CONTRIBUTIONS D’UN PROJET
+GET http://localhost:3000/api/contributions/all

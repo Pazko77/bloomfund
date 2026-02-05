@@ -278,6 +278,7 @@ const Profil = () => {
 										<p className="text-gray-500">
 											{user.role === 'porteur_projet' ? 'Porteur de projet' : user.role === 'admin' ? 'Administrateur' : 'Citoyen'}
 										</p>
+										<a href="/admin" className="text-[#4c9a4e] hover:text-[#3e7a3b] font-medium">Go to Admin Dashboard</a>
 									</div>
 								</div>
 

@@ -5,8 +5,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { parseImages } from '../../helpers/image/parseImg';
 import api from '../../helpers/request/api';
 import { useAuth } from '../../hook/useAuth';
+import { decodeId } from '../../helpers/hashId.js';
 
-const stripePromise = loadStripe('pk_test_51Sl6P9GXKqhH0ez38lPOTJLcGpyeitYY1K3W1jIMXTms9bWFoPQrDLVbs2SBDMhHRtlNWMbC3knZZFEy6vlLd2Gx00UXWjYqYs');
+const stripePromise = loadStripe(
+	import.meta.env.VITE_STRIPE_PUBLIC_KEY ||
+		'pk_test_51Sl6P9GXKqhH0ez38lPOTJLcGpyeitYY1K3W1jIMXTms9bWFoPQrDLVbs2SBDMhHRtlNWMbC3knZZFEy6vlLd2Gx00UXWjYqYs'
+);
 
 function CheckoutForm() {
 	const [projet, setProjet] = useState(null);
@@ -15,13 +19,14 @@ function CheckoutForm() {
 	const [message, setMessage] = useState('');
 	const [loading, setLoading] = useState(false);
 
-	const { id } = useParams();
+	let { id } = useParams();
+	const originId = id;
+	id = decodeId(id);
+
 	const navigate = useNavigate();
 	const stripe = useStripe();
 	const elements = useElements();
 	const userProfil = useAuth();
-
-
 
 	useEffect(() => {
 		if (userProfil.isLogged === false) {
@@ -83,7 +88,7 @@ function CheckoutForm() {
 			else if (result.paymentIntent.status === 'succeeded') {
 				setMessage(`✅ Paiement de ${amount}€ réussi !`);
 				setTimeout(() => {
-					navigate(`/cagnotte/${id}`);
+					navigate(`/cagnotte/${originId}`);
 				}, 2000);
 			}
 		} catch (err) {
@@ -213,17 +218,6 @@ function CheckoutForm() {
 
 						<p className="text-xs text-gray-500 text-center mt-2">Paiement sécurisé par Stripe</p>
 					</form>
-					{/* <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-white rounded shadow">
-						<label>Montant :</label>
-						<input type="number" min="1" value={amount} onChange={e => setAmount(Number(e.target.value))} />
-						<div className="p-3 border rounded">
-							<CardElement />
-						</div>
-						<button type="submit" disabled={!stripe || loading} className="bg-green-600 text-white py-2 px-4 rounded">
-							{loading ? 'Traitement...' : `Payer ${amount}€`}
-						</button>
-						{message && <p>{message}</p>}
-					</form> */}
 				</div>
 			</div>
 		</>
