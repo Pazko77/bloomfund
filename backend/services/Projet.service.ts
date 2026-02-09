@@ -29,7 +29,7 @@ export const ProjetService = {
 	},
 
 	// READ ALL
-	async findAll(): Promise<Projet[]> {
+	async findAll(statut?: string): Promise<Projet[]> {
 		const [rows] = await pool.query(
 			`SELECT 
       Projets.id AS projet_id,
@@ -50,6 +50,8 @@ export const ProjetService = {
      FROM Projets
      INNER JOIN Utilisateurs ON Projets.porteur_id = Utilisateurs.id
      LEFT JOIN Categories ON Projets.categorie_id = Categories.id`
+	 + (statut ? ' WHERE Projets.statut = ?' : ''),
+			statut ? [statut] : []
 		);
 
 		return rows as Projet[];

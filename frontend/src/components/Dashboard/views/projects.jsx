@@ -1,19 +1,118 @@
-export function projectsViews() {
-    return (
-			<>
-				<div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
-					<div className="text-gray-400 mb-4">
-						<svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth="1.5"
-								d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-						</svg>
-					</div>
-					<h3 className="text-xl font-bold text-gray-800">Gestion des Projets</h3>
-					<p className="text-gray-500 mt-2">Cette section affichera la liste complète des projets avec options de modération.</p>
-				</div>
-			</>
+import { useState, useEffect } from 'react';
+
+export function ProjectsViews({ projects }) {
+	const [currentPage, setCurrentPage] = useState(1);
+	const [search, setSearch] = useState('');
+	const projectsPerPage = 10;
+
+	const filteredProjects = projects.filter(project => {
+		const searchLower = search.toLowerCase();
+		return (
+			project.titre?.toLowerCase().includes(searchLower) ||
+			project.porteur?.toLowerCase().includes(searchLower) ||
+			project.statut?.toLowerCase().includes(searchLower)
 		);
+	});
+
+	const totalPages = Math.ceil(filteredProjects.length / projectsPerPage) || 1;
+
+	const startIndex = (currentPage - 1) * projectsPerPage;
+	const endIndex = startIndex + projectsPerPage;
+	const projectsToShow = filteredProjects.slice(startIndex, endIndex);
+
+	useEffect(() => {
+		if (currentPage > totalPages) {
+			// eslint-disable-next-line react-hooks/set-state-in-effect
+			setCurrentPage(1);
+		}
+	}, [currentPage, totalPages]);
+
+	return (
+		<div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+			<div className="flex justify-between items-center px-6 pt-6 pb-2">
+				<input
+					type="text"
+					placeholder="Rechercher un projet..."
+					value={search}
+					onChange={e => {
+						setSearch(e.target.value);
+						setCurrentPage(1);
+					}}
+					className="w-64 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-200 text-sm"
+				/>
+			</div>
+			<table className="w-full text-left">
+				<thead className="bg-gray-50">
+					<tr className="text-gray-500 text-sm">
+						<th className="px-6 py-4 font-medium">Titre</th>
+						<th className="px-6 py-4 font-medium">Créateur</th>
+						<th className="px-6 py-4 font-medium">Statut</th>
+						<th className="px-6 py-4 font-medium">Actions</th>
+					</tr>
+				</thead>
+				<tbody className="divide-y divide-gray-100">
+					{projectsToShow.length > 0 ? (
+						projectsToShow.map(project => (
+							<tr key={project.id} className="hover:bg-gray-50">
+								<td className="px-6 py-4 font-medium text-gray-900">{project.titre}</td>
+								<td className="px-6 py-4 text-gray-600">{project.porteur}</td>
+								<td className="px-6 py-4">
+									<span
+										className={`px-2 py-1 rounded text-xs font-medium ${project.statut === 'publie' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+										{project.statut}
+									</span>
+								</td>
+								<td className="px-3 py-4 flex gap-2">
+									{project.statut === 'publie' ? (
+										<a href={`/cagnotte/${project.id}`}>
+											<button className="px-3 py-1 rounded bg-blue-100 text-blue-700 text-xs font-medium hover:bg-blue-200 transition">Voir</button>
+										</a>
+									) : (
+										<>
+											<button className="px-3 py-1 rounded bg-blue-100 text-blue-700 text-xs font-medium hover:bg-blue-200 transition">
+												Valider
+											</button> 
+											|
+											<button className="px-3 py-1 rounded bg-red-100 text-red-700 text-xs font-medium hover:bg-red-200 transition">Supprimer</button>
+										</>
+									)}
+								</td>
+							</tr>
+						))
+					) : (
+						<tr>
+							<td colSpan="5" className="text-center py-8 text-gray-400">
+								Aucun projet trouvé.
+							</td>
+						</tr>
+					)}
+				</tbody>
+			</table>
+			<div className="flex justify-between items-center mt-6 px-6 py-4">
+				<div>
+					<button
+						disabled={currentPage === 1}
+						onClick={() => setCurrentPage(currentPage - 1)}
+						className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors duration-150
+						${currentPage === 1 ? 'bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:text-green-700'}`}>
+						Précédent
+					</button>
+				</div>
+				<div>
+					<span className="mx-2 text-gray-600 text-sm select-none">
+						Page <span className="font-semibold text-green-700">{currentPage}</span> sur <span className="font-semibold">{totalPages}</span>
+					</span>
+				</div>
+				<div>
+					<button
+						disabled={currentPage === totalPages}
+						onClick={() => setCurrentPage(currentPage + 1)}
+						className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors duration-150
+						${currentPage === totalPages ? 'bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:text-green-700'}`}>
+						Suivant
+					</button>
+				</div>
+			</div>
+		</div>
+	);
 }

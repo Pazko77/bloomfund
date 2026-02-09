@@ -62,7 +62,8 @@ const Rechercher = ({ onSelect }) => {
 	useEffect(() => {
 		const fetchCagnottes = async () => {
 			try {
-				const response = await api.get(`/projets`);
+				const response = await api.get(`/projets/?statut=publie`);
+				console.log('Projets récupérés :', response.data);
 				const adaptedCagnottes = response.data.map(item => {
 					const dateObj = new Date(item.date_creation);
 					const formattedDate = dateObj.toLocaleDateString('fr-FR', {

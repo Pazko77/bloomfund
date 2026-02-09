@@ -5,18 +5,17 @@ import { SidebarItem } from '../../components/Dashboard/SidebarItem.jsx';
 import { Icons } from '../../components/Dashboard/Icons/Icons.jsx';
 import { Loader } from '../../components/shared/Loader.jsx';
 import { Overview } from '../../components/Dashboard/views/overview.jsx';
-import { usersViews as UsersViews } from '../../components/Dashboard/views/users.jsx';
-import { projectsViews as ProjectsViews } from '../../components/Dashboard/views/projects.jsx';
+import { UsersViews } from '../../components/Dashboard/views/users.jsx';
+import { ProjectsViews } from '../../components/Dashboard/views/projects.jsx';
 import api from '../../helpers/request/api';
 import { useAuth } from '../../hook/useAuth';
-
+import { encodeId } from '../../helpers/hashId';
 
 export default function DashboardAdmin() {
 	const userProfil = useAuth();
 	const [currentView, setCurrentView] = useState('overview');
 	const [isLoading, setIsLoading] = useState(false);
 
-	// États pour les données (Mockées pour l'instant)
 	const [stats, setStats] = useState({
 		totalUsers: 0,
 		totalProjects: 0,
@@ -27,51 +26,46 @@ export default function DashboardAdmin() {
 	const [projects, setProjects] = useState([]);
 
 	useEffect(() => {
-		// Simulation de chargement de données API
 		const fetchData = async () => {
 			setIsLoading(true);
 			try {
-				
-				  const usersRes = await api.get('/utilisateurs');
-				  const projectsRes = await api.get('/projets');
-				  const  contributionsRes = await api.get('/contributions/all');
+				const usersRes = (await api.get('/utilisateurs')).data;
+				const projectsRes = (await api.get('/projets')).data;
+				const contributionsRes = (await api.get('/contributions/all')).data;
 
-				// Données simulées
 				setTimeout(() => {
 					setStats({
-						totalUsers: usersRes.data.length,
-						totalProjects: projectsRes.data.length,
-						totalFunds: contributionsRes.data.total.split('.')[0],
-						activeCampaigns: projectsRes.data.filter(p => p.statut === 'publie').length,
+						totalUsers: usersRes.length,
+						totalProjects: projectsRes.length,
+						totalFunds: contributionsRes.total.split('.')[0],
+						activeCampaigns: projectsRes.filter(p => p.statut === 'publie').length,
 					});
 
 					setUsers([
-						...usersRes.data.map(u => ({
+						...usersRes.map(u => ({
 							id: u.id,
 							nom: u.nom,
 							prenom: u.prenom,
 							email: u.email,
 							role: u.role,
-							status: 'actif', // À ajuster selon les données réelles
+							status: 'actif',
 						})),
 					]);
 
 					setProjects([
-						...projectsRes.data.slice(-5).map(p => ({
-
-							id: p.projet_id,
+						...projectsRes.map(p => ({
+							id: encodeId(p.projet_id),
 							role: 'porteur de projet',
 							titre: p.titre,
 							porteur: p.porteur_prenom + ' ' + p.porteur_nom,
 							objectif: p.objectif_financier,
 							recolte: p.montant_collecte,
-							status: p.statut,
+							statut: p.statut,
+							date_creation: p.date_creation,
 						})),
-					
 					]);
 					setIsLoading(false);
 				}, 800);
-
 			} catch (error) {
 				console.error('Erreur dashboard:', error);
 				setIsLoading(false);
@@ -81,17 +75,17 @@ export default function DashboardAdmin() {
 		fetchData();
 	}, [userProfil]);
 
-
-
 	return (
 		<div className="dashboard-admin min-h-screen bg-gray-50 flex">
 			{/* Sidebar */}
 			<aside className="w-64 bg-white border-r border-gray-200 fixed h-full z-10 hidden md:block">
 				<div className="p-6 border-b border-gray-100">
-					<h1 className="text-2xl font-bold text-green-700 text-center flex items-center justify-center flex-col gap-1">
-						<img src={logoNoText} alt="BloomFund Logo" />
-						<span className="text-xs text-gray-400 ml-1">ADMIN</span>
-					</h1>
+					<a href="/">
+						<h1 className="text-2xl font-bold text-green-700 text-center flex items-center justify-center flex-col gap-1">
+							<img src={logoNoText} alt="BloomFund Logo" />
+							<span className="text-xs text-gray-400 ml-1">ADMIN</span>
+						</h1>
+					</a>
 				</div>
 				<nav className="mt-6">
 					<SidebarItem id="overview" label="Vue d'ensemble" icon={Icons.Home} currentView={currentView} setCurrentView={setCurrentView} />
@@ -111,12 +105,14 @@ export default function DashboardAdmin() {
 					<div className="flex items-center space-x-4">
 						<div className="text-right hidden sm:block">
 							<p className="text-sm font-semibold text-gray-700">Administrateur</p>
-							<p className="text-xs text-gray-500">{userProfil.userCtx.prenom + '' + userProfil.userCtx.nom}@bloomfund.com</p>
+							<p className="text-xs text-gray-500">{userProfil.nom ? userProfil.userCtx.nom : '' + userProfil.prenom ? userProfil.prenom : ''}</p>
 						</div>
-						<div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold">
-							{userProfil.userCtx.prenom + '' + userProfil.userCtx.nom}
-						</div>
-					</div>
+						<a href="/profil">
+							<div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold">
+								{userProfil ? userProfil.userCtx.prenom.charAt(0) + userProfil.userCtx.nom.charAt(0) : '' + userProfil.email}
+							</div>
+						</a>
+					</div>	
 				</header>
 
 				{isLoading ? (

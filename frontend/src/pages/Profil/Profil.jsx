@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { getFirstImage } from '../../helpers/image/parseImg';
 import { useAuth } from '../../hook/useAuth';
 import api from '../../helpers/request/api';
+import { encodeId } from '../../helpers/hashId';
 
 const Profil = () => {
 	const navigate = useNavigate();
@@ -278,7 +279,9 @@ const Profil = () => {
 										<p className="text-gray-500">
 											{user.role === 'porteur_projet' ? 'Porteur de projet' : user.role === 'admin' ? 'Administrateur' : 'Citoyen'}
 										</p>
-										<a href="/admin" className="text-[#4c9a4e] hover:text-[#3e7a3b] font-medium">Go to Admin Dashboard</a>
+										<a href="/admin" className="text-[#4c9a4e] hover:text-[#3e7a3b] font-medium">
+											Go to Admin Dashboard
+										</a>
 									</div>
 								</div>
 
@@ -403,7 +406,11 @@ const Profil = () => {
 										return (
 											<div
 												key={projet.projet_id}
-												onClick={() => navigate(`/cagnotte/${projet.projet_id}`)}
+												onClick={() =>
+													projet.statut === 'brouillon'
+														? navigate(`/cagnotte/${encodeId(projet.projet_id)}/edit`)
+														: navigate(`/cagnotte/${encodeId(projet.projet_id)}`)
+												}
 												className="flex gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
 												<img src={getFirstImage(projet.image_url)} alt={projet.titre} className="w-32 h-24 object-cover rounded-lg" />
 												<div className="flex-1">
@@ -416,11 +423,11 @@ const Profil = () => {
 															className={`px-3 py-1 rounded-full text-xs font-medium ${
 																projet.statut === 'publie'
 																	? 'bg-green-100 text-green-700'
-																	: projet.statut === 'en_attente'
+																	: projet.statut === 'brouillon'
 																		? 'bg-yellow-100 text-yellow-700'
 																		: 'bg-gray-100 text-gray-700'
 															}`}>
-															{projet.statut === 'publie' ? 'publié' : projet.statut === 'en_attente' ? 'en attente' : projet.statut}
+															{projet.statut}
 														</span>
 													</div>
 													<div className="mt-2">

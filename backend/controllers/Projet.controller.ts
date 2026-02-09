@@ -17,7 +17,7 @@ export const ProjetController = {
 
   // READ ALL
   async getAll(req: Request, res: Response) {
-    const projets = await ProjetService.findAll();
+    const projets = await ProjetService.findAll(req.query.statut as string);
     return res.json(projets);
   },
 

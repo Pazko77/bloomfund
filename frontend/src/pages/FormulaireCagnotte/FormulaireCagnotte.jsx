@@ -6,6 +6,7 @@ import Logo from '/BloomfundLogo.svg';
 import api from '../../helpers/request/api';
 import { useAuth } from '../../hook/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { encodeId } from '../../helpers/hashId';
 
 export default function FormulaireCagnotte() {
 	const userProfil = useAuth();
@@ -348,7 +349,7 @@ export default function FormulaireCagnotte() {
 					date_fin: '',
 					categorie_id: '',
 				});
-				window.location.href = `/cagnotte/${data.id}`;
+				window.location.href = `/cagnotte/${encodeId(data.id)}`;
 			}, 2000);
 		} catch (error) {
 			showNotification(error.response?.data?.message || 'Échec de la création', 'error');
