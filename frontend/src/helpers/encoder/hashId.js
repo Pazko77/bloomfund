@@ -2,7 +2,7 @@
 // Simple hashids wrapper for obfuscating IDs in URLs
 import Hashids from 'hashids';
 
-const hashids = new Hashids('bloomfund-secret', 8); // salt + min length
+const hashids = new Hashids('bloomfund-secret', 150); // salt + min length
 
 export function encodeId(id) {
   return hashids.encode(id);

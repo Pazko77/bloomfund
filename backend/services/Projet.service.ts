@@ -46,7 +46,8 @@ export const ProjetService = {
       Utilisateurs.prenom AS porteur_prenom,
       Utilisateurs.departement AS porteur_departement,
       Categories.nom AS categorie_nom,
-      Categories.description AS categorie_description
+      Categories.description AS categorie_description,
+	  Categories.id AS categorie_id
      FROM Projets
      INNER JOIN Utilisateurs ON Projets.porteur_id = Utilisateurs.id
      LEFT JOIN Categories ON Projets.categorie_id = Categories.id`
@@ -71,11 +72,13 @@ export const ProjetService = {
       Projets.date_fin,
       Projets.image_url,
       Projets.localisation,
+      Projets.porteur_id AS utilisateur_id,
       Utilisateurs.nom AS porteur_nom,
       Utilisateurs.prenom AS porteur_prenom,
       Utilisateurs.departement AS porteur_departement,
       Categories.nom AS categorie_nom,
-      Categories.description AS categorie_description
+      Categories.description AS categorie_description,
+	  Categories.id AS categorie_id
      FROM Projets
      INNER JOIN Utilisateurs ON Projets.porteur_id = Utilisateurs.id
      LEFT JOIN Categories ON Projets.categorie_id = Categories.id 

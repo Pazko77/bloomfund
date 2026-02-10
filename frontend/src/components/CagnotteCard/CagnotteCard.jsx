@@ -4,7 +4,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './CagnotteCard.scss';
 import { getFirstImage } from '../../helpers/image/parseImg.js';
-import { encodeId } from '../../helpers/hashId.js';
+import { encodeId } from '../../helpers/encoder/hashId.js';
 
 const CagnotteCard = ({ id, image, titre, auteur, date, description, categorie }) => {
 	const hashId = encodeId(id);

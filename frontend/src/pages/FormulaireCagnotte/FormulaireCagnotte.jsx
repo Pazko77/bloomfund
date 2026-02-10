@@ -1,17 +1,69 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from 'react';
-
 import './FormulaireCagnotte.scss';
 import Logo from '/BloomfundLogo.svg';
 import api from '../../helpers/request/api';
 import { useAuth } from '../../hook/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { encodeId } from '../../helpers/hashId';
+import { encodeId, decodeId } from '../../helpers/encoder/hashId';
 
-export default function FormulaireCagnotte() {
+export default function FormulaireCagnotte({ edit = false }) {
+	const [formData, setFormData] = useState({
+		titre: '',
+		description: '',
+		objectif_financier: '',
+		localisation: '',
+		date_fin: '',
+		categorie_id: '',
+		image_url: '',
+	});
+
 	const userProfil = useAuth();
 	const navigate = useNavigate();
 	const [user, setUser] = useState(null);
+	const [projetId, setProjetId] = useState(null);
+
+	useEffect(() => {
+		if (edit) {
+			const id = decodeId(window.location.pathname.split('/cagnotte/')[1]?.split('/edit')[0] || '');
+			setProjetId(id);
+
+			const fetchProjetData = async () => {
+				try {
+					const response = await api.get(`/projets/${id}`);
+					const projet = response.data;
+
+					if (userProfil.userCtx.role === 'admin') {
+						// Admins can edit any project, no redirection needed
+					} else {
+						if (projet.utilisateur_id !== userProfil.userCtx.id) {
+							navigate('/profil');
+							return;
+						}
+					}
+					setFormData({
+						titre: projet.titre,
+						description: projet.description,
+						objectif_financier: projet.objectif_financier,
+						localisation: projet.localisation || '',
+						date_fin: projet.date_fin ? projet.date_fin.split('T')[0] : '',
+						categorie_id: projet.categorie_id || '',
+						image_url: '',
+					});
+
+					if (projet.image_url) {
+						const images = JSON.parse(projet.image_url);
+						setImageUrls(images);
+						setImagePreviews(images);
+					}
+				} catch (error) {
+					console.error('Erreur lors de la récupération des données du projet :', error);
+				}
+			};
+
+			fetchProjetData();
+		}
+	}, [edit, navigate, userProfil.userCtx.id, userProfil.userCtx.role]);
 
 	useEffect(() => {
 		if (userProfil.isLogged === false) {
@@ -47,16 +99,6 @@ export default function FormulaireCagnotte() {
 
 		fetchCategories();
 	}, []);
-
-	const [formData, setFormData] = useState({
-		titre: '',
-		description: '',
-		objectif_financier: '',
-		localisation: '',
-		date_fin: '',
-		categorie_id: '',
-		image_url: '',
-	});
 
 	const [errors, setErrors] = useState({
 		titre: '',
@@ -258,6 +300,11 @@ export default function FormulaireCagnotte() {
 		return response.data;
 	};
 
+	const modifierProjet = async (id, projetData) => {
+		const response = await api.put(`/projets/${id}`, projetData);
+		return response.data;
+	};
+
 	// Handle form submission
 	const handleSubmit = async e => {
 		e.preventDefault();
@@ -318,13 +365,16 @@ export default function FormulaireCagnotte() {
 				image_url: JSON.stringify(finalImageUrls),
 			};
 
-			console.log('Données du projet à envoyer :', projetData);
-			console.log(projetData.image_url);
-
-			const data = await creerProjet(projetData);
-
-			setShowSuccess(true);
-			showNotification('Cagnotte créée avec succès !', 'success');
+			let data;
+			if (edit && projetId) {
+				data = await modifierProjet(projetId, projetData);
+				setShowSuccess(true);
+				showNotification('Cagnotte modifiée avec succès !', 'success');
+			} else {
+				data = await creerProjet(projetData);
+				setShowSuccess(true);
+				showNotification('Cagnotte créée avec succès !', 'success');
+			}
 
 			// Simulate redirect
 			setTimeout(() => {
@@ -349,7 +399,7 @@ export default function FormulaireCagnotte() {
 					date_fin: '',
 					categorie_id: '',
 				});
-				window.location.href = `/cagnotte/${encodeId(data.id)}`;
+				window.location.href = `/cagnotte/${edit ? encodeId(projetId) : encodeId(data.id)}`;
 			}, 2000);
 		} catch (error) {
 			showNotification(error.response?.data?.message || 'Échec de la création', 'error');
@@ -478,8 +528,8 @@ export default function FormulaireCagnotte() {
 				<div className="formulaire-cagnotte-card">
 					<div className="formulaire-cagnotte-header">
 						<img src={Logo} alt="BloomFund Logo" />
-						<h2>Créer une cagnotte</h2>
-						<p>Donnez vie à votre projet</p>
+						<h2>{edit ? 'Modifier la cagnotte' : 'Créer une cagnotte'}</h2>
+						<p>{edit ? 'Modifiez les informations de votre projet' : 'Donnez vie à votre projet'}</p>
 					</div>
 
 					{notification && <div className={`notification notification-${notification.type}`}>{notification.message}</div>}
@@ -770,14 +820,24 @@ export default function FormulaireCagnotte() {
 						</div>
 
 						<button type="submit" className={`cagnotte-btn btn ${isSubmitting ? 'loading' : ''}`} disabled={isSubmitting}>
-							<span className="btn-text">Créer la cagnotte</span>
+							<span className="btn-text">{edit ? 'Modifier la cagnotte' : 'Créer la cagnotte'}</span>
+
 							<span className="btn-loader"></span>
 						</button>
+						{edit && (
+							<button
+								type="button"
+								className={`mt-4  cancel-btn ${isSubmitting ? 'loading' : ''}`}
+								onClick={() => navigate(`/cagnotte/${encodeId(projetId)}`)}
+								disabled={isSubmitting}>
+								<span className="btn-text">Annuler</span>
+							</button>
+						)}
 					</form>
 
 					<div className={`success-message ${showSuccess ? 'show' : ''}`} id="successMessage">
 						<div className="success-icon">✓</div>
-						<h3>Cagnotte créée avec succès !</h3>
+						<h3>{edit ? 'Cagnotte modifiée avec succès !' : 'Cagnotte créée avec succès !'}</h3>
 						<p>Redirection vers votre projet...</p>
 					</div>
 				</div>

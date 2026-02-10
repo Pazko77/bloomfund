@@ -9,7 +9,7 @@ import { UsersViews } from '../../components/Dashboard/views/users.jsx';
 import { ProjectsViews } from '../../components/Dashboard/views/projects.jsx';
 import api from '../../helpers/request/api';
 import { useAuth } from '../../hook/useAuth';
-import { encodeId } from '../../helpers/hashId';
+import { encodeId } from '../../helpers/encoder/hashId.js';
 
 export default function DashboardAdmin() {
 	const userProfil = useAuth();

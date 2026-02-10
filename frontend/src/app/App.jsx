@@ -37,6 +37,7 @@ function App() {
 					<Route path="/payment/:id" element={<Payment />} />
 					<Route path="/legal" element={<LegalPages />} />
 					<Route path="/admin" element={<DashboardAdmin />} />
+					<Route path="/cagnotte/:id/edit" element={<Cagnotte edit={true} />} />
 				</Route>
 			</Routes>
 		</Suspense>

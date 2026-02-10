@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { parseImages } from '../../helpers/image/parseImg';
 import api from '../../helpers/request/api';
 import { useAuth } from '../../hook/useAuth';
-import { decodeId } from '../../helpers/hashId.js';
+import { decodeId } from '../../helpers/encoder/hashId.js';
 
 const stripePromise = loadStripe(
 	import.meta.env.VITE_STRIPE_PUBLIC_KEY ||

@@ -4,17 +4,19 @@ import { TabNavigation } from '../tabNavigation/tabNavigation';
 import { useParams } from 'react-router-dom';
 import { parseImages } from '../../helpers/image/parseImg.js';
 import api from '../../helpers/request/api.js';
-import { decodeId } from '../../helpers/hashId.js';
+import { decodeId } from '../../helpers/encoder/hashId.js';
+import { useAuth } from '../../hook/useAuth.js';
 
 function CagnottePageHero() {
-	const { id } = useParams(); 
+	const { id } = useParams();
 	const realId = decodeId(id);
 	const [projet, setProjet] = useState(null);
+	const userProfil = useAuth().userCtx;
 
 	useEffect(() => {
 		const fetchProjet = async () => {
 			try {
-				const response = await api.get(`/projets/${realId}`); 
+				const response = await api.get(`/projets/${realId}`);
 				setProjet(response.data);
 			} catch (error) {
 				console.error('Erreur lors de la récupération du projet :', error);
@@ -59,8 +61,12 @@ function CagnottePageHero() {
 			<div className={'w-full bg h-175 flex justify-center items-center flex-col  bg-linear-to-b from-green-600 from-50% to-white to-50%'}>
 				<div className={'w-4/6 h-fit py-2 bg-white shadow-2xl rounded-2xl'}>
 					<div className={'flex flex-col items-center justify-center w-full m-6 gap-3'}>
-						<h1 className={'text-2xl  '}>{projet ? projet.titre : 'titre'}</h1>
-						{/* <p>{projet ? projet.description : 'Petite description'}</p> */}
+						<h1 className={'text-2xl '}>{projet ? projet.titre : 'titre'}</h1>
+						{userProfil && userProfil.role === 'admin' ? (
+							<a href={`/cagnotte/${id}/edit`} className="text-sm text-gray-500 hover:text-gray-700">
+								Modifier la cagnotte
+							</a>
+						) : null}
 					</div>
 					<div className="flex flex-col lg:flex-row px-6 gap-10 justify-between items-start w-full">
 						{/* COLONNE GAUCHE (60%) */}
@@ -69,9 +75,9 @@ function CagnottePageHero() {
 
 							{/* Infos Porteur */}
 							<div className="flex flex-row gap-4 items-center py-2">
-								<div className="w-12 h-12 bg-gray-200 text-gray-700 rounded-full flex items-center justify-center font-bold shrink-0">
-									{projet?.porteur_prenom?.charAt(0)}
-									{projet?.porteur_nom?.charAt(0)}
+								<div className="w-12 h-12 bg-gray-300 text-gray-700 rounded-full flex items-center justify-center font-bold shrink-0">
+									{projet?.porteur_prenom?.charAt(0).toUpperCase() || ''}
+									{projet?.porteur_nom?.charAt(0).toUpperCase() || ''}
 								</div>
 								<div className="flex flex-col">
 									<p className="font-semibold text-lg leading-tight">
