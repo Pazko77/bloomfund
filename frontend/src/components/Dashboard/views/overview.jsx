@@ -55,29 +55,34 @@ export function Overview({ currentView, setCurrentView, stats, projects , Icons 
 								</tr>
 							</thead>
 							<tbody className="text-sm">
-								{projects.slice(0, 5).map((p, idx) => (
-									<tr key={p.id ? p.id : idx} className="border-b border-gray-50 last:border-0 hover:bg-gray-50">
-										<td className="py-3 font-medium text-gray-800">
-											<a href={`/cagnotte/${p.id}`}>{p.titre}</a>
-										</td>
-										<td className="py-3 text-gray-600">{p.porteur}</td>
-										<td className="py-3 text-gray-600">
-											{p.recolte}€ / {p.objectif}€
-											<div className="w-24 h-1.5 bg-gray-200 rounded-full mt-1">
-												<div className="h-1.5 bg-green-500 rounded-full" style={{ width: `${Math.min((p.recolte / p.objectif) * 100, 100)}%` }}></div>
-											</div>
-										</td>
-										<td className="py-3">
-											<span
-												className={`px-2 py-1 rounded-full text-xs font-medium ${
-													p.statut === 'publie' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-												}`}>
-												{p.statut}
-											</span>
-										</td>
-										<td className="py-3 text-gray-600 text-center">{new Date(p.date_creation).toLocaleDateString()}</td>
-									</tr>
-								))}
+								{[...projects]
+									.sort((a, b) => new Date(b.date_creation) - new Date(a.date_creation))
+									.slice(0, 9)
+									.map((p, idx) => (
+										<tr key={p.id ? p.id : idx} className="border-b border-gray-50 last:border-0 hover:bg-gray-50">
+											<td className="py-3 font-medium text-gray-800">
+												<a href={`/cagnotte/${p.id}`}>{p.titre}</a>
+											</td>
+											<td className="py-3 text-gray-600">{p.porteur}</td>
+											<td className="py-3 text-gray-600">
+												{p.recolte}€ / {p.objectif}€
+												<div className="w-24 h-1.5 bg-gray-200 rounded-full mt-1">
+													<div
+														className="h-1.5 bg-green-500 rounded-full"
+														style={{ width: `${Math.min((p.recolte / p.objectif) * 100, 100)}%` }}></div>
+												</div>
+											</td>
+											<td className="py-3">
+												<span
+													className={`px-2 py-1 rounded-full text-xs font-medium ${
+														p.statut === 'publie' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+													}`}>
+													{p.statut}
+												</span>
+											</td>
+											<td className="py-3 text-gray-600 text-center">{new Date(p.date_creation).toLocaleDateString()}</td>
+										</tr>
+									))}
 							</tbody>
 						</table>
 					</div>

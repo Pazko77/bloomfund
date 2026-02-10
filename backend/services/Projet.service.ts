@@ -50,8 +50,7 @@ export const ProjetService = {
 	  Categories.id AS categorie_id
      FROM Projets
      INNER JOIN Utilisateurs ON Projets.porteur_id = Utilisateurs.id
-     LEFT JOIN Categories ON Projets.categorie_id = Categories.id`
-	 + (statut ? ' WHERE Projets.statut = ?' : ''),
+     LEFT JOIN Categories ON Projets.categorie_id = Categories.id` + (statut ? ' WHERE Projets.statut = ?' : ''),
 			statut ? [statut] : []
 		);
 
@@ -103,6 +102,27 @@ export const ProjetService = {
 			UPDATE Projets 
 			SET ${fields}
 			WHERE id = ? AND porteur_id = ?
+		`;
+
+		const [result]: any = await pool.execute(sql, values);
+		return result.affectedRows === 1;
+	},
+
+	// UPDATE by admin (no porteur_id check)
+	async updateByAdmin(id: number, data: Partial<ProjetInput>): Promise<boolean> {
+		const fields = Object.keys(data)
+			.map(key => `${key} = ?`)
+			.join(', ');
+		const values = Object.values(data);
+
+		if (!fields) return false;
+
+		values.push(id);
+
+		const sql = `
+			UPDATE Projets 
+			SET ${fields}
+			WHERE id = ?
 		`;
 
 		const [result]: any = await pool.execute(sql, values);

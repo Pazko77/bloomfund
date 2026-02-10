@@ -35,11 +35,14 @@ export const ProjetController = {
     const porteur_id = req.Utilisateur?.id;
     if (!porteur_id) return res.sendStatus(401);
 
-    const success = await ProjetService.update(
-      Number(req.params.id),
-      porteur_id,
-      req.body,
-    );
+    // If the user is admin, allow updating regardless of ownership
+    const role = req.Utilisateur?.role;
+    let success = false;
+    if (role === 'admin') {
+      success = await ProjetService.updateByAdmin(Number(req.params.id), req.body);
+    } else {
+			success = await ProjetService.update(Number(req.params.id), porteur_id, req.body);
+		}
 
     if (!success) {
       return res.status(403).json({ message: "Modification refusée" });

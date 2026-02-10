@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../../hook/useAuth';
+import api from '../../../helpers/request/api';
+import { decodeId } from '../../../helpers/encoder/hashId';
 
 export function ProjectsViews({ projects }) {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [search, setSearch] = useState('');
+
+	const { userCtx } = useAuth();
 	const projectsPerPage = 10;
 
 	const filteredProjects = projects.filter(project => {
@@ -63,7 +68,39 @@ export function ProjectsViews({ projects }) {
 									</span>
 								</td>
 								<td className="px-3 py-4 flex gap-2">
-									{project.statut === 'publie' ? (
+									{userCtx?.role === 'admin' ? (
+										<>
+											<button
+												type="button"
+												onClick={async () => {
+													const newStatus = project.statut === 'publie' ? 'brouillon' : 'publie';
+													try {
+														await api.put(`/projets/${decodeId(project.id)}`, { statut: newStatus });
+														window.location.reload();
+													} catch (err) {
+														console.error(err);
+													}
+												}}
+												className="px-3 py-1 rounded bg-blue-100 text-blue-700 text-xs font-medium hover:bg-blue-200 transition">
+												{project.statut === 'publie' ? 'Dépublier' : 'Publier'}
+											</button>
+											<button
+												type="button"
+												onClick={async () => {
+													if (!window.confirm('Confirmer la suppression du projet ?')) return;
+													try {
+														await api.delete(`/projets/${decodeId(project.id)}`);
+														window.location.reload();
+													} catch (err) {
+														console.error(err);
+														alert('Erreur lors de la suppression');
+													}
+												}}
+												className="px-3 py-1 rounded bg-red-100 text-red-700 text-xs font-medium hover:bg-red-200 transition">
+												Supprimer
+											</button>
+										</>
+									) : project.statut === 'publie' ? (
 										<a href={`/cagnotte/${project.id}`}>
 											<button className="px-3 py-1 rounded bg-blue-100 text-blue-700 text-xs font-medium hover:bg-blue-200 transition">Voir</button>
 										</a>
@@ -71,7 +108,7 @@ export function ProjectsViews({ projects }) {
 										<>
 											<button className="px-3 py-1 rounded bg-blue-100 text-blue-700 text-xs font-medium hover:bg-blue-200 transition">
 												Valider
-											</button> 
+											</button>
 											|
 											<button className="px-3 py-1 rounded bg-red-100 text-red-700 text-xs font-medium hover:bg-red-200 transition">Supprimer</button>
 										</>
