@@ -56,6 +56,10 @@ export default function FormulaireCagnotte({ edit = false }) {
 						setImageUrls(images);
 						setImagePreviews(images);
 					}
+
+					// Charger les contreparties existantes
+					const contrepartiesResponse = await api.get(`/contreparties/projet/${id}`);
+					setContrepartiesExistantes(contrepartiesResponse.data || []);
 				} catch (error) {
 					console.error('Erreur lors de la récupération des données du projet :', error);
 				}
@@ -115,6 +119,22 @@ export default function FormulaireCagnotte({ edit = false }) {
 	const [notification, setNotification] = useState(null);
 	const [imagePreviews, setImagePreviews] = useState([]);
 	const [imageUrls, setImageUrls] = useState([]);
+
+	// États pour les contreparties
+	const [contreparties, setContreparties] = useState([]); // Nouvelles contreparties (pas encore en base)
+	const [contrepartiesExistantes, setContrepartiesExistantes] = useState([]); // Contreparties déjà en base
+	const [contrepartiesToDelete, setContrepartiesToDelete] = useState([]); // IDs des contreparties à supprimer
+	const [editingContrepartieId, setEditingContrepartieId] = useState(null); // ID de la contrepartie en cours d'édition
+	const [contrepartieForm, setContrepartieForm] = useState({
+		titre: '',
+		description: '',
+		montant_minimum: '',
+		type: 'physique',
+		quantite_disponible: '',
+		date_livraison_estimee: '',
+		image_url: '',
+	});
+	const [showContrepartieForm, setShowContrepartieForm] = useState(false);
 
 	// États pour la recherche de localisation
 	const [locationSuggestions, setLocationSuggestions] = useState([]);
@@ -305,6 +325,149 @@ export default function FormulaireCagnotte({ edit = false }) {
 		return response.data;
 	};
 
+	// Fonctions pour gérer les contreparties
+	const handleContrepartieChange = e => {
+		const { name, value } = e.target;
+		setContrepartieForm(prev => ({ ...prev, [name]: value }));
+	};
+
+	const handleAddContrepartie = () => {
+		if (!contrepartieForm.titre || !contrepartieForm.description || !contrepartieForm.montant_minimum) {
+			showNotification('Veuillez remplir les champs obligatoires de la contrepartie', 'error');
+			return;
+		}
+		if (parseFloat(contrepartieForm.montant_minimum) <= 0) {
+			showNotification('Le montant minimum doit être positif', 'error');
+			return;
+		}
+		setContreparties(prev => [...prev, { ...contrepartieForm, id: Date.now() }]);
+		setContrepartieForm({
+			titre: '',
+			description: '',
+			montant_minimum: '',
+			type: 'physique',
+			quantite_disponible: '',
+			date_livraison_estimee: '',
+			image_url: '',
+		});
+		setShowContrepartieForm(false);
+		showNotification('Contrepartie ajoutée !', 'success');
+	};
+
+	const removeContrepartie = id => {
+		setContreparties(prev => prev.filter(c => c.id !== id));
+	};
+
+	const removeContrepartieExistante = id => {
+		setContrepartiesToDelete(prev => [...prev, id]);
+		setContrepartiesExistantes(prev => prev.filter(c => c.id !== id));
+	};
+
+	const editContrepartieExistante = contrepartie => {
+		setEditingContrepartieId(contrepartie.id);
+		setContrepartieForm({
+			titre: contrepartie.titre,
+			description: contrepartie.description,
+			montant_minimum: contrepartie.montant_minimum.toString(),
+			type: contrepartie.type || 'physique',
+			quantite_disponible: contrepartie.quantite_disponible?.toString() || '',
+			date_livraison_estimee: contrepartie.date_livraison_estimee ? contrepartie.date_livraison_estimee.split('T')[0] : '',
+			image_url: contrepartie.image_url || '',
+		});
+		setShowContrepartieForm(true);
+	};
+
+	const handleSaveContrepartie = () => {
+		if (!contrepartieForm.titre || !contrepartieForm.description || !contrepartieForm.montant_minimum) {
+			showNotification('Veuillez remplir les champs obligatoires de la contrepartie', 'error');
+			return;
+		}
+		if (parseFloat(contrepartieForm.montant_minimum) <= 0) {
+			showNotification('Le montant minimum doit être positif', 'error');
+			return;
+		}
+
+		if (editingContrepartieId) {
+			// Mise à jour d'une contrepartie existante
+			setContrepartiesExistantes(prev =>
+				prev.map(c =>
+					c.id === editingContrepartieId
+						? { ...c, ...contrepartieForm, montant_minimum: parseFloat(contrepartieForm.montant_minimum), _modified: true }
+						: c
+				)
+			);
+			showNotification('Contrepartie modifiée !', 'success');
+		} else {
+			// Ajout d'une nouvelle contrepartie
+			setContreparties(prev => [...prev, { ...contrepartieForm, id: Date.now() }]);
+			showNotification('Contrepartie ajoutée !', 'success');
+		}
+
+		setContrepartieForm({
+			titre: '',
+			description: '',
+			montant_minimum: '',
+			type: 'physique',
+			quantite_disponible: '',
+			date_livraison_estimee: '',
+			image_url: '',
+		});
+		setShowContrepartieForm(false);
+		setEditingContrepartieId(null);
+	};
+
+	const cancelEditContrepartie = () => {
+		setContrepartieForm({
+			titre: '',
+			description: '',
+			montant_minimum: '',
+			type: 'physique',
+			quantite_disponible: '',
+			date_livraison_estimee: '',
+			image_url: '',
+		});
+		setShowContrepartieForm(false);
+		setEditingContrepartieId(null);
+	};
+
+	const creerContrepartie = async (projet_id, contrepartie) => {
+		// Exclure l'id temporaire et ne garder que les champs nécessaires
+		const contrepartieData = {
+			titre: contrepartie.titre,
+			description: contrepartie.description,
+			montant_minimum: parseFloat(contrepartie.montant_minimum),
+			type: contrepartie.type || 'physique',
+			projet_id,
+			quantite_disponible: contrepartie.quantite_disponible ? parseInt(contrepartie.quantite_disponible) : undefined,
+			date_livraison_estimee: contrepartie.date_livraison_estimee || undefined,
+			image_url: contrepartie.image_url || undefined,
+		};
+		console.log('Envoi contrepartie:', contrepartieData);
+		const response = await api.post('/contreparties', contrepartieData);
+		console.log('Contrepartie créée :', response.data);
+		return response.data;
+	};
+
+	const modifierContrepartie = async (id, projet_id, contrepartie) => {
+		const contrepartieData = {
+			titre: contrepartie.titre,
+			description: contrepartie.description,
+			montant_minimum: parseFloat(contrepartie.montant_minimum),
+			type: contrepartie.type || 'physique',
+			projet_id,
+			quantite_disponible: contrepartie.quantite_disponible ? parseInt(contrepartie.quantite_disponible) : undefined,
+			date_livraison_estimee: contrepartie.date_livraison_estimee || undefined,
+			image_url: contrepartie.image_url || undefined,
+		};
+		const response = await api.put(`/contreparties/${id}`, contrepartieData);
+		return response.data;
+	};
+
+	const supprimerContrepartie = async (id, projet_id) => {
+		const response = await api.delete(`/contreparties/${id}?projet_id=${projet_id}`);
+		return response.data;
+	};
+
 	// Handle form submission
 	const handleSubmit = async e => {
 		e.preventDefault();
@@ -368,10 +531,50 @@ export default function FormulaireCagnotte({ edit = false }) {
 			let data;
 			if (edit && projetId) {
 				data = await modifierProjet(projetId, projetData);
+
+				// Supprimer les contreparties marquées à supprimer
+				for (const contrepartieId of contrepartiesToDelete) {
+					try {
+						await supprimerContrepartie(contrepartieId, projetId);
+					} catch (err) {
+						console.error('Erreur suppression contrepartie:', err);
+					}
+				}
+
+				// Mettre à jour les contreparties modifiées
+				for (const contrepartie of contrepartiesExistantes.filter(c => c._modified)) {
+					try {
+						await modifierContrepartie(contrepartie.id, projetId, contrepartie);
+					} catch (err) {
+						console.error('Erreur modification contrepartie:', err);
+					}
+				}
+
+				// Créer les nouvelles contreparties
+				for (const contrepartie of contreparties) {
+					try {
+						await creerContrepartie(projetId, contrepartie);
+					} catch (err) {
+						console.error('Erreur création contrepartie:', err);
+					}
+				}
+
 				setShowSuccess(true);
 				showNotification('Cagnotte modifiée avec succès !', 'success');
 			} else {
 				data = await creerProjet(projetData);
+
+				// Créer les contreparties pour ce projet
+				if (contreparties.length > 0) {
+					for (const contrepartie of contreparties) {
+						try {
+							await creerContrepartie(data.id, contrepartie);
+						} catch (err) {
+							console.error('Erreur création contrepartie:', err);
+						}
+					}
+				}
+
 				setShowSuccess(true);
 				showNotification('Cagnotte créée avec succès !', 'success');
 			}
@@ -616,7 +819,7 @@ export default function FormulaireCagnotte({ edit = false }) {
 									className={formData.localisation ? 'has-value' : ''}
 									autoComplete="off"
 								/>
-								<label htmlFor="localisation">Département (optionnel)</label>
+								<label htmlFor="localisation">Département </label>
 								{isLocationLoading && (
 									<div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)' }}>
 										<div className="btn-loader" style={{ width: '20px', height: '20px', borderWidth: '2px' }}></div>
@@ -814,6 +1017,305 @@ export default function FormulaireCagnotte({ edit = false }) {
 											fontWeight: '500',
 										}}>
 										+ Ajouter
+									</button>
+								</div>
+							)}
+						</div>
+
+						{/* Section Contreparties */}
+						<div className="form-group" style={{ marginTop: '30px', borderTop: '1px solid #e5e7eb', paddingTop: '20px' }}>
+							<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+								<label className="form-label" style={{ fontWeight: '600', fontSize: '16px', margin: 0 }}>
+									Contreparties ({contrepartiesExistantes.length + contreparties.length})
+								</label>
+								<button
+									type="button"
+									onClick={() => {
+										if (showContrepartieForm) {
+											cancelEditContrepartie();
+										} else {
+											setShowContrepartieForm(true);
+										}
+									}}
+									style={{
+										padding: '8px 16px',
+										background: showContrepartieForm ? '#ef4444' : '#15a019',
+										color: 'white',
+										border: 'none',
+										borderRadius: '8px',
+										cursor: 'pointer',
+										fontWeight: '500',
+										fontSize: '14px',
+									}}>
+									{showContrepartieForm ? 'Annuler' : '+ Ajouter une contrepartie'}
+								</button>
+							</div>
+
+							{/* Liste des contreparties existantes (en base) */}
+							{edit && contrepartiesExistantes.length > 0 && (
+								<div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px' }}>
+									<p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '5px' }}>Contreparties existantes :</p>
+									{contrepartiesExistantes.map(c => (
+										<div
+											key={c.id}
+											style={{
+												display: 'flex',
+												justifyContent: 'space-between',
+												alignItems: 'center',
+												padding: '12px 15px',
+												background: c._modified ? '#fef3c7' : '#f9fafb',
+												borderRadius: '8px',
+												border: c._modified ? '1px solid #f59e0b' : '1px solid #e5e7eb',
+											}}>
+											<div>
+												<span style={{ fontWeight: '600', color: '#1f2937' }}>{c.titre}</span>
+												<span style={{ margin: '0 10px', color: '#9ca3af' }}>|</span>
+												<span style={{ color: '#15a019', fontWeight: '500' }}>{c.montant_minimum}€ min</span>
+												<span style={{ margin: '0 10px', color: '#9ca3af' }}>|</span>
+												<span
+													style={{
+														padding: '2px 8px',
+														borderRadius: '4px',
+														fontSize: '12px',
+														background: c.type === 'physique' ? '#dbeafe' : '#fef3c7',
+														color: c.type === 'physique' ? '#1d4ed8' : '#b45309',
+													}}>
+													{c.type === 'physique' ? 'Physique' : 'En ligne'}
+												</span>
+												{c._modified && (
+													<span
+														style={{
+															marginLeft: '10px',
+															padding: '2px 8px',
+															borderRadius: '4px',
+															fontSize: '12px',
+															background: '#fef3c7',
+															color: '#b45309',
+														}}>
+														Modifié
+													</span>
+												)}
+											</div>
+											<div style={{ display: 'flex', gap: '8px' }}>
+												<button
+													type="button"
+													onClick={() => editContrepartieExistante(c)}
+													style={{
+														padding: '4px 10px',
+														background: '#dbeafe',
+														color: '#1d4ed8',
+														border: 'none',
+														borderRadius: '4px',
+														cursor: 'pointer',
+														fontSize: '12px',
+													}}>
+													Modifier
+												</button>
+												<button
+													type="button"
+													onClick={() => removeContrepartieExistante(c.id)}
+													style={{
+														padding: '4px 10px',
+														background: '#fee2e2',
+														color: '#dc2626',
+														border: 'none',
+														borderRadius: '4px',
+														cursor: 'pointer',
+														fontSize: '12px',
+													}}>
+													Supprimer
+												</button>
+											</div>
+										</div>
+									))}
+								</div>
+							)}
+
+							{/* Liste des nouvelles contreparties (pas encore en base) */}
+							{contreparties.length > 0 && (
+								<div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px' }}>
+									{edit && <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '5px' }}>Nouvelles contreparties :</p>}
+									{contreparties.map(c => (
+										<div
+											key={c.id}
+											style={{
+												display: 'flex',
+												justifyContent: 'space-between',
+												alignItems: 'center',
+												padding: '12px 15px',
+												background: '#ecfdf5',
+												borderRadius: '8px',
+												border: '1px solid #10b981',
+											}}>
+											<div>
+												<span style={{ fontWeight: '600', color: '#1f2937' }}>{c.titre}</span>
+												<span style={{ margin: '0 10px', color: '#9ca3af' }}>|</span>
+												<span style={{ color: '#15a019', fontWeight: '500' }}>{c.montant_minimum}€ min</span>
+												<span style={{ margin: '0 10px', color: '#9ca3af' }}>|</span>
+												<span
+													style={{
+														padding: '2px 8px',
+														borderRadius: '4px',
+														fontSize: '12px',
+														background: c.type === 'physique' ? '#dbeafe' : '#fef3c7',
+														color: c.type === 'physique' ? '#1d4ed8' : '#b45309',
+													}}>
+													{c.type === 'physique' ? 'Physique' : 'En ligne'}
+												</span>
+												{edit && (
+													<span
+														style={{
+															marginLeft: '10px',
+															padding: '2px 8px',
+															borderRadius: '4px',
+															fontSize: '12px',
+															background: '#ecfdf5',
+															color: '#10b981',
+														}}>
+														Nouveau
+													</span>
+												)}
+											</div>
+											<button
+												type="button"
+												onClick={() => removeContrepartie(c.id)}
+												style={{
+													padding: '4px 10px',
+													background: '#fee2e2',
+													color: '#dc2626',
+													border: 'none',
+													borderRadius: '4px',
+													cursor: 'pointer',
+													fontSize: '12px',
+												}}>
+												Supprimer
+											</button>
+										</div>
+									))}
+								</div>
+							)}
+
+							{/* Formulaire d'ajout/modification de contrepartie */}
+							{showContrepartieForm && (
+								<div style={{ background: '#f9fafb', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+									{editingContrepartieId && (
+										<p style={{ marginBottom: '15px', fontWeight: '600', color: '#1d4ed8' }}>Modification de la contrepartie</p>
+									)}
+									<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+										<div className={`input-wrapper ${focusedField === 'contrepartie_titre' ? 'focused' : ''}`}>
+											<input
+												type="text"
+												name="titre"
+												value={contrepartieForm.titre}
+												onChange={handleContrepartieChange}
+												onFocus={() => setFocusedField('contrepartie_titre')}
+												onBlur={() => setFocusedField(null)}
+												className={contrepartieForm.titre ? 'has-value' : ''}
+												required
+											/>
+											<label>Titre *</label>
+										</div>
+										<div className={`input-wrapper ${focusedField === 'contrepartie_montant' ? 'focused' : ''}`}>
+											<input
+												type="number"
+												name="montant_minimum"
+												value={contrepartieForm.montant_minimum}
+												onChange={handleContrepartieChange}
+												onFocus={() => setFocusedField('contrepartie_montant')}
+												onBlur={() => setFocusedField(null)}
+												className={contrepartieForm.montant_minimum ? 'has-value' : ''}
+												min="1"
+												required
+											/>
+											<label>Montant minimum (€) *</label>
+										</div>
+									</div>
+									<div
+										className={`input-wrapper textarea-wrapper ${focusedField === 'contrepartie_desc' ? 'focused' : ''}`}
+										style={{ marginTop: '15px' }}>
+										<textarea
+											name="description"
+											value={contrepartieForm.description}
+											onChange={handleContrepartieChange}
+											onFocus={() => setFocusedField('contrepartie_desc')}
+											onBlur={() => setFocusedField(null)}
+											className={contrepartieForm.description ? 'has-value' : ''}
+											rows="3"
+											required
+										/>
+										<label>Description *</label>
+									</div>
+									<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '15px' }}>
+										<div className={`input-wrapper select-wrapper ${focusedField === 'contrepartie_type' ? 'focused' : ''}`}>
+											<select
+												name="type"
+												value={contrepartieForm.type}
+												onChange={handleContrepartieChange}
+												onFocus={() => setFocusedField('contrepartie_type')}
+												onBlur={() => setFocusedField(null)}
+												className="has-value">
+												<option value="physique">Physique (livraison)</option>
+												<option value="en_ligne">En ligne (numérique)</option>
+											</select>
+											<label>Type</label>
+										</div>
+										<div className={`input-wrapper ${focusedField === 'contrepartie_quantite' ? 'focused' : ''}`}>
+											<input
+												type="number"
+												name="quantite_disponible"
+												value={contrepartieForm.quantite_disponible}
+												onChange={handleContrepartieChange}
+												onFocus={() => setFocusedField('contrepartie_quantite')}
+												onBlur={() => setFocusedField(null)}
+												className={contrepartieForm.quantite_disponible ? 'has-value' : ''}
+												min="1"
+												placeholder=" "
+											/>
+											<label>Quantité disponible</label>
+										</div>
+									</div>
+									<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '15px' }}>
+										<div className={`input-wrapper ${focusedField === 'contrepartie_date' ? 'focused' : ''}`}>
+											<input
+												type="date"
+												name="date_livraison_estimee"
+												value={contrepartieForm.date_livraison_estimee}
+												onChange={handleContrepartieChange}
+												onFocus={() => setFocusedField('contrepartie_date')}
+												onBlur={() => setFocusedField(null)}
+												className={contrepartieForm.date_livraison_estimee ? 'has-value' : ''}
+											/>
+											<label>Date de livraison estimée</label>
+										</div>
+										<div className={`input-wrapper ${focusedField === 'contrepartie_image' ? 'focused' : ''}`}>
+											<input
+												type="text"
+												name="image_url"
+												value={contrepartieForm.image_url}
+												onChange={handleContrepartieChange}
+												onFocus={() => setFocusedField('contrepartie_image')}
+												onBlur={() => setFocusedField(null)}
+												className={contrepartieForm.image_url ? 'has-value' : ''}
+												placeholder="https://..."
+											/>
+											<label>URL de l'image</label>
+										</div>
+									</div>
+									<button
+										type="button"
+										onClick={handleSaveContrepartie}
+										style={{
+											marginTop: '15px',
+											padding: '10px 20px',
+											background: editingContrepartieId ? '#1d4ed8' : '#15a019',
+											color: 'white',
+											border: 'none',
+											borderRadius: '8px',
+											cursor: 'pointer',
+											fontWeight: '500',
+											width: '100%',
+										}}>
+										{editingContrepartieId ? 'Enregistrer les modifications' : 'Ajouter cette contrepartie'}
 									</button>
 								</div>
 							)}

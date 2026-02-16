@@ -29,7 +29,7 @@ Content-Type: application/json
 
 {
   "email": "pierre.ychnightder@test.com",
-  "mot_de_passe": "monpassword"
+  "mot_de_passe": "h2jC7x2Dgre7Prp"
 }
 
 ### Utiliser le refresh token pour obtenir un nouveau token d'accès

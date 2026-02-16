@@ -7,6 +7,7 @@ import projetRouter from './routes/Projet.route';
 import contributionRouter from './routes/Contribution.route';
 import CommentaireRouter from './routes/commentaire.routes';
 import PaymentIntentsRouter from './routes/paymentIntent.route';
+import contrepartieRouter from './routes/Contrepartie.route';
 import cookieParser from 'cookie-parser';
 
 function createApp() {
@@ -26,6 +27,7 @@ function createApp() {
 	app.use('/api/contributions', contributionRouter);
 	app.use('/api/commentaires', CommentaireRouter);
 	app.use('/api/payment-intents', PaymentIntentsRouter);
+	app.use('/api/contreparties', contrepartieRouter);
 
 	return app;
 }

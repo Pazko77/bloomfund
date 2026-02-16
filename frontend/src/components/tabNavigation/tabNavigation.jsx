@@ -12,6 +12,7 @@ import { useAuth } from '../../hook/useAuth.js';
 export function TabNavigation({ projet, contributions }) {
 	// console.log('TabNavigation props:', { projet, contributions });
 	const [commentaires, setCommentaires] = useState([]);
+	const [contreparties, setContreparties] = useState([]);
 	const userProfil = useAuth();
 	// ----------------------- --------------------------------------------------
 	// Gestion des Collect
@@ -21,7 +22,7 @@ export function TabNavigation({ projet, contributions }) {
 
 	const tabs = [
 		{ id: 'collecte', label: 'Collecte' },
-		{ id: 'contreparties', label: 'Contreparties' },
+		{ id: 'contreparties', label: `Contreparties ${contreparties.length > 0 ? contreparties.length : ''}` },
 		{ id: 'contributions', label: `Contributions ${contributions.length ?? 0} ` },
 		{ id: 'commentaires', label: `Commentaires ${commentaires.length ?? 0}` },
 	];
@@ -235,7 +236,7 @@ export function TabNavigation({ projet, contributions }) {
 					name: `${(currentUser.Utilisateur.prenom || '').toLowerCase()}-${(currentUser.Utilisateur.nom || '').toLowerCase()}`,
 					comment: commentText,
 					date: timeAgo(new Date()),
-					avatar: `${(currentUser.Utilisateur.prenom && currentUser.Utilisateur.prenom[0] ? currentUser.Utilisateur.prenom[0].toUpperCase() : '')}${(currentUser.Utilisateur.nom && currentUser.Utilisateur.nom[0] ? currentUser.Utilisateur.nom[0].toUpperCase() : '')}`,
+					avatar: `${currentUser.Utilisateur.prenom && currentUser.Utilisateur.prenom[0] ? currentUser.Utilisateur.prenom[0].toUpperCase() : ''}${currentUser.Utilisateur.nom && currentUser.Utilisateur.nom[0] ? currentUser.Utilisateur.nom[0].toUpperCase() : ''}`,
 				},
 				...prev,
 			]);
@@ -257,7 +258,7 @@ export function TabNavigation({ projet, contributions }) {
 					name: `${(c.prenom || '').toLowerCase()}-${(c.nom || '').toLowerCase()}`,
 					comment: c.contenu,
 					date: timeAgo(c.date_commentaire),
-					avatar: `${(c.prenom && c.prenom[0] ? c.prenom[0].toUpperCase() : '')}${(c.nom && c.nom[0] ? c.nom[0].toUpperCase() : '')}`,
+					avatar: `${c.prenom && c.prenom[0] ? c.prenom[0].toUpperCase() : ''}${c.nom && c.nom[0] ? c.nom[0].toUpperCase() : ''}`,
 				}));
 				setCommentaires(commentaires);
 				// console.log('Commentaires fetched:', response.data);s
@@ -267,6 +268,22 @@ export function TabNavigation({ projet, contributions }) {
 		};
 		if (projet?.projet_id) {
 			fetchCommentaires();
+		}
+	}, [projet.projet_id]);
+
+	// Fetch contreparties
+	useEffect(() => {
+		const fetchContreparties = async () => {
+			try {
+				const response = await api.get(`/contreparties/projet/${projet.projet_id}`);
+				setContreparties(response.data || []);
+			} catch (error) {
+				console.error('Erreur lors de la récupération des contreparties :', error);
+				setContreparties([]);
+			}
+		};
+		if (projet?.projet_id) {
+			fetchContreparties();
 		}
 	}, [projet.projet_id]);
 
@@ -291,7 +308,7 @@ export function TabNavigation({ projet, contributions }) {
 			case 'collecte':
 				return <Collecte projet={projet} images={images} prevImage={prevImage} nextImage={nextImage} currentIndex={currentIndex} />;
 			case 'contreparties':
-				return <Contrepartie />;
+				return <Contrepartie contreparties={contreparties} />;
 			case 'contributions':
 				return (
 					<Contribution
@@ -306,8 +323,6 @@ export function TabNavigation({ projet, contributions }) {
 			case 'commentaires':
 				return (
 					<>
-						
-
 						<Commentaire
 							commentaires={commentaires}
 							isLoggedIn={isLoggedIn}

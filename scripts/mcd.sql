@@ -60,3 +60,20 @@ CREATE TABLE contributions (
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
     FOREIGN KEY (projet_id) REFERENCES projets(id) ON DELETE CASCADE
 );
+
+
+CREATE TABLE Contreparties (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titre VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    montant_minimum DECIMAL(10,2) NOT NULL,
+    type VARCHAR(30) NOT NULL DEFAULT 'physique',
+    quantite_disponible INT,
+    quantite_restante INT,
+    date_livraison_estimee DATE,
+    image_url VARCHAR(1000),
+    projet_id INT NOT NULL,
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (projet_id) REFERENCES Projets(id) ,
+    CHECK (type IN ('physique', 'en_ligne'))
+);
