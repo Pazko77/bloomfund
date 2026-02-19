@@ -1,0 +1,76 @@
+ ### Variables
+@baseUrl = http://localhost:8080/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJpYXQiOjE3Mzk5NzI1NjB9.REPLACE_WITH_VALID_TOKEN
+
+### ========================================
+### Tests AI - Génération de description
+### ========================================
+
+### Test 1: Génération complète (sans auth - devrait échouer)
+POST {{baseUrl}}/ai/generate-description
+Content-Type: application/json
+
+{
+    "titre": "Mon projet test",
+    "categorie": "Environnement",
+    "objectifFinancier": 5000,
+    "promptType": "complete"
+}
+
+### Test 2: Génération complète avec auth
+POST {{baseUrl}}/ai/generate-description
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "titre": "Jardin urbain partagé",
+    "categorie": "Environnement",
+    "objectifFinancier": 5000,
+    "promptType": "complete"
+}
+
+### Test 3: Amélioration de description existante
+POST {{baseUrl}}/ai/generate-description
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "titre": "Application mobile solidaire",
+    "categorie": "Technologie",
+    "currentDescription": "Je veux créer une app pour aider les gens.",
+    "objectifFinancier": 15000,
+    "promptType": "improve"
+}
+
+### Test 4: Expansion de description existante
+POST {{baseUrl}}/ai/generate-description
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "titre": "Festival de musique locale",
+    "categorie": "Culture",
+    "currentDescription": "Un festival pour mettre en avant les artistes locaux de notre région. Nous voulons créer un événement convivial.",
+    "objectifFinancier": 25000,
+    "promptType": "expand"
+}
+
+### Test 5: Erreur - Titre manquant
+POST {{baseUrl}}/ai/generate-description
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "categorie": "Solidarité",
+    "promptType": "complete"
+}
+
+### Test 6: Erreur - promptType invalide
+POST {{baseUrl}}/ai/generate-description
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "titre": "Mon projet",
+    "promptType": "invalid"
+}

@@ -8,6 +8,7 @@ import contributionRouter from './routes/Contribution.route';
 import CommentaireRouter from './routes/commentaire.routes';
 import PaymentIntentsRouter from './routes/paymentIntent.route';
 import contrepartieRouter from './routes/Contrepartie.route';
+import aiRouter from './routes/AI.route';
 import cookieParser from 'cookie-parser';
 
 function createApp() {
@@ -28,6 +29,7 @@ function createApp() {
 	app.use('/api/commentaires', CommentaireRouter);
 	app.use('/api/payment-intents', PaymentIntentsRouter);
 	app.use('/api/contreparties', contrepartieRouter);
+	app.use('/api/ai', aiRouter);
 
 	return app;
 }

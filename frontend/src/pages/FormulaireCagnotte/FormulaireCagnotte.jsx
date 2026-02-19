@@ -6,6 +6,7 @@ import api from '../../helpers/request/api';
 import { useAuth } from '../../hook/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { encodeId, decodeId } from '../../helpers/encoder/hashId';
+import AIDescriptionHelper from '../../components/AIDescriptionHelper/AIDescriptionHelper';
 
 export default function FormulaireCagnotte({ edit = false }) {
 	const [formData, setFormData] = useState({
@@ -22,9 +23,58 @@ export default function FormulaireCagnotte({ edit = false }) {
 	const navigate = useNavigate();
 	const [user, setUser] = useState(null);
 	const [projetId, setProjetId] = useState(null);
+	const [categories, setCategories] = useState([]);
+	const [errors, setErrors] = useState({
+		titre: '',
+		description: '',
+		objectif_financier: '',
+		localisation: '',
+		date_fin: '',
+		categorie_id: '',
+	});
+	const [focusedField, setFocusedField] = useState(null);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [showSuccess, setShowSuccess] = useState(false);
+	const [notification, setNotification] = useState(null);
+	const [imagePreviews, setImagePreviews] = useState([]);
+	const [imageUrls, setImageUrls] = useState([]);
+
+	// États pour les contreparties
+	const [contreparties, setContreparties] = useState([]);
+	const [contrepartiesExistantes, setContrepartiesExistantes] = useState([]);
+	const [contrepartiesToDelete, setContrepartiesToDelete] = useState([]);
+	const [editingContrepartieId, setEditingContrepartieId] = useState(null);
+	const [contrepartieForm, setContrepartieForm] = useState({
+		titre: '',
+		description: '',
+		montant_minimum: '',
+		type: 'physique',
+		quantite_disponible: '',
+		date_livraison_estimee: '',
+		image_url: '',
+	});
+	const [showContrepartieForm, setShowContrepartieForm] = useState(false);
+
+	// États pour la recherche de localisation
+	const [locationSuggestions, setLocationSuggestions] = useState([]);
+	const [isLocationOpen, setIsLocationOpen] = useState(false);
+	const [isLocationLoading, setIsLocationLoading] = useState(false);
+	const [locationSelectedIndex, setLocationSelectedIndex] = useState(-1);
+
+	const formRef = useRef(null);
+	const titreRef = useRef(null);
+	const locationTimeoutRef = useRef(null);
+	const locationRef = useRef(null);
+
+	// Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+	useEffect(() => {
+		if (userProfil.isLogged === false) {
+			navigate('/connexion');
+		}
+	}, [userProfil.isLogged, navigate]);
 
 	useEffect(() => {
-		if (edit) {
+		if (edit && userProfil.userCtx) {
 			const id = decodeId(window.location.pathname.split('/cagnotte/')[1]?.split('/edit')[0] || '');
 			setProjetId(id);
 
@@ -67,15 +117,11 @@ export default function FormulaireCagnotte({ edit = false }) {
 
 			fetchProjetData();
 		}
-	}, [edit, navigate, userProfil.userCtx.id, userProfil.userCtx.role]);
+	}, [edit, navigate, userProfil.userCtx]);
 
 	useEffect(() => {
-		if (userProfil.isLogged === false) {
-			navigate('/connexion');
-		}
-	}, [userProfil.isLogged, navigate]);
+		if (!userProfil.userCtx) return;
 
-	useEffect(() => {
 		const fetchUserData = async () => {
 			try {
 				const response = await api.get(`/utilisateurs/profile`);
@@ -86,15 +132,12 @@ export default function FormulaireCagnotte({ edit = false }) {
 		};
 
 		fetchUserData();
-	}, [userProfil]);
-
-	const [categories, setCategories] = useState([]);
+	}, [userProfil.userCtx]);
 
 	useEffect(() => {
 		const fetchCategories = async () => {
 			try {
 				const response = await api.get(`/categories`);
-				// console.log('Catégories récupérées :', response.data);
 				setCategories(response.data);
 			} catch (error) {
 				console.error('Erreur lors de la récupération des catégories :', error);
@@ -103,49 +146,6 @@ export default function FormulaireCagnotte({ edit = false }) {
 
 		fetchCategories();
 	}, []);
-
-	const [errors, setErrors] = useState({
-		titre: '',
-		description: '',
-		objectif_financier: '',
-		localisation: '',
-		date_fin: '',
-		categorie_id: '',
-	});
-
-	const [focusedField, setFocusedField] = useState(null);
-	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [showSuccess, setShowSuccess] = useState(false);
-	const [notification, setNotification] = useState(null);
-	const [imagePreviews, setImagePreviews] = useState([]);
-	const [imageUrls, setImageUrls] = useState([]);
-
-	// États pour les contreparties
-	const [contreparties, setContreparties] = useState([]); // Nouvelles contreparties (pas encore en base)
-	const [contrepartiesExistantes, setContrepartiesExistantes] = useState([]); // Contreparties déjà en base
-	const [contrepartiesToDelete, setContrepartiesToDelete] = useState([]); // IDs des contreparties à supprimer
-	const [editingContrepartieId, setEditingContrepartieId] = useState(null); // ID de la contrepartie en cours d'édition
-	const [contrepartieForm, setContrepartieForm] = useState({
-		titre: '',
-		description: '',
-		montant_minimum: '',
-		type: 'physique',
-		quantite_disponible: '',
-		date_livraison_estimee: '',
-		image_url: '',
-	});
-	const [showContrepartieForm, setShowContrepartieForm] = useState(false);
-
-	// États pour la recherche de localisation
-	const [locationSuggestions, setLocationSuggestions] = useState([]);
-	const [isLocationOpen, setIsLocationOpen] = useState(false);
-	const [isLocationLoading, setIsLocationLoading] = useState(false);
-	const [locationSelectedIndex, setLocationSelectedIndex] = useState(-1);
-
-	const formRef = useRef(null);
-	const titreRef = useRef(null);
-	const locationTimeoutRef = useRef(null);
-	const locationRef = useRef(null);
 
 	// Validation functions
 	const validateTitre = titre => {
@@ -167,9 +167,6 @@ export default function FormulaireCagnotte({ edit = false }) {
 		}
 		if (description.length < 20) {
 			return { isValid: false, message: 'La description doit contenir au moins 20 caractères' };
-		}
-		if (description.length > 2000) {
-			return { isValid: false, message: 'La description ne doit pas dépasser 2000 caractères' };
 		}
 		return { isValid: true, message: '' };
 	};
@@ -725,6 +722,25 @@ export default function FormulaireCagnotte({ edit = false }) {
 		}
 	};
 
+	// Afficher un loader pendant la vérification de l'authentification
+	if (userProfil.isLoading) {
+		return (
+			<div className="formulaire-cagnotte">
+				<div className="formulaire-cagnotte-container">
+					<div className="formulaire-cagnotte-card" style={{ textAlign: 'center', padding: '60px' }}>
+						<div className="btn-loader" style={{ width: '40px', height: '40px', margin: '0 auto' }}></div>
+						<p style={{ marginTop: '20px', color: '#6b7280' }}>Chargement...</p>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	// Rediriger si non connecté
+	if (!userProfil.isLogged) {
+		return null;
+	}
+
 	return (
 		<div className="formulaire-cagnotte">
 			<div className="formulaire-cagnotte-container">
@@ -760,6 +776,15 @@ export default function FormulaireCagnotte({ edit = false }) {
 
 						{/* Description */}
 						<div className={`form-group ${errors.description ? 'has-error' : ''}`}>
+							<div className="description-header">
+								<AIDescriptionHelper
+									titre={formData.titre}
+									categorie={categories.find(c => c.id === Number(formData.categorie_id))?.nom || ''}
+									currentDescription={formData.description}
+									objectifFinancier={formData.objectif_financier}
+									onApplyDescription={desc => setFormData(prev => ({ ...prev, description: desc }))}
+								/>
+							</div>
 							<div className={`input-wrapper textarea-wrapper ${focusedField === 'description' ? 'focused' : ''}`}>
 								<textarea
 									id="description"
@@ -773,7 +798,6 @@ export default function FormulaireCagnotte({ edit = false }) {
 									required
 								/>
 								<label htmlFor="description">Description du projet</label>
-								<span className="char-count">{formData.description.length}/2000</span>
 							</div>
 							{errors.description && <span className="error-message show">{errors.description}</span>}
 						</div>
@@ -1255,7 +1279,6 @@ export default function FormulaireCagnotte({ edit = false }) {
 												onBlur={() => setFocusedField(null)}
 												className="has-value">
 												<option value="physique">Physique (livraison)</option>
-												<option value="en_ligne">En ligne (numérique)</option>
 											</select>
 											<label>Type</label>
 										</div>
