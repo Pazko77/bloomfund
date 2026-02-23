@@ -6,7 +6,10 @@
       "use": "@vercel/node"
     }
   ],
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "multi-server.ts" }
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "multi-server.ts"
+    }
   ]
 }
