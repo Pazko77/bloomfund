@@ -1,8 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import axios from 'axios';
-
 import './Connexion.scss';
 import Logo from '/BloomfundLogo.svg';
+import api from "../../helpers/request/api";
+import LoginForm from '../../components/login/LoginForm';
+import SocialLogin from '../../components/shared/SocialLogin';
+import SignupLink from '../../components/login/SignupLink';
+import SuccessMessage from '../../components/login/SuccessMessage';
+import { FormUtils } from '../../helpers/formUtils/form-utils';
+
 
 export default function Connexion() {
 	const [formData, setFormData] = useState({
@@ -26,27 +31,6 @@ export default function Connexion() {
 	const emailRef = useRef(null);
 	const passwordRef = useRef(null);
 
-	// Validation functions
-	const validateEmail = email => {
-		if (!email) {
-			return { isValid: false, message: "L'email est requis" };
-		}
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!emailRegex.test(email)) {
-			return { isValid: false, message: 'Email invalide' };
-		}
-		return { isValid: true, message: '' };
-	};
-
-	const validatePassword = password => {
-		if (!password) {
-			return { isValid: false, message: 'Le mot de passe est requis' };
-		}
-		if (password.length < 6) {
-			return { isValid: false, message: 'Au moins 6 caractères requis' };
-		}
-		return { isValid: true, message: '' };
-	};
 
 	// Handle input changes
 	const handleChange = e => {
@@ -70,9 +54,9 @@ export default function Connexion() {
 		let result;
 
 		if (fieldName === 'email') {
-			result = validateEmail(value);
+			result = FormUtils.validateEmail(value);
 		} else if (fieldName === 'password') {
-			result = validatePassword(value);
+			result = FormUtils.validatePassword(value);
 		}
 
 		if (result && !result.isValid) {
@@ -100,7 +84,7 @@ export default function Connexion() {
 	};
 
 	const login = async (email, password) => {
-		const response = await axios.post(`${import.meta.env.VITE_API_URL}/utilisateurs/login`, {
+		const response = await api.post(`/utilisateurs/login`, {
 			email,
 			mot_de_passe: password,
 		});
@@ -115,8 +99,8 @@ export default function Connexion() {
 		if (isSubmitting) return;
 
 		// Validate all fields
-		const emailValidation = validateEmail(formData.email);
-		const passwordValidation = validatePassword(formData.password);
+		const emailValidation = FormUtils.validateEmail(formData.email);
+		const passwordValidation = FormUtils.validatePassword(formData.password);
 
 		const newErrors = {
 			email: emailValidation.isValid ? '' : emailValidation.message,
@@ -140,9 +124,9 @@ export default function Connexion() {
 		setIsSubmitting(true);
 
 		try {
+			// eslint-disable-next-line no-unused-vars
 			const data = await login(formData.email, formData.password);
 
-			localStorage.setItem('token', data.token);
 
 			setShowSuccess(true);
 			// Simulate redirect
@@ -153,7 +137,6 @@ export default function Connexion() {
 				setErrors({ email: '', password: '' });
 				window.location.href = '/rechercher';
 			}, 1000);
-			
 		} catch (error) {
 			showNotification(error.response?.data?.message || 'Échec de la connexion', 'error');
 		} finally {
@@ -185,6 +168,7 @@ export default function Connexion() {
 		return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
 	}, [formData.email]);
 
+
 	return (
 		<div className="login">
 			<div className="login-container">
@@ -196,99 +180,29 @@ export default function Connexion() {
 
 					{notification && <div className={`notification notification-${notification.type}`}>{notification.message}</div>}
 
-					<form ref={formRef} className={`login-form ${showSuccess ? 'form-hidden' : ''}`} id="loginForm" onSubmit={handleSubmit} noValidate>
-						<div className={`form-group ${errors.email ? 'has-error' : ''}`}>
-							<div className={`input-wrapper ${focusedField === 'email' ? 'focused' : ''}`}>
-								<input
-									ref={emailRef}
-									type="email"
-									id="email"
-									name="email"
-									value={formData.email}
-									onChange={handleChange}
-									onFocus={() => setFocusedField('email')}
-									onBlur={() => handleBlur('email')}
-									className={formData.email ? 'has-value' : ''}
-									required
-									autoComplete="email"
-								/>
-								<label htmlFor="email">Adresse Mail</label>
-							</div>
-							{errors.email && <span className="error-message show">{errors.email}</span>}
-						</div>
+					<LoginForm
+						formRef={formRef}
+						handleSubmit={handleSubmit}
+						showSuccess={showSuccess}
+						errors={errors}
+						focusedField={focusedField}
+						formData={formData}
+						handleChange={handleChange}
+						setFocusedField={setFocusedField}
+						handleBlur={handleBlur}
+						emailRef={emailRef}
+						passwordRef={passwordRef}
+						showPassword={showPassword}
+						setShowPassword={setShowPassword}
+						handleForgotPassword={handleForgotPassword}
+						isSubmitting={isSubmitting}
+					/>
 
-						<div className={`form-group ${errors.password ? 'has-error' : ''}`}>
-							<div className={`input-wrapper password-wrapper ${focusedField === 'password' ? 'focused' : ''}`}>
-								<input
-									ref={passwordRef}
-									type={showPassword ? 'text' : 'password'}
-									id="password"
-									name="password"
-									value={formData.password}
-									onChange={handleChange}
-									onFocus={() => setFocusedField('password')}
-									onBlur={() => handleBlur('password')}
-									className={formData.password ? 'has-value' : ''}
-									required
-									autoComplete="current-password"
-								/>
-								<label htmlFor="password">Mot de Passe</label>
-								<button
-									type="button"
-									className="password-toggle"
-									onClick={() => setShowPassword(!showPassword)}
-									aria-label="Toggle password visibility">
-									<span className={`eye-icon ${showPassword ? 'show-password' : ''}`}></span>
-								</button>
-							</div>
-							{errors.password && <span className="error-message show">{errors.password}</span>}
-						</div>
+					<SocialLogin showSuccess={showSuccess} handleSocialLogin={handleSocialLogin} />
 
-						<div className="form-options">
-							<label className="remember-wrapper">
-								<input type="checkbox" id="remember" name="remember" checked={formData.remember} onChange={handleChange} />
-								<span className="checkbox-label">
-									<span className="checkmark"></span>
-									Souviens-toi de moi
-								</span>
-							</label>
-							<a href="#" className="forgot-password" onClick={handleForgotPassword}>
-								Mot de passe oublié ?
-							</a>
-						</div>
+					<SignupLink showSuccess={showSuccess} />
 
-						<button type="submit" className={`login-btn btn ${isSubmitting ? 'loading' : ''}`} disabled={isSubmitting}>
-							<span className="btn-text">Se connecter</span>
-							<span className="btn-loader"></span>
-						</button>
-					</form>
-
-					<div className={`divider ${showSuccess ? 'hidden' : ''}`}>
-						<span>ou</span>
-					</div>
-
-					<div className={`social-login ${showSuccess ? 'hidden' : ''}`}>
-						<button type="button" className="social-btn google-btn" onClick={() => handleSocialLogin('Google')}>
-							<span className="social-icon google-icon"></span>
-							Google
-						</button>
-						<button type="button" className="social-btn github-btn" onClick={() => handleSocialLogin('Facebook')}>
-							<span className="social-icon facebook-icon"></span>
-							Facebook
-						</button>
-					</div>
-
-					<div className={`signup-link ${showSuccess ? 'hidden' : ''}`}>
-						<p>
-							Vous découvrez BloomFund ? <a href="/inscription">Inscrivez-vous</a>
-						</p>
-					</div>
-
-					<div className={`success-message ${showSuccess ? 'show' : ''}`} id="successMessage">
-						<div className="success-icon">✓</div>
-						<h3>Connexion réussie !</h3>
-						<p>Redirection vers votre tableau de bord...</p>
-					</div>
+					<SuccessMessage showSuccess={showSuccess} />
 				</div>
 			</div>
 		</div>

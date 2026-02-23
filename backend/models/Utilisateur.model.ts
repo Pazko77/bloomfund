@@ -11,14 +11,15 @@ export type RoleUtilisateur = "citoyen" | "porteur_projet" | "admin";
  * @typedef {Utilisateur}
  */
 export interface Utilisateur {
-  id: number;
-  nom: string;
-  prenom: string;
-  email: string;
-  mot_de_passe: string;
-  departement: string;
-  role: RoleUtilisateur;
-  date_inscription: Date;
+	id: number;
+	nom: string;
+	prenom: string;
+	email: string;
+	mot_de_passe: string;
+	departement: string;
+	role: RoleUtilisateur;
+	date_inscription: Date;
+	refresh_token?: string; // Ajout du refresh token
 }
 
 /**
@@ -58,9 +59,9 @@ export interface UtilisateurOutput {
  * @typedef {UtilisateurPayload}
  */
 export interface UtilisateurPayload {
-  id: number;
-  email: string;
-  role: "citoyen" | "porteur_projet" | "admin";
+	id: number;
+	email: string;
+	role: RoleUtilisateur;
 }
 
 /**

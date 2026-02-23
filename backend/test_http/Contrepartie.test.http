@@ -1,0 +1,51 @@
+### CREATE
+POST http://localhost:3000/api/contreparties
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJub20iOiJQaWVycmUiLCJwcmVub20iOiJZY2huaWdodGRlciIsImRhdGVfaW5zY3JpcHRpb24iOiIyMDI1LTEyLTIwVDIyOjQxOjM3LjAwMFoiLCJkZXBhcnRlbWVudCI6Ijk3MyIsImlhdCI6MTc3MTI3MzY3MSwiZXhwIjoxNzcxMjc1NDcxfQ.NLOjobV1iQioPdqMrlRkJOP_pBsdErkiO4yGIcr0UEE
+Content-Type: application/json
+
+{
+  "titre": "Pack Découverte",
+  "description": "Un pack de bienvenue avec goodies exclusifs",
+  "montant_minimum": 25,
+  "type": "physique",
+  "quantite_disponible": 100,
+  "date_livraison_estimee": "2026-06-01",
+  "projet_id": 2
+}
+
+### GET ALL BY PROJET
+GET http://localhost:3000/api/contreparties/projet/1
+
+### GET ONE
+GET http://localhost:3000/api/contreparties/1
+
+### UPDATE
+PUT http://localhost:3000/api/contreparties/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibm9tIjoiUGllcnJlIiwicHJlbm9tIjoiWWNobmlnaHRkZXIiLCJlbWFpbCI6InBpZXJyZS55Y2huaWdodGRlckB0ZXN0LmNvbSIsIm1vdF9kZV9wYXNzZSI6IiQyYiQxMCRzdE1kZzBrTzZnaXpzQjJpT0NUWnkud25MV3BIcE9XVGhJQy83VHFJeGVYaTh5bUdMeHAxUyIsInJvbGUiOiJhZG1pbiIsImRhdGVfaW5zY3JpcHRpb24iOiIyMDI1LTEyLTIwVDIyOjQxOjM3LjAwMFoiLCJkZXBhcnRlbWVudCI6Ijc1IiwiaWF0IjoxNzY2ODUyOTk2LCJleHAiOjE3NjY4NTM4OTZ9.oh1pZOdHWepz2dBYM-9uG6r_rJc6TivA2z5bLf99Ffs
+Content-Type: application/json
+
+{
+  "titre": "Pack Premium",
+  "description": "Un pack premium avec encore plus de goodies",
+  "montant_minimum": 50,
+  "projet_id": 1
+}
+
+### DELETE
+DELETE http://localhost:3000/api/contreparties/1?projet_id=1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJub20iOiJQaWVycmUiLCJwcmVub20iOiJZY2huaWdodGRlciIsImRhdGVfaW5zY3JpcHRpb24iOiIyMDI1LTEyLTIwVDIyOjQxOjM3LjAwMFoiLCJkZXBhcnRlbWVudCI6Ijk3MyIsImlhdCI6MTc3MTI3MzY3MSwiZXhwIjoxNzcxMjc1NDcxfQ.NLOjobV1iQioPdqMrlRkJOP_pBsdErkiO4yGIcr0UEE
+
+###
+
+### CREATE - Contrepartie en ligne
+POST http://localhost:3000/api/contreparties
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibm9tIjoiUGllcnJlIiwicHJlbm9tIjoiWWNobmlnaHRkZXIiLCJlbWFpbCI6InBpZXJyZS55Y2huaWdodGRlckB0ZXN0LmNvbSIsIm1vdF9kZV9wYXNzZSI6IiQyYiQxMCRzdE1kZzBrTzZnaXpzQjJpT0NUWnkud25MV3BIcE9XVGhJQy83VHFJeGVYaTh5bUdMeHAxUyIsInJvbGUiOiJhZG1pbiIsImRhdGVfaW5zY3JpcHRpb24iOiIyMDI1LTEyLTIwVDIyOjQxOjM3LjAwMFoiLCJkZXBhcnRlbWVudCI6Ijc1IiwiaWF0IjoxNzY2ODUyOTk2LCJleHAiOjE3NjY4NTM4OTZ9.oh1pZOdHWepz2dBYM-9uG6r_rJc6TivA2z5bLf99Ffs
+Content-Type: application/json
+
+{
+  "titre": "Accès VIP Digital",
+  "description": "Accès exclusif au contenu en ligne et mises à jour",
+  "montant_minimum": 15,
+  "type": "en_ligne",
+  "projet_id": 1
+}

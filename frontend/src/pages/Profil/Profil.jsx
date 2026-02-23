@@ -1,12 +1,15 @@
 import './Profil.scss';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isTokenExpired } from './../../helpers/token/tokenExpire';
-import { getFirstImage } from './../../helpers/image/parseImg';
-import axios from 'axios';
+import { getFirstImage } from '../../helpers/image/parseImg';
+import { useAuth } from '../../hook/useAuth';
+import api from '../../helpers/request/api';
+import { encodeId } from '../../helpers/encoder/hashId';
 
 const Profil = () => {
 	const navigate = useNavigate();
+	const userProfil = useAuth();
+
 	const [user, setUser] = useState(null);
 	const [projets, setProjets] = useState([]);
 	const [isEditing, setIsEditing] = useState(false);
@@ -25,39 +28,33 @@ const Profil = () => {
 		departement: '',
 	});
 
-	const token = localStorage.getItem('token');
-	const isTokenExpiredValue = isTokenExpired(token);
+	useEffect(() => {
+		if (userProfil.isLogged === false) {
+			navigate('/connexion');
+		}
+	}, [userProfil.isLogged, navigate, userProfil]);
 
 	useEffect(() => {
 		const fetchUserProfil = async () => {
-			if (!isTokenExpiredValue && token) {
-				try {
-					const response = await axios.get(`${import.meta.env.VITE_API_URL}/utilisateurs/profile`, {
-						headers: {
-							Authorization: `Bearer ${token}`,
-						},
-					});
-					setUser(response.data.Utilisateur);
-					setFormData({
-						nom: response.data.Utilisateur.nom || '',
-						prenom: response.data.Utilisateur.prenom || '',
-						email: response.data.Utilisateur.email || '',
-						departement: response.data.Utilisateur.departement || '',
-					});
-				} catch (error) {
-					console.error(error);
-				}
+			if (userProfil.isLogged) {
+				setUser(userProfil.userCtx);
+				setFormData({
+					nom: userProfil.userCtx.nom,
+					prenom: userProfil.userCtx.prenom,
+					email: userProfil.userCtx.email,
+					departement: userProfil.userCtx.departement || '',
+				});
 			}
 		};
 		fetchUserProfil();
-	}, [isTokenExpiredValue, token]);
+	}, [userProfil.isLogged, userProfil.userCtx]);
 
 	// Récupérer les projets de l'utilisateur si porteur de projet
 	useEffect(() => {
 		const fetchProjets = async () => {
 			if (user && (user.role === 'porteur_projet' || user.role === 'admin')) {
 				try {
-					const response = await axios.get(`${import.meta.env.VITE_API_URL}/projets`);
+					const response = await api.get(`/projets`);
 					const mesProjets = response.data.filter(projet => projet.porteur_nom === user.nom && projet.porteur_prenom === user.prenom);
 					setProjets(mesProjets);
 				} catch (error) {
@@ -78,11 +75,7 @@ const Profil = () => {
 	const handleSubmit = async e => {
 		e.preventDefault();
 		try {
-			await axios.put(`${import.meta.env.VITE_API_URL}/utilisateurs/profile/update`, formData, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
+			await api.put(`/utilisateurs/profile/update`, formData);
 			setUser({ ...user, ...formData });
 			setIsEditing(false);
 		} catch (error) {
@@ -124,18 +117,10 @@ const Profil = () => {
 		}
 
 		try {
-			await axios.put(
-				`${import.meta.env.VITE_API_URL}/utilisateurs/password`,
-				{
-					ancienMotDePasse: passwordData.ancienMotDePasse,
-					nouveauMotDePasse: passwordData.nouveauMotDePasse,
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
+			await api.put(`/utilisateurs/password`, {
+				ancienMotDePasse: passwordData.ancienMotDePasse,
+				nouveauMotDePasse: passwordData.nouveauMotDePasse,
+			});
 			setPasswordSuccess('Mot de passe modifié avec succès');
 			setPasswordData({
 				ancienMotDePasse: '',
@@ -164,19 +149,11 @@ const Profil = () => {
 
 	const handleLogout = async () => {
 		try {
-			await axios.post(
-				`${import.meta.env.VITE_API_URL}/utilisateurs/logout`,
-				{},
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
+			await api.post(`/utilisateurs/logout`);
 		} catch (error) {
 			console.error(error);
 		}
-		localStorage.removeItem('token');
+		userProfil.refreshUser();
 		navigate('/');
 	};
 
@@ -292,16 +269,21 @@ const Profil = () => {
 							<div className="space-y-6">
 								<div className="flex items-center gap-6 pb-6 border-b border-gray-200">
 									<div className="w-24 h-24 bg-[#4c9a4e] rounded-full flex items-center justify-center text-white text-3xl">
-										{user.prenom[0]}
-										{user.nom[0]}
+										{user.prenom && user.prenom[0] ? user.prenom[0].toUpperCase() : ''}
+										{user.nom && user.nom[0] ? user.nom[0].toUpperCase() : ''}
 									</div>
 									<div>
 										<h3 className="text-2xl">
-											{user.prenom} {user.nom}
+											{user.prenom.charAt(0).toUpperCase() + user.prenom.slice(1)} {user.nom.charAt(0).toUpperCase() + user.nom.slice(1)}
 										</h3>
 										<p className="text-gray-500">
 											{user.role === 'porteur_projet' ? 'Porteur de projet' : user.role === 'admin' ? 'Administrateur' : 'Citoyen'}
 										</p>
+										{userProfil.userCtx.role === 'admin' ? (
+											<a href="/admin" className="text-[#4c9a4e] hover:text-[#3e7a3b] font-medium">
+												Go to Admin Dashboard
+											</a>
+										) : null}
 									</div>
 								</div>
 
@@ -426,7 +408,11 @@ const Profil = () => {
 										return (
 											<div
 												key={projet.projet_id}
-												onClick={() => navigate(`/cagnotte/${projet.projet_id}`)}
+												onClick={() =>
+													projet.statut === 'brouillon'
+														? navigate(`/cagnotte/${encodeId(projet.projet_id)}/edit`)
+														: navigate(`/cagnotte/${encodeId(projet.projet_id)}`)
+												}
 												className="flex gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
 												<img src={getFirstImage(projet.image_url)} alt={projet.titre} className="w-32 h-24 object-cover rounded-lg" />
 												<div className="flex-1">
@@ -439,11 +425,11 @@ const Profil = () => {
 															className={`px-3 py-1 rounded-full text-xs font-medium ${
 																projet.statut === 'publie'
 																	? 'bg-green-100 text-green-700'
-																	: projet.statut === 'en_attente'
+																	: projet.statut === 'brouillon'
 																		? 'bg-yellow-100 text-yellow-700'
 																		: 'bg-gray-100 text-gray-700'
 															}`}>
-															{projet.statut === 'publie' ? 'publié' : projet.statut === 'en_attente' ? 'en attente' : projet.statut}
+															{projet.statut}
 														</span>
 													</div>
 													<div className="mt-2">

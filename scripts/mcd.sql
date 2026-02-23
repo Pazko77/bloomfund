@@ -8,6 +8,7 @@ CREATE TABLE utilisateurs (
     role VARCHAR(30) NOT NULL DEFAULT 'citoyen',
     departement VARCHAR(100) ,
     date_inscription TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    refresh_token VARCHAR(500),
     CHECK (role IN ('citoyen', 'porteur_projet', 'admin'))
 );
 
@@ -27,7 +28,7 @@ CREATE TABLE projets (
     objectif_financier DECIMAL(10,2) NOT NULL,
     montant_collecte DECIMAL(10,2) DEFAULT 0,
     localisation VARCHAR(150),
-    statut VARCHAR(30) DEFAULT 'publie',
+    statut VARCHAR(30) DEFAULT 'brouillon',
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     date_fin DATE,
     porteur_id INT NOT NULL,
@@ -58,4 +59,21 @@ CREATE TABLE contributions (
     projet_id INT NOT NULL,
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
     FOREIGN KEY (projet_id) REFERENCES projets(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE Contreparties (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titre VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    montant_minimum DECIMAL(10,2) NOT NULL,
+    type VARCHAR(30) NOT NULL DEFAULT 'physique',
+    quantite_disponible INT,
+    quantite_restante INT,
+    date_livraison_estimee DATE,
+    image_url VARCHAR(1000),
+    projet_id INT NOT NULL,
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (projet_id) REFERENCES Projets(id) ,
+    CHECK (type IN ('physique', 'en_ligne'))
 );

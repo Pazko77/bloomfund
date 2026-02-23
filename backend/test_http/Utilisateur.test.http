@@ -23,22 +23,34 @@ Content-Type: application/json
 }
 
 
-### Login pour récupérer le token JWT
-POST http://localhost:3000/api/utilisateurs/login
+### Login pour récupérer le token JWT et le refresh token
+POST http://localhost:8080/api/utilisateurs/login
 Content-Type: application/json
 
 {
   "email": "pierre.ychnightder@test.com",
-  "mot_de_passe": "monpassword"
+  "mot_de_passe": "h2jC7x2Dgre7Prp"
 }
+
+### Utiliser le refresh token pour obtenir un nouveau token d'accès
+POST http://localhost:3000/api/utilisateurs/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzAwNjYxMTcsImV4cCI6MTc3MDY3MDkxN30.C1hs_6AFqzVeLahbTo6sDC9vIsmS6RPtExDi84t0hWY"
+}
+
+### Exemple d'utilisation (explications)
+# 1. Faites un login pour obtenir le token et le refreshToken
+# 2. Quand le token d'accès expire, appelez /refresh-token avec le refreshToken
+# 3. Utilisez le nouveau token d'accès pour accéder aux routes protégées
 ###
 POST http://localhost:3000/api/utilisateurs/logout
 
 
-https://images.unsplash.com/photo-1543906965-f9520aa2ed8a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y3VsdHVyZXxlbnwwfHwwfHx8MA%3D%3D
 ### Accéder au profil protégé (remplacer TOKEN par celui reçu au login)
 GET http://localhost:3000/api/utilisateurs/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJub20iOiJQaWVycmUiLCJwcmVub20iOiJZY2huaWdodGRlciIsImRhdGVfaW5zY3JpcHRpb24iOiIyMDI1LTEyLTIwVDIyOjQxOjM3LjAwMFoiLCJkZXBhcnRlbWVudCI6Ijc1IiwiaWF0IjoxNzY3MjgyMzE1LCJleHAiOjE3NjcyODMyMTV9.3bWoZ4Ku5o6rpZ1rT1BRlsW-GFZlsqhDYSxDR048-UY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJub20iOiJQaWVycmUiLCJwcmVub20iOiJZY2huaWdodGRlciIsImRhdGVfaW5zY3JpcHRpb24iOiIyMDI1LTEyLTIwVDIyOjQxOjM3LjAwMFoiLCJkZXBhcnRlbWVudCI6Ijk3MyIsImlhdCI6MTc3MDA2NjEyOSwiZXhwIjoxNzcwMDY3OTI5fQ.Z1EtuhCQh_BLE3wUA-4JU7BGrSLRbbEqczxuu8x2CVw
   
 
 ### ADAMIN - Register un nouvel utilisateur avec le rôle admin
@@ -55,9 +67,6 @@ Content-Type: application/json
   "role": "admin"
 }
 
-
-# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJub20iOiJDaGFybGllIiwicHJlbm9tIjoiWWNobmlnaHRkZXIiLCJkYXRlX2luc2NyaXB0aW9uIjoiMjAyNS0xMi0yMFQyMjo0MTozNy4wMDBaIiwiZGVwYXJ0ZW1lbnQiOiI3NSIsImlhdCI6MTc2NzM0ODA1OCwiZXhwIjoxNzY3OTUyODU4fQ.KS-dk4AwIJO9GnLVf0AlEgaNdIOKsFLqWHktXT2jMpo
-
 ###
 POST http://localhost:3000/api/utilisateurs/login
 Content-Type: application/json
@@ -67,3 +76,6 @@ Content-Type: application/json
   "mot_de_passe": "monpassword"
 }
 ###
+
+GET http://localhost:3000/api/utilisateurs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJwaWVycmUueWNobmlnaHRkZXJAdGVzdC5jb20iLCJyb2xlIjoiYWRtaW4iLCJub20iOiJQaWVycmUiLCJwcmVub20iOiJZY2huaWdodGRlciIsImRhdGVfaW5zY3JpcHRpb24iOiIyMDI1LTEyLTIwVDIyOjQxOjM3LjAwMFoiLCJkZXBhcnRlbWVudCI6Ijk3MyIsImlhdCI6MTc3MDI0MjI5NiwiZXhwIjoxNzcwMjQ0MDk2fQ.hqIwvYNjq_mBXSASTNYYqWwXDHe4TjuBTn3wh8XdHks

@@ -29,7 +29,7 @@ export const ProjetService = {
 	},
 
 	// READ ALL
-	async findAll(): Promise<Projet[]> {
+	async findAll(statut?: string): Promise<Projet[]> {
 		const [rows] = await pool.query(
 			`SELECT 
       Projets.id AS projet_id,
@@ -46,10 +46,12 @@ export const ProjetService = {
       Utilisateurs.prenom AS porteur_prenom,
       Utilisateurs.departement AS porteur_departement,
       Categories.nom AS categorie_nom,
-      Categories.description AS categorie_description
+      Categories.description AS categorie_description,
+	  Categories.id AS categorie_id
      FROM Projets
      INNER JOIN Utilisateurs ON Projets.porteur_id = Utilisateurs.id
-     LEFT JOIN Categories ON Projets.categorie_id = Categories.id`
+     LEFT JOIN Categories ON Projets.categorie_id = Categories.id` + (statut ? ' WHERE Projets.statut = ?' : ''),
+			statut ? [statut] : []
 		);
 
 		return rows as Projet[];
@@ -69,11 +71,13 @@ export const ProjetService = {
       Projets.date_fin,
       Projets.image_url,
       Projets.localisation,
+      Projets.porteur_id AS utilisateur_id,
       Utilisateurs.nom AS porteur_nom,
       Utilisateurs.prenom AS porteur_prenom,
       Utilisateurs.departement AS porteur_departement,
       Categories.nom AS categorie_nom,
-      Categories.description AS categorie_description
+      Categories.description AS categorie_description,
+	  Categories.id AS categorie_id
      FROM Projets
      INNER JOIN Utilisateurs ON Projets.porteur_id = Utilisateurs.id
      LEFT JOIN Categories ON Projets.categorie_id = Categories.id 
@@ -98,6 +102,27 @@ export const ProjetService = {
 			UPDATE Projets 
 			SET ${fields}
 			WHERE id = ? AND porteur_id = ?
+		`;
+
+		const [result]: any = await pool.execute(sql, values);
+		return result.affectedRows === 1;
+	},
+
+	// UPDATE by admin (no porteur_id check)
+	async updateByAdmin(id: number, data: Partial<ProjetInput>): Promise<boolean> {
+		const fields = Object.keys(data)
+			.map(key => `${key} = ?`)
+			.join(', ');
+		const values = Object.values(data);
+
+		if (!fields) return false;
+
+		values.push(id);
+
+		const sql = `
+			UPDATE Projets 
+			SET ${fields}
+			WHERE id = ?
 		`;
 
 		const [result]: any = await pool.execute(sql, values);

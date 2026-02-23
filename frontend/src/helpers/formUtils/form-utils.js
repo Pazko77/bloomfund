@@ -1,32 +1,76 @@
 export class FormUtils {
 	static validateEmail(value) {
 		if (!value) {
-			return { isValid: false, message: 'Email address is required' };
+			return { isValid: false, message: "L'email est requis" };
 		}
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		if (!emailRegex.test(value)) {
-			return { isValid: false, message: 'Please enter a valid email address' };
+			return { isValid: false, message: 'Email invalide' };
 		}
 		return { isValid: true };
 	}
 
 	static validatePassword(value) {
 		if (!value) {
-			return { isValid: false, message: 'Password is required' };
+			return { isValid: false, message: 'Le mot de passe est requis' };
 		}
 		if (value.length < 8) {
 			return {
 				isValid: false,
-				message: 'Password must be at least 8 characters long',
+				message: 'Au moins 8 caractères requis',
 			};
 		}
 		if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value)) {
 			return {
 				isValid: false,
-				message: 'Password must contain uppercase, lowercase, and number',
+				message: 'Au moins une majuscule, une minuscule et un chiffre',
 			};
 		}
 		return { isValid: true };
+	}
+
+	static validateName(value, fieldLabel = 'Ce champ') {
+		if (!value) {
+			return { isValid: false, message: `${fieldLabel} est requis` };
+		}
+		if (value.length < 2) {
+			return {
+				isValid: false,
+				message: `${fieldLabel} doit contenir au moins 2 caractères`,
+			};
+		}
+		return { isValid: true };
+	}
+
+	static validateConfirmPassword(value, password) {
+		if (!value) {
+			return { isValid: false, message: 'Confirmez votre mot de passe' };
+		}
+		if (value !== password) {
+			return {
+				isValid: false,
+				message: 'Les mots de passe ne correspondent pas',
+			};
+		}
+		return { isValid: true };
+	}
+
+	static validateTerms(value) {
+		if (!value) {
+			return { isValid: false, message: 'Vous devez accepter les conditions' };
+		}
+		return { isValid: true };
+	}
+
+	static calculatePasswordStrength(password) {
+		let strength = 0;
+		if (!password) return 0;
+		if (password.length >= 8) strength++;
+		if (password.length >= 12) strength++;
+		if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+		if (/[0-9]/.test(password)) strength++;
+		if (/[^A-Za-z0-9]/.test(password)) strength++;
+		return Math.min(strength, 4);
 	}
 
 	static showError(fieldName, message) {

@@ -48,3 +48,5 @@ Content-Type: application/json
   "porteur_id": 4
 
 }
+### GET ALL
+GET http://localhost:3000/api/projets?statut=publie

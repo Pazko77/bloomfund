@@ -2,25 +2,21 @@ import "./App.scss";
 import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from 'react';
 import LayoutMain from "../layouts/LayoutMain/LayoutMain.jsx";
+import { Loader } from '../components/shared/Loader.jsx';
 
 // Lazy loading des pages
-const About = lazy(() => import("../pages/About/About.jsx"));
-const Accueil = lazy(() => import("../pages/Accueil/Accueil.jsx"));
-const Connexion = lazy(() => import("../pages/Connexion/Connexion.jsx"));
-const Inscription = lazy(() => import("../pages/Inscription/Inscription.jsx"));
-const Rechercher = lazy(() => import("../pages/Rechercher/Rechercher.jsx"));
-const Cagnotte = lazy(() => import("../pages/FormulaireCagnotte/FormulaireCagnotte.jsx"));
-const CagnottePageTemplate = lazy(() => import("../pages/CagnottePageTemplate/CagnottePageTemplate.jsx"));
-const Profil = lazy(() => import("../pages/Profil/Profil.jsx"));
-const Payment = lazy(() => import('../pages/Payment/Payment.jsx'));
+const About = lazy(() => import('../pages/About/About.jsx'));
+const Accueil = lazy(() => import('../pages/Accueil/Accueil.jsx'));
+const Connexion = lazy(() => import('../pages/Connexion/Connexion.jsx'));
+const Inscription = lazy(() => import('../pages/Inscription/Inscription.jsx'));
+const Rechercher = lazy(() => import('../pages/Rechercher/Rechercher.jsx'));
+const Cagnotte = lazy(() => import('../pages/FormulaireCagnotte/FormulaireCagnotte.jsx'));
+const CagnottePageTemplate = lazy(() => import('../pages/CagnottePageTemplate/CagnottePageTemplate.jsx'));
+const Profil = lazy(() => import('../pages/Profil/Profil.jsx'));
 const LegalPages = lazy(() => import('../pages/LegalPages/LegalPages.jsx'));
+const Payment = lazy(() => import('../pages/Payment/Payment.jsx'));
+const DashboardAdmin = lazy(() => import('../pages/Admin/DashboardAdmin.jsx'));
 
-// Composant Loader
-const Loader = () => (
-	<div className="w-full h-screen flex justify-center items-center">
-		<img src="/shared/loader.svg" alt="Loading..." />
-	</div>
-);
 
 function App() {
 	return (
@@ -40,6 +36,8 @@ function App() {
 					<Route path="/profil" element={<Profil />} />
 					<Route path="/payment/:id" element={<Payment />} />
 					<Route path="/legal" element={<LegalPages />} />
+					<Route path="/admin" element={<DashboardAdmin />} />
+					<Route path="/cagnotte/:id/edit" element={<Cagnotte edit={true} />} />
 				</Route>
 			</Routes>
 		</Suspense>

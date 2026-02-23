@@ -10,11 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.13.4",
     "@stripe/react-stripe-js": "^1.14.0",
     "@stripe/stripe-js": "^1.54.0",
     "@tailwindcss/postcss": "^4.1.18",
     "axios": "^1.13.2",
     "dotenv": "^17.2.3",
+    "hashids": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.10.1"

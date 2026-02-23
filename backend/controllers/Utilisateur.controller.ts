@@ -1,9 +1,13 @@
 import { Request, Response } from "express";
-import { generateAccessToken } from "../common/generateToken";
-import { hashP } from "../common/hashPassword";
-import { UtilisateurService } from "./../services/Utilisateur.service";
-import bcrypt from "bcrypt";
-import { Utilisateur, UtilisateurInput } from "./../models/Utilisateur.model";
+import { generateAccessToken, generateRefreshToken } from '../common/generateToken';
+import { hashP } from '../common/hashPassword';
+import { UtilisateurService } from './../services/Utilisateur.service';
+import bcrypt from 'bcrypt';
+import { Utilisateur, UtilisateurInput } from './../models/Utilisateur.model';
+import jwt from 'jsonwebtoken';
+import { OAuth2Client } from 'google-auth-library';
+const client = new OAuth2Client(process.env.GOOGLE_OAUTH_CLIENT_ID);
+import axios from 'axios';
 
 export const UtilisateurController = {
 	// REGISTER
@@ -43,22 +47,84 @@ export const UtilisateurController = {
 			return res.status(401).json({ message: 'Mot de passe incorrect', success: false });
 		}
 
-		// Add password verification and token generation logic here
+		// Génère les tokens
 		const token = generateAccessToken(existingUtilisateur);
+		const refreshToken = generateRefreshToken(existingUtilisateur);
 
+		// Stocke le refresh token en base de données pour cet utilisateur
+		await UtilisateurService.update(existingUtilisateur.id, { refresh_token: refreshToken });
+		// Envoie le refresh token en httpOnly cookie (ou dans le body si tu préfères)
 		res.cookie('token', token, {
 			httpOnly: true,
-			// secure: process.env.NODE_ENV === 'production',
-			// sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'lax', // 'lax' est nécessaire pour le cross-port (5173 -> 8080)
+			path: '/',
 			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
 		});
 
-		return res.json({ token, success: true });
+		res.cookie('refreshToken', refreshToken, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'lax', // 'lax' est nécessaire pour le cross-port (5173 -> 8080)
+			path: '/',
+			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+		});
+
+		return res.json({ token: token, success: true });
+	},
+
+	// REFRESH TOKEN
+	async refreshToken(req: Request, res: Response) {
+		try {
+			// Récupère le refresh token depuis le cookie ou le body
+			const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
+
+			// console.log('[RefreshToken] Received refresh token:', refreshToken);
+
+			if (!refreshToken) {
+				return res.status(401).json({ message: 'Refresh token manquant', success: false });
+			}
+			// Vérifie le refresh token
+			const decoded = (jwt as any).verify(refreshToken, process.env.REFRESH_TOKEN_SECRET || 'supersecrety');
+			// Vérifie qu'il correspond à celui stocké en base
+			const user = await UtilisateurService.findById(decoded.id);
+
+			// console.log('[RefreshToken] Token valid for user ID:', user, refreshToken);
+
+			if (!user || user.refresh_token !== refreshToken) {
+				return res.status(403).json({ message: 'Refresh token invalide correspondant à un utilisateur différent', success: false });
+			}
+			// Génère un nouveau token d'accès
+			const token = generateAccessToken(user as Utilisateur);
+			const newRefreshToken = generateRefreshToken(user as Utilisateur);
+
+			await UtilisateurService.update(user.id, { refresh_token: newRefreshToken });
+			res.cookie('refreshToken', newRefreshToken, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				sameSite: 'lax', // 'lax' est nécessaire pour le cross-port (5173 -> 8080)
+				path: '/',
+				maxAge: 7 * 24 * 60 * 60 * 1000,
+			});
+
+			res.cookie('token', token, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				path: '/',
+				maxAge: 30 * 60 * 1000,
+				sameSite: 'lax',
+			});
+
+			return res.json({ success: true });
+		} catch (err) {
+			return res.status(403).json({ message: 'Refresh token invalide', success: false });
+		}
 	},
 
 	// LOGOUT
 	async logout(req: Request, res: Response) {
 		res.clearCookie('token');
+		res.clearCookie('refreshToken');
 		return res.json({ success: true });
 	},
 
@@ -156,5 +222,78 @@ export const UtilisateurController = {
 			message: 'Mot de passe modifié avec succès',
 			success: true,
 		});
+	},
+
+	//Google Social Login
+	async googleLogin(req: Request, res: Response) {
+		try {
+			const { token } = req.body; 
+
+			const googleRes = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+				headers: { Authorization: `Bearer ${token}` },
+			});
+
+			const payload = googleRes.data;
+
+			if (!payload || !payload.email) {
+				return res.status(400).json({ message: 'Token Google invalide ou expiré', success: false });
+			}
+
+			let user = await UtilisateurService.findByEmail(payload.email);
+
+			if (!user) {
+				const newUser: UtilisateurInput = {
+					nom: payload.family_name || '',
+					prenom: payload.given_name || '',
+					email: payload.email,
+					mot_de_passe: await hashP(Math.random().toString(36).slice(-10)),
+					departement: '',
+					role: 'citoyen' ,
+				};
+				user = await UtilisateurService.create(newUser);
+			}
+
+			const accessToken = generateAccessToken(user as Utilisateur);
+			const refreshToken = generateRefreshToken(user as Utilisateur);
+
+			await UtilisateurService.update((user as Utilisateur).id, { refresh_token: refreshToken });
+
+			const isProd = process.env.NODE_ENV === 'production';
+
+			res.cookie('token', accessToken, {
+				httpOnly: true,
+				secure: isProd,
+				sameSite: 'lax',
+				path: '/',
+				maxAge: 30 * 60 * 1000,
+			});
+
+			res.cookie('refreshToken', refreshToken, {
+				httpOnly: true,
+				secure: isProd,
+				sameSite: 'lax',
+				path: '/',
+				maxAge: 7 * 24 * 60 * 60 * 1000,
+			});
+
+			console.log('Login Google réussi pour :', payload.email);
+			return res.json({ token: accessToken, success: true });
+		} catch (error: any) {
+			console.error('Erreur Google Login :', error.response?.data || error.message);
+			return res.status(500).json({
+				message: 'Erreur lors de la connexion avec Google',
+				success: false,
+			});
+		}
+	},
+	// GET ALL USERS
+	async getAll(req: Request, res: Response) {
+		try {
+			const utilisateurs = await UtilisateurService.getAll();
+			return res.json(utilisateurs);
+		} catch (error) {
+			console.error('Erreur getAll utilisateurs :', error);
+			return res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs', success: false });
+		}
 	},
 };

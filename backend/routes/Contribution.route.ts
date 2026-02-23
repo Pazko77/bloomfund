@@ -5,7 +5,7 @@ import { authenticateToken } from "../middlewares/Utilisateur.middleware";
 const contributionRouter = Router();
 
 contributionRouter.post("/", authenticateToken, ContributionController.create);
-contributionRouter.get("/all", ContributionController.getAll);
+contributionRouter.get('/all', ContributionController.getAll);
 contributionRouter.get("/projet/:projetId", ContributionController.getByProjet);
 
 

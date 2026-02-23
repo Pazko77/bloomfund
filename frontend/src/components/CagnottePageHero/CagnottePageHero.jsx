@@ -2,42 +2,43 @@ import { useEffect, useState } from 'react';
 import logo from '/BloomfundNoText.svg';
 import { TabNavigation } from '../tabNavigation/tabNavigation';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import { parseImages } from '../../helpers/image/parseImg.js';
-
-// Parse les images depuis le format JSON ou autres formats
+import api from '../../helpers/request/api.js';
+import { decodeId } from '../../helpers/encoder/hashId.js';
+import { useAuth } from '../../hook/useAuth.js';
 
 function CagnottePageHero() {
-	const { id } = useParams(); //  ID du projet
+	const { id } = useParams();
+	const realId = decodeId(id);
 	const [projet, setProjet] = useState(null);
+	const userProfil = useAuth().userCtx;
 
 	useEffect(() => {
 		const fetchProjet = async () => {
 			try {
-				const response = await axios.get(`${import.meta.env.VITE_API_URL}/projets/${id}`); // GET pour récupérer les projets
+				const response = await api.get(`/projets/${realId}`);
 				setProjet(response.data);
 			} catch (error) {
 				console.error('Erreur lors de la récupération du projet :', error);
 			}
 		};
-		fetchProjet();
-	}, [id]);
+		if (realId) fetchProjet();
+	}, [realId]);
 
 	const [Contributions, setContributions] = useState([]);
 
 	useEffect(() => {
 		// http://localhost:3000/api/contributions/projet/1
-
 		const fetchContribution = async () => {
 			try {
-				const response = await axios.get(`${import.meta.env.VITE_API_URL}/contributions/projet/${id}`); // GET pour récupérer les contributions
+				const response = await api.get(`/contributions/projet/${realId}`); // GET pour récupérer les contributions
 				setContributions(response.data);
 			} catch (error) {
 				console.error('Erreur lors de la récupération des contributions :', error);
 			}
 		};
-		fetchContribution();
-	}, [id]);
+		if (realId) fetchContribution();
+	}, [realId]);
 
 	if (!projet) {
 		return (
@@ -53,23 +54,19 @@ function CagnottePageHero() {
 	const aujourdHui = new Date();
 	const diffMs = dateFin - aujourdHui;
 	const diffJours = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-
-	// console.log(id);
-	// console.log(projet);
-	// console.log(Contributions);
-
-	// const [Commentaires, setCommentaires] = useState([]);
-
 	const images = parseImages(projet);
-	// console.log('Parsed images:', images);
 
 	return (
 		<>
 			<div className={'w-full bg h-175 flex justify-center items-center flex-col  bg-linear-to-b from-green-600 from-50% to-white to-50%'}>
 				<div className={'w-4/6 h-fit py-2 bg-white shadow-2xl rounded-2xl'}>
 					<div className={'flex flex-col items-center justify-center w-full m-6 gap-3'}>
-						<h1 className={'text-2xl  '}>{projet ? projet.titre : 'titre'}</h1>
-						{/* <p>{projet ? projet.description : 'Petite description'}</p> */}
+						<h1 className={'text-2xl '}>{projet ? projet.titre : 'titre'}</h1>
+						{userProfil && userProfil.role === 'admin' ? (
+							<a href={`/cagnotte/${id}/edit`} className="text-sm text-gray-500 hover:text-gray-700">
+								Modifier la cagnotte
+							</a>
+						) : null}
 					</div>
 					<div className="flex flex-col lg:flex-row px-6 gap-10 justify-between items-start w-full">
 						{/* COLONNE GAUCHE (60%) */}
@@ -78,9 +75,9 @@ function CagnottePageHero() {
 
 							{/* Infos Porteur */}
 							<div className="flex flex-row gap-4 items-center py-2">
-								<div className="w-12 h-12 bg-gray-200 text-gray-700 rounded-full flex items-center justify-center font-bold shrink-0">
-									{projet?.porteur_prenom?.charAt(0)}
-									{projet?.porteur_nom?.charAt(0)}
+								<div className="w-12 h-12 bg-gray-300 text-gray-700 rounded-full flex items-center justify-center font-bold shrink-0">
+									{projet?.porteur_prenom?.charAt(0).toUpperCase() || ''}
+									{projet?.porteur_nom?.charAt(0).toUpperCase() || ''}
 								</div>
 								<div className="flex flex-col">
 									<p className="font-semibold text-lg leading-tight">
@@ -130,7 +127,7 @@ function CagnottePageHero() {
 							</div>
 
 							<a
-								href={`/payment/${projet ? projet.projet_id : ''}`}
+								href={`/payment/${id}`}
 								className="w-full bg-green-600 text-white py-4 px-4 rounded-2xl hover:bg-green-700 transition-all transform active:scale-95 shadow-lg shadow-green-100">
 								<p className="font-bold text-lg">Contribuer</p>
 								<p className="text-xs opacity-90 uppercase tracking-wide">À partir de 1€</p>
