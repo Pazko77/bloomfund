@@ -34,12 +34,10 @@ export default function createApp() {
 	return app;
 }
 
-if (process.env.NODE_ENV !== 'production') {
-	const ports = process.env.PORTS ? process.env.PORTS.split(',').map(Number) : [3000, 3001];
-	ports.forEach(port => {
-		const localApp = createApp();
-		localApp.listen(port, () => {
-			console.log(`-|Local: http://localhost:${port}/|-`);
-		});
+const ports = process.env.PORTS ? process.env.PORTS.split(',').map(Number) : [3000, 3001];
+ports.forEach(port => {
+	const app = createApp();
+	app.listen(port, () => {
+		console.log(`-|Local: http://localhost:${port}/|-`);
 	});
-}
+});
