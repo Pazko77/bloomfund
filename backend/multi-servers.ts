@@ -11,7 +11,7 @@ import contrepartieRouter from './routes/Contrepartie.route';
 import aiRouter from './routes/AI.route';
 import cookieParser from 'cookie-parser';
 
-export default function createApp() {
+function createApp() {
 	const app = express();
 	// app.set('trust proxy', 1);
 	app.use(express.json());
@@ -34,10 +34,17 @@ export default function createApp() {
 	return app;
 }
 
-const ports = process.env.PORTS ? process.env.PORTS.split(',').map(Number) : [3000, 3001];
-ports.forEach(port => {
-	const app = createApp();
-	app.listen(port, () => {
-		console.log(`-|Local: http://localhost:${port}/|-`);
+const app = createApp();
+
+
+export default app;
+
+if (process.env.NODE_ENV !== 'production') {
+	const ports = process.env.PORTS ? process.env.PORTS.split(',').map(Number) : [3000, 3001];
+	ports.forEach(port => {
+		const localApp = createApp();
+		localApp.listen(port, () => {
+			console.log(`-|Local: http://localhost:${port}/|-`);
+		});
 	});
-});
+}
