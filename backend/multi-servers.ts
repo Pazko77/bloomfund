@@ -11,7 +11,7 @@ import contrepartieRouter from './routes/Contrepartie.route';
 import aiRouter from './routes/AI.route';
 import cookieParser from 'cookie-parser';
 
-function createApp() {
+export default function createApp() {
 	const app = express();
 	// app.set('trust proxy', 1);
 	app.use(express.json());
@@ -33,6 +33,7 @@ function createApp() {
 
 	return app;
 }
+
 const ports = process.env.PORTS ? process.env.PORTS.split(',').map(Number) : [3000, 3001];
 ports.forEach(port => {
 	const app = createApp();
