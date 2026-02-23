@@ -14,7 +14,7 @@ const Cagnotte = lazy(() => import('../pages/FormulaireCagnotte/FormulaireCagnot
 const CagnottePageTemplate = lazy(() => import('../pages/CagnottePageTemplate/CagnottePageTemplate.jsx'));
 const Profil = lazy(() => import('../pages/Profil/Profil.jsx'));
 const LegalPages = lazy(() => import('../pages/LegalPages/LegalPages.jsx'));
-const Payment = lazy(() => import('../pages/Payment/payment.jsx'));
+const Payment = lazy(() => import('../pages/Payment/Payment.jsx'));
 const DashboardAdmin = lazy(() => import('../pages/Admin/DashboardAdmin.jsx'));
 
 
