@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "multi-server.ts",
+      "src": "multi-servers.ts",
       "use": "@vercel/node"
     }
   ],
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "multi-server.ts"
+      "destination": "multi-servers.ts"
     }
   ]
 }
