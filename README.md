@@ -18,8 +18,8 @@ BloomFund répond à ce besoin en offrant une interface simple entre citoyens et
 
 ---
 ## Lien
-* **Déploiement : https://bloomfund-frontend.vercel.app
-* **Maquette : https://www.figma.com/design/xkkQ4iT5xB8ewacQZGSxwe/Financement-participative?node-id=10-21&t=8g9idOour2vmwys9-1
+* **Déploiement :** https://bloomfund-frontend.vercel.app
+* **Maquette :** https://www.figma.com/design/xkkQ4iT5xB8ewacQZGSxwe/Financement-participative?node-id=10-21&t=8g9idOour2vmwys9-1
 
 ## Prérequis
 
